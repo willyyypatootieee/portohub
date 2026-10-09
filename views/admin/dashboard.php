@@ -103,8 +103,11 @@
                     <tbody>
                         <?php foreach ($portfolioItems as $item): ?>
                             <tr>
-                                <td><?= (int) $item['display_order'] ?></td>
-                                <td><strong><?= escape($item['title']) ?></strong><small><?= escape($item['creator_name']) ?></small></td>
+                                <td><?= (int) ($item['display_order'] ?? 0) ?></td>
+                                <td>
+                                    <strong><?= escape($item['title']) ?></strong>
+                                    <small><?= escape($item['creator_name']) ?></small>
+                                </td>
                                 <td><?= escape($item['category']) ?></td>
                                 <td><code><?= escape($item['image_filename']) ?></code></td>
                                 <td><?= (int) $item['is_featured'] === 1 ? 'Unggulan' : 'Reguler' ?></td>

@@ -15,7 +15,7 @@ final class PortfolioRepository
     public function getAll(): array
     {
         $statement = $this->database->query(
-            'SELECT id, title, creator_name, category, image_filename, likes_count, views_count, is_featured
+            'SELECT id, title, creator_name, category, image_filename, likes_count, views_count, is_featured, display_order
              FROM portfolio_items
              ORDER BY display_order ASC, id DESC'
         );

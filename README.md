@@ -249,6 +249,16 @@ $semuaKarya = $query->fetchAll();
 
 Gunakan prepared statement untuk query yang menerima data dari formulir pengguna.
 
+### Menguji koneksi di browser
+
+Gunakan file `koneksi.php` langsung. File ini memakai `echo` untuk menampilkan hasil test **hanya jika dibuka langsung dari browser**. Saat file dipanggil menggunakan `require_once` oleh halaman aplikasi, tidak ada output test yang ditampilkan.
+
+- XAMPP: `http://localhost/portohub/koneksi.php`
+- Laragon: `http://localhost/portohub/koneksi.php` atau `http://portohub.test/koneksi.php`
+- Docker: `http://localhost:8088/koneksi.php`
+
+Halaman akan menampilkan pesan **Koneksi berhasil**, nama database aktif `portfolio_hub`, serta jumlah data karya. Untuk production, sebaiknya batasi akses ke file ini melalui konfigurasi Apache atau hapus mode test setelah aplikasi selesai diperiksa.
+
 Koneksi lokal dikelola dalam `app/config/database.php`.
 
 ```php
