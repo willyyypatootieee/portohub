@@ -21,6 +21,7 @@ Data kartu karya pada halaman utama disimpan di database MySQL. Data tersebut da
 ```text
 portohub/
 ├── index.php                         Halaman utama
+├── koneksi.php                       Satu titik koneksi PDO ke MySQL
 ├── admin/
 │   └── index.php                     Login dan dashboard admin
 ├── app/
@@ -65,7 +66,7 @@ phpMyAdmin serta MySQL **tidak hanya digunakan oleh Docker**.
 - **Laragon** juga menyediakan MySQL dan menu Database/phpMyAdmin.
 - **Docker** menjalankan MySQL dan phpMyAdmin sebagai container terpisah secara otomatis.
 
-File `database/portfoliohub.sql` dipakai oleh semua cara instalasi untuk membuat database `portfoliohub`, tabel `portfolio_items`, dan data contoh.
+File `database/portfoliohub.sql` dipakai oleh semua cara instalasi untuk membuat database `portfolio_hub`, tabel `portfolio_items`, dan data contoh.
 
 - Pada **XAMPP/Laragon**, import file SQL satu kali menggunakan phpMyAdmin lokal.
 - Pada **Docker**, file tersebut diimport otomatis hanya saat volume database Docker pertama kali dibuat.
@@ -109,7 +110,9 @@ Di XAMPP Control Panel, jalankan Apache dan MySQL.
 3. Pilih file `database/portfoliohub.sql` dari folder proyek.
 4. Klik **Import** atau **Go**.
 
-File SQL akan membuat database `portfoliohub`, tabel `portfolio_items`, serta enam data contoh.
+File SQL akan membuat database `portfolio_hub`, tabel `portfolio_items`, serta enam data contoh.
+
+Nama database pada XAMPP dan Laragon sudah otomatis diarahkan ke `portfolio_hub`. Setelah import, Anda tidak perlu mengubah `app/config/database.php` maupun membuat file `.env` selama MySQL lokal memakai konfigurasi standar `root` tanpa kata sandi.
 
 ### 4. Buka proyek
 
@@ -133,6 +136,8 @@ C:\laragon\www\portohub
 1. Klik **Start All** di Laragon.
 2. Buka menu **Database** atau phpMyAdmin dari Laragon.
 3. Import file `database/portfoliohub.sql`.
+
+Import tersebut membuat database dengan nama `portfolio_hub`, yang sudah sama dengan konfigurasi default aplikasi.
 
 ### 3. Buka proyek
 
@@ -229,12 +234,27 @@ Setelah data diubah, segarkan halaman landing page untuk melihat hasilnya.
 
 ## Konfigurasi database lokal
 
+File `koneksi.php` adalah pintu utama koneksi database yang dapat dipakai dari file PHP baru. File ini membaca `.env`, memakai PDO, dan menampilkan pesan yang jelas bila MySQL atau database belum siap.
+
+Contoh pemakaian dari file PHP baru:
+
+```php
+<?php
+
+require_once __DIR__ . '/koneksi.php';
+
+$query = $koneksi->query('SELECT * FROM portfolio_items');
+$semuaKarya = $query->fetchAll();
+```
+
+Gunakan prepared statement untuk query yang menerima data dari formulir pengguna.
+
 Koneksi lokal dikelola dalam `app/config/database.php`.
 
 ```php
 'host' => environmentValue('DB_HOST', '127.0.0.1'),
 'port' => environmentValue('DB_PORT', '3306'),
-'name' => environmentValue('DB_NAME', 'portfoliohub'),
+'name' => environmentValue('DB_NAME', 'portfolio_hub'),
 'username' => environmentValue('DB_USER', 'root'),
 'password' => environmentValue('DB_PASSWORD', ''),
 ```
