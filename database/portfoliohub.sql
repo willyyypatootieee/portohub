@@ -1,10 +1,10 @@
 -- need to do if laragon or xampp doesnt have the database yet, then create it
 
-CREATE DATABASE IF NOT EXISTS portfoliohub
+CREATE DATABASE IF NOT EXISTS portfolio_hub
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE portfoliohub;
+USE portfolio_hub;
 
 CREATE TABLE IF NOT EXISTS portfolio_items (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
