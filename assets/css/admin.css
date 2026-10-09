@@ -1,0 +1,356 @@
+:root {
+    --admin-ink: #181a18;
+    --admin-paper: #f6f6f2;
+    --admin-panel: #ffffff;
+    --admin-muted: #6f736e;
+    --admin-line: #d9d9d2;
+    --admin-purple: #5b55e8;
+    --admin-danger: #b52c2c;
+    --admin-success: #187443;
+    --admin-font: Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--admin-ink);
+    background: var(--admin-paper);
+    font-family: var(--admin-font);
+}
+
+a {
+    color: inherit;
+}
+
+.admin-container {
+    width: min(100% - 40px, 1120px);
+    margin: 0 auto;
+}
+
+.admin-header {
+    color: white;
+    background: var(--admin-ink);
+}
+
+.admin-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 65px;
+}
+
+.admin-brand {
+    color: inherit;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -.7px;
+    text-decoration: none;
+}
+
+.admin-header nav {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+}
+
+.admin-header nav a {
+    text-decoration: none;
+}
+
+.admin-header nav a:hover,
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.admin-main {
+    padding-top: 52px;
+    padding-bottom: 70px;
+}
+
+.admin-title-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 29px;
+}
+
+.admin-kicker {
+    margin: 0 0 8px;
+    color: var(--admin-purple);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+.admin-title-row h1,
+.login-card h1 {
+    margin-bottom: 8px;
+    font-size: clamp(29px, 5vw, 42px);
+    letter-spacing: -1.3px;
+}
+
+.admin-title-row > div > p:last-child,
+.login-description {
+    margin-bottom: 0;
+    color: var(--admin-muted);
+}
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 17px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    background: var(--admin-purple);
+    border: 1px solid #3a36a3;
+    border-radius: 4px;
+}
+
+.admin-button:hover {
+    background: #4842ce;
+}
+
+.admin-panel {
+    margin-top: 24px;
+    padding: 25px;
+    background: var(--admin-panel);
+    border: 1px solid var(--admin-line);
+    border-radius: 7px;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 21px;
+}
+
+.panel-heading h2 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.panel-heading a,
+.panel-heading span {
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.admin-form {
+    display: grid;
+    gap: 17px;
+}
+
+.item-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-form label {
+    display: grid;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="password"],
+.admin-form input[type="number"] {
+    width: 100%;
+    min-height: 41px;
+    padding: 9px 11px;
+    color: var(--admin-ink);
+    font: inherit;
+    font-weight: 400;
+    background: #fff;
+    border: 1px solid #bfc1bb;
+    border-radius: 4px;
+    outline-color: var(--admin-purple);
+}
+
+.admin-form small {
+    color: var(--admin-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+.checkbox-label {
+    display: flex !important;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 9px !important;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 16px;
+    height: 16px;
+}
+
+.form-actions {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+}
+
+.alert {
+    margin: 0 0 23px;
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #0f592f;
+    background: #e1f4e7;
+    border: 1px solid #9edbb0;
+}
+
+.alert-error {
+    color: #8d2020;
+    background: #fbe8e8;
+    border: 1px solid #e8b2b2;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 13px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--admin-line);
+}
+
+th {
+    color: var(--admin-muted);
+    font-size: 11px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+td strong,
+td small {
+    display: block;
+}
+
+td small {
+    margin-top: 3px;
+    color: var(--admin-muted);
+}
+
+code {
+    font-size: 11px;
+}
+
+.table-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.table-actions a,
+.table-actions button {
+    color: var(--admin-purple);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: transparent;
+    border: 0;
+}
+
+.table-actions button {
+    color: var(--admin-danger);
+}
+
+.table-actions form {
+    margin: 0;
+}
+
+.admin-login-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 22px;
+}
+
+.login-card {
+    width: min(100%, 430px);
+    padding: 36px;
+    background: white;
+    border: 1px solid var(--admin-line);
+    border-radius: 8px;
+    box-shadow: 0 12px 35px rgb(0 0 0 / .07);
+}
+
+.login-card .admin-brand {
+    display: inline-block;
+    margin-bottom: 36px;
+    color: var(--admin-ink);
+}
+
+.login-description {
+    margin-bottom: 26px;
+    line-height: 1.5;
+}
+
+.login-card .admin-button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 22px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .admin-container {
+        width: min(100% - 28px, 1120px);
+    }
+
+    .admin-main {
+        padding-top: 34px;
+    }
+
+    .admin-title-row {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .item-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-panel,
+    .login-card {
+        padding: 21px;
+    }
+}
