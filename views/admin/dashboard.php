@@ -96,7 +96,7 @@
                             <th>Karya</th>
                             <th>Kategori</th>
                             <th>Gambar</th>
-                            <th>Status</th>
+                            <th>StatusSSSS</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
