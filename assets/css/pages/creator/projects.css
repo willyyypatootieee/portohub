@@ -1,0 +1,108 @@
+/* =============================================================================
+   pages/creator/projects.css
+   Halaman daftar proyek dan editor proyek.
+   ============================================================================= */
+
+.project-editor {
+    margin-bottom: 18px;
+}
+
+.project-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 13px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.filter-tabs {
+    display: flex;
+    overflow-x: auto;
+}
+
+.filter-tabs a {
+    flex: 0 0 auto;
+    padding: 9px 11px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.filter-tabs a.is-active {
+    color: var(--ink);
+    font-weight: 700;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+}
+
+.inline-search {
+    display: flex;
+    gap: 5px;
+}
+
+.inline-search input {
+    width: 190px;
+    min-height: 34px;
+    font-size: 10px;
+}
+
+.inline-search button {
+    padding: 0 9px;
+    color: var(--purple);
+    font-size: 10px;
+    font-weight: 700;
+    background: #fff;
+    border: 1px solid var(--soft-line);
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 7px;
+    font-size: 9px;
+    border: 1px solid var(--line);
+}
+
+.status.published {
+    background: #a9e7cf;
+}
+
+.status.draft {
+    background: var(--yellow);
+}
+
+.status.archived {
+    background: #e3e3df;
+}
+
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.row-actions a,
+.row-actions button {
+    color: var(--purple);
+    font-size: 10px;
+    font-weight: 700;
+    background: transparent;
+    border: 0;
+}
+
+.row-actions button {
+    color: #b52d2d;
+}
+
+.row-actions form {
+    margin: 0;
+}
+
+/* Panel media yang menyatu dengan editor proyek. */
+.project-media {
+    margin-bottom: 18px;
+}
+
+.project-upload-form {
+    margin-bottom: 18px;
+}

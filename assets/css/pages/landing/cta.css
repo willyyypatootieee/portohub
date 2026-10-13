@@ -1,0 +1,71 @@
+/* =============================================================================
+   pages/landing/cta.css
+   Bagian call to action berwarna ungu di bawah landing page.
+   ============================================================================= */
+
+.call-to-action {
+    position: relative;
+    overflow: hidden;
+    padding: 83px 0 84px;
+    color: white;
+    text-align: center;
+    background: var(--purple);
+}
+
+.cta-content {
+    position: relative;
+    z-index: 1;
+}
+
+.eyebrow-light {
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px 9px;
+    color: white;
+    border: 1px solid rgb(255 255 255 / .45);
+    border-radius: 2px;
+}
+
+.call-to-action h2 {
+    margin: 16px 0 14px;
+    font-size: clamp(43px, 5vw, 57px);
+    color: #fff;
+}
+
+.call-to-action p:not(.eyebrow) {
+    margin-bottom: 22px;
+    color: #e5e4ff;
+    font-size: 11px;
+}
+
+.call-to-action small {
+    display: block;
+    margin-top: 11px;
+    color: #d7d5ff;
+    font-size: 8px;
+}
+
+.cta-circle {
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    border: 1px solid rgb(255 255 255 / .15);
+    border-radius: 50%;
+}
+
+.cta-circle-left {
+    top: -65px;
+    left: -50px;
+}
+
+.cta-circle-right {
+    right: -50px;
+    bottom: -165px;
+}
+
+@media (max-width: 430px) {
+    .cta-circle {
+        width: 260px;
+        height: 260px;
+    }
+}

@@ -1,0 +1,19 @@
+/* =============================================================================
+   studio.css
+   CSS untuk area creator studio dan superadmin.
+   Bergantung pada app.css yang harus dimuat lebih dulu.
+   ============================================================================= */
+
+/* Rangka studio: sidebar dan topbar */
+@import url("layout/studio-shell.css");
+
+/* Halaman studio */
+@import url("pages/creator/dashboard.css");
+@import url("pages/creator/projects.css");
+@import url("pages/creator/media.css");
+@import url("pages/creator/settings.css");
+@import url("pages/creator/analytics.css");
+@import url("pages/creator/responsive.css");
+
+/* Monitoring superadmin */
+@import url("pages/superadmin.css");

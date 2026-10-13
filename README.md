@@ -2,13 +2,13 @@
 
 Landing page portofolio kreatif yang dibuat dengan PHP native, MySQL, CSS, dan JavaScript. Proyek ini tidak memakai framework, Composer, atau Node.js sehingga mudah dijalankan di XAMPP, Laragon, maupun Docker.
 
-Data kartu karya pada halaman utama disimpan di database MySQL. Data tersebut dapat dikelola dari halaman admin atau langsung melalui phpMyAdmin.
+Data kartu karya pada halaman utama diambil dari proyek creator yang sudah berstatus **published**. Bila belum ada karya yang dipublikasikan, halaman utama menampilkan ajakan "Become The One".
 
 ## Fitur
 
 - Landing page responsif dengan hero, koleksi karya, profil kreator, dan call to action
-- Data karya dinamis dari tabel MySQL `portfolio_items`
-- Dashboard admin untuk tambah, ubah, dan hapus karya
+- Grid karya dinamis dari proyek creator yang published (`studio_projects`)
+- Creator studio untuk membuat, mengubah, dan menghapus proyek beserta medianya
 - Filter kategori dan pencarian karya pada landing page
 - Tema terang/gelap dan menu navigasi untuk perangkat kecil
 - Koneksi database menggunakan PDO serta prepared statement
@@ -18,38 +18,127 @@ Data kartu karya pada halaman utama disimpan di database MySQL. Data tersebut da
 
 ## Struktur folder
 
+Semua file yang diakses browser berada di dalam satu folder `public/` (web root).
+Backend tinggal di `app/`, tampilan dipisah per audiens di `views/`, dan CSS
+modular ada di `assets/css/` dengan lapisan base, components, layout, dan pages.
+
 ```text
 portohub/
-├── index.php                         Halaman utama
-├── koneksi.php                       Satu titik koneksi PDO ke MySQL
-├── admin/
-│   └── index.php                     Login dan dashboard admin
-├── app/
-│   ├── bootstrap.php                 Memuat konfigurasi dan koneksi aplikasi
+├── public/                           WEB ROOT — hanya folder ini yang diakses browser
+│   ├── .htaccess                     Rewrite URL cantik + alias route
+│   ├── index.php                     Landing page (end-user)
+│   ├── login/
+│   │   ├── index.php                 Masuk creator
+│   │   ├── register/index.php        Daftar creator
+│   │   └── superadmin/index.php      Masuk superadmin
+│   ├── studio/                       Halaman creator (backend)
+│   │   ├── index.php                 Dashboard
+│   │   ├── projects.php              CRUD proyek + media
+│   │   ├── media.php                 Media library
+│   │   ├── settings.php              Profil publik
+│   │   ├── analytics.php             Ringkasan
+│   │   └── logout.php
+│   └── portfolio/index.php           Portofolio publik satu creator
+├── app/                              Backend aplikasi (tidak diakses browser)
+│   ├── bootstrap.php                 Titik muat: session, helper, koneksi, repo
 │   ├── config/
-│   │   ├── admin.php                 Kredensial dashboard admin
+│   │   ├── admin.php                 Kredensial superadmin
 │   │   ├── database.php              Konfigurasi koneksi MySQL
+│   │   ├── media.php                 Aturan upload dan MIME type
 │   │   └── site.php                  Nama dan informasi situs
 │   ├── core/
-│   │   ├── Database.php              Pembuat koneksi PDO
-│   │   └── helpers.php               Fungsi bantuan umum
-│   └── repositories/
-│       └── PortfolioRepository.php   Semua query karya portofolio
+│   │   ├── Connection.php            Membuka koneksi PDO aplikasi
+│   │   ├── Database.php              Pembuat koneksi PDO (singleton)
+│   │   ├── JsonFormValidator.php     Validasi form berbasis JSON schema
+│   │   ├── helpers.php               Memuat seluruh helper di bawah
+│   │   └── helpers/                  Helper dipisah per topik
+│   │       ├── env.php               Baca berkas .env
+│   │       ├── output.php            escape() untuk HTML
+│   │       ├── csrf.php              Token CSRF form POST
+│   │       ├── url.php               redirect() dan appUrl()
+│   │       ├── flash.php             Pesan flash sekali tampil
+│   │       ├── auth.php              Status login tingkat halaman
+│   │       └── format.php            Format angka tampilan
+│   ├── middleware/
+│   │   └── AuthMiddleware.php        Pintu tunggal validasi login creator
+│   ├── repositories/                 Semua query database
+│   │   ├── PortfolioRepository.php   Karya landing page
+│   │   └── StudioRepository.php      Semua data creator studio
+│   ├── services/
+│   │   ├── AuthenticationService.php Login dan pembuatan session
+│   │   └── MediaUploadService.php    Validasi dan simpan upload
+│   ├── controllers/
+│   │   ├── AuthController.php        Alur login dan registrasi
+│   │   └── StudioController.php      Alur proyek, media, dan profil
+│   └── data/form-schemas.json        Kontrak validasi form
+├── views/                            Tampilan per audiens (tidak diakses browser)
+│   ├── layout/                       Header dan footer landing page
+│   ├── public/
+│   │   ├── portfolio.php             Tampilan portofolio publik
+│   │   ├── auth/                     Tampilan login dan register
+│   │   └── sections/                 Bagian-bagian landing page
+│   ├── creator/                      Tampilan creator studio
+│   └── superadmin/                   Tampilan monitoring superadmin
 ├── assets/
 │   ├── css/
-│   │   ├── style.css                 Style landing page
-│   │   └── admin.css                 Style dashboard admin
+│   │   ├── app.css                   Lapisan bersama: base + components + layout
+│   │   ├── public.css                CSS area publik (end-user)
+│   │   ├── studio.css                CSS creator studio dan superadmin
+│   │   ├── base/                     Token, reset, tipografi
+│   │   ├── components/               Tombol, form, kartu, alert
+│   │   ├── layout/                   Header, footer, kerangka studio
+│   │   ├── pages/                    CSS per halaman
+│   │   └── auth/                     CSS halaman login dan register (sengaja polos)
 │   ├── images/                       Gambar SVG demo
-│   └── js/app.js                     Interaksi landing page
+│   └── js/                           Interaksi landing page dan studio
 ├── database/
-│   └── portfoliohub.sql              Tabel dan data awal MySQL
-├── views/
-│   ├── admin/                        Tampilan login dan dashboard
-│   ├── layout/                       Header dan footer landing page
-│   └── sections/                     Bagian-bagian landing page
+│   ├── portfoliohub.sql              Tabel landing page dan data contoh
+│   └── creator-studio.sql            Tabel creator studio
+├── docs/                             Dokumentasi Bahasa Indonesia
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+### Di mana letak backend dan tampilan?
+
+- **Route / URL (web root):** semua file yang diakses browser ada di `public/`.
+  Contoh `public/studio/projects.php` melayani `/studio/projects.php`.
+- **End-user (pengunjung):** tampilan di `views/public/` + `views/layout/`,
+  CSS di `public.css`, logika data lewat `PortfolioRepository`.
+- **Creator studio (backend):** tampilan di `views/creator/`, CSS di
+  `studio.css`, logika lewat `StudioController` + `StudioRepository`.
+- **Auth:** alur di `AuthController` + `AuthenticationService`, tampilan di
+  `views/public/auth/`.
+- **Superadmin:** tampilan di `views/superadmin/`.
+
+Semua kelas backend berada di `app/` dan dimuat sekali lewat `app/bootstrap.php`,
+jadi setiap halaman cukup `require` bootstrap satu kali. Karena backend ada di
+luar `public/`, file seperti `app/bootstrap.php` atau `database/*.sql` tidak
+bisa dibuka langsung dari browser.
+
+### Kenapa ada `public/studio/` dan `views/creator/`?
+
+Keduanya bukan duplikat; tugasnya berbeda:
+
+| Lokasi | Isi | Tugas |
+| --- | --- | --- |
+| `public/studio/` | `projects.php`, `media.php`, dst. | **URL / route.** File tipis: cek login, ambil data, lalu `require` view. |
+| `views/creator/` | `projects.php`, `media.php`, dst. | **Markup HTML** halaman studio. |
+| `assets/css/pages/creator/` | `projects.css`, dst. | **Gaya** khusus tiap halaman studio. |
+
+Folder URL tetap bernama `studio/` karena menentukan alamat `/studio/...`,
+sedangkan view dan CSS memakai nama `creator/` supaya perannya jelas dan tidak
+tertukar dengan folder URL.
+
+### Kenapa `assets/` ada di luar `public/`?
+
+Folder `assets/` (CSS, JS, gambar, dan upload) sengaja tidak dipindah ke dalam
+`public/` agar struktur repo tetap rapi. Agar tetap dapat diakses browser,
+konfigurasi server memetakan URL `/assets/...` ke folder tersebut:
+
+- **Docker/Apache:** file `docker/assets-alias.conf` mengaktifkan `Alias /assets`.
+- **XAMPP/Laragon:** tambahkan alias serupa pada konfigurasi Apache Anda, atau
+  pindahkan folder `assets/` ke dalam `public/`.
 
 ## Kebutuhan sistem
 
@@ -109,15 +198,54 @@ Di XAMPP Control Panel, jalankan Apache dan MySQL.
 2. Pilih menu **Import**.
 3. Pilih file `database/portfoliohub.sql` dari folder proyek.
 4. Klik **Import** atau **Go**.
+5. Ulangi langkah import untuk file `database/creator-studio.sql`.
 
-File SQL akan membuat database `portfolio_hub`, tabel `portfolio_items`, serta enam data contoh.
+File SQL pertama membuat database `portfolio_hub`, tabel `portfolio_items`, serta enam data contoh. File SQL kedua membuat tabel creator studio: `users`, `studio_projects`, dan `media_assets`.
 
 Nama database pada XAMPP dan Laragon sudah otomatis diarahkan ke `portfolio_hub`. Setelah import, Anda tidak perlu mengubah `app/config/database.php` maupun membuat file `.env` selama MySQL lokal memakai konfigurasi standar `root` tanpa kata sandi.
 
-### 4. Buka proyek
+### 4. Arahkan web root ke folder public
 
-- Landing page: `http://localhost/portohub/`
-- Dashboard admin: `http://localhost/portohub/admin/`
+Agar kode backend tetap aman, Apache harus melayani folder `public/`, bukan
+folder proyek. Ada dua cara:
+
+**Cara A — Virtual Host (disarankan)**
+
+Tambahkan konfigurasi berikut di `httpd-vhosts.conf` XAMPP lalu restart Apache.
+
+```apache
+<VirtualHost *:80>
+    ServerName portohub.test
+    DocumentRoot "C:/xampp/htdocs/portohub/public"
+
+    <Directory "C:/xampp/htdocs/portohub/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # Aset berada di luar public/, jadi dipetakan lewat alias.
+    Alias /assets "C:/xampp/htdocs/portohub/assets"
+    <Directory "C:/xampp/htdocs/portohub/assets">
+        Require all granted
+        Options -Indexes
+    </Directory>
+</VirtualHost>
+```
+
+Tambahkan `127.0.0.1 portohub.test` ke file `hosts` bila perlu, lalu buka
+`http://portohub.test/`.
+
+**Cara B — mod_rewrite dari root proyek**
+
+Cukup buka `http://localhost/portohub/`; file `.htaccess` di root proyek
+mengarahkan semua permintaan ke `public/`. Cara ini praktis tetapi kode
+backend ikut berada di dalam web root, jadi kurang aman untuk produksi.
+
+### 5. Buka proyek
+
+- Landing page: `http://localhost/portohub/` (Cara B) atau `http://portohub.test/` (Cara A)
+- Creator studio: `/studio/` setelah masuk creator
+- Monitoring superadmin: `/login/superadmin/`
 
 Konfigurasi bawaan XAMPP memakai host `127.0.0.1`, pengguna `root`, dan kata sandi kosong. Nilai itu sudah tersedia di `app/config/database.php`. Bila konfigurasi MySQL Anda berbeda, salin `.env.example` menjadi `.env` lalu sesuaikan nilai `DB_*`.
 
@@ -136,8 +264,9 @@ C:\laragon\www\portohub
 1. Klik **Start All** di Laragon.
 2. Buka menu **Database** atau phpMyAdmin dari Laragon.
 3. Import file `database/portfoliohub.sql`.
+4. Import file `database/creator-studio.sql`.
 
-Import tersebut membuat database dengan nama `portfolio_hub`, yang sudah sama dengan konfigurasi default aplikasi.
+Import tersebut membuat database dengan nama `portfolio_hub`, yang sudah sama dengan konfigurasi default aplikasi, beserta seluruh tabel creator studio.
 
 ### 3. Buka proyek
 
@@ -178,7 +307,7 @@ Username: root
 Password: root_password_change_me
 ```
 
-Database awal diimpor otomatis ketika volume MySQL dibuat pertama kali. Untuk menghentikan container gunakan:
+Database awal diimpor otomatis ketika volume MySQL dibuat pertama kali dari `database/portfoliohub.sql` dan `database/creator-studio.sql`. Untuk menghentikan container gunakan:
 
 ```bash
 docker compose down
@@ -213,6 +342,31 @@ Melalui dashboard, admin dapat:
 - Menghapus karya
 - Menentukan gambar dengan memasukkan nama file yang tersimpan di `assets/images/`
 
+## Creator accounts and studio
+
+- Sign in: `/login/`
+- Register: `/login/register/`
+- Creator studio: `/studio/` (requires a creator account)
+- Superadmin monitoring: `/login/superadmin/` (separate monitoring screen without the creator sidebar)
+
+Creator projects, profiles, and uploads are stored in `users`, `studio_projects`, and `media_assets`. All creator-studio tables live in `database/creator-studio.sql`; the application checks at startup that they exist and never creates them by itself.
+
+Account, profile, and project fields are validated on the server using the JSON contracts in `app/data/form-schemas.json`. The media library validates MIME types server-side and accepts JPEG, PNG, WebP, GIF, MP4, WebM, and PDF (PDF can be used for CVs), up to 25 MB.
+
+The whole interface — landing page, studio, auth, and monitoring — uses the DM Sans typeface.
+
+The sign-in and registration pages intentionally remain unstyled beyond that font. Their clean modular CSS locations are `assets/css/auth/login.css` and `assets/css/auth/register.css`.
+
+## Demo kelas dengan ngrok
+
+Untuk memperlihatkan aplikasi langsung ke kelas tanpa deploy, jalankan:
+
+```bash
+./demo.sh
+```
+
+Skrip tersebut menyalakan Docker lalu membuka tunnel ngrok. Bagikan URL HTTPS yang muncul. Selengkapnya ada di `docs/demo-ngrok.md`.
+
 ## Mengelola data dengan phpMyAdmin
 
 Selain dashboard, tabel `portfolio_items` dapat diubah dari phpMyAdmin.
@@ -234,14 +388,14 @@ Setelah data diubah, segarkan halaman landing page untuk melihat hasilnya.
 
 ## Konfigurasi database lokal
 
-File `koneksi.php` adalah pintu utama koneksi database yang dapat dipakai dari file PHP baru. File ini membaca `.env`, memakai PDO, dan menampilkan pesan yang jelas bila MySQL atau database belum siap.
+Koneksi database dibuka sekali di `app/bootstrap.php` melalui `App\Core\Connection`. Setelah bootstrap dimuat, variabel `$koneksi` (alias `$pdo`) berisi objek PDO yang siap dipakai.
 
 Contoh pemakaian dari file PHP baru:
 
 ```php
 <?php
 
-require_once __DIR__ . '/koneksi.php';
+require_once __DIR__ . '/app/bootstrap.php';
 
 $query = $koneksi->query('SELECT * FROM portfolio_items');
 $semuaKarya = $query->fetchAll();
@@ -249,15 +403,9 @@ $semuaKarya = $query->fetchAll();
 
 Gunakan prepared statement untuk query yang menerima data dari formulir pengguna.
 
-### Menguji koneksi di browser
+### Menguji koneksi database
 
-Gunakan file `koneksi.php` langsung. File ini memakai `echo` untuk menampilkan hasil test **hanya jika dibuka langsung dari browser**. Saat file dipanggil menggunakan `require_once` oleh halaman aplikasi, tidak ada output test yang ditampilkan.
-
-- XAMPP: `http://localhost/portohub/koneksi.php`
-- Laragon: `http://localhost/portohub/koneksi.php` atau `http://portohub.test/koneksi.php`
-- Docker: `http://localhost:8088/koneksi.php`
-
-Halaman akan menampilkan pesan **Koneksi berhasil**, nama database aktif `portfolio_hub`, serta jumlah data karya. Untuk production, sebaiknya batasi akses ke file ini melalui konfigurasi Apache atau hapus mode test setelah aplikasi selesai diperiksa.
+Tidak ada lagi halaman test di browser. Untuk memastikan koneksi MySQL berjalan, cukup buka halaman utama aplikasi. Bila database belum siap, `Connection` menampilkan pesan yang jelas dan mencatat detailnya ke `error_log`.
 
 Koneksi lokal dikelola dalam `app/config/database.php`.
 
@@ -275,15 +423,20 @@ Ubah nilai default melalui file `.env` bila MySQL lokal memakai nama database, p
 
 1. Simpan gambar baru di folder `assets/images/`.
 2. Gunakan nama file sederhana, contoh `karya-baru.jpg`.
-3. Pada dashboard, masukkan `karya-baru.jpg` ke kolom **Nama file gambar**.
+3. Unggah sebagai media pada proyek creator di studio, atau kelola lewat phpMyAdmin.
 4. Simpan karya.
 
 Format gambar seperti SVG, JPG, PNG, dan WebP dapat digunakan selama browser mendukungnya.
 
 ## Mengubah tampilan
 
-- `assets/css/style.css` untuk tampilan landing page
-- `assets/css/admin.css` untuk tampilan dashboard admin
-- `assets/js/app.js` untuk filter, pencarian, tema, dan navigasi mobile
-- `views/sections/` untuk teks dan struktur setiap bagian landing page
-- `app/config/site.php` untuk nama situs dan informasi dasar
+CSS dipisah rapi per lapisan:
+
+- `assets/css/app.css` memuat token, reset, tipografi, komponen, dan layout bersama.
+- `assets/css/public.css` untuk area publik (landing dan portofolio).
+- `assets/css/studio.css` untuk creator studio dan superadmin.
+- `assets/css/base/`, `components/`, `layout/`, dan `pages/` berisi berkas per topik.
+- `assets/js/app.js` untuk filter, pencarian, tema, dan navigasi mobile.
+- `views/public/sections/` untuk teks dan struktur setiap bagian landing page.
+- `assets/css/base/tokens.css` untuk warna dan tipografi.
+- `app/config/site.php` untuk nama situs dan informasi dasar.

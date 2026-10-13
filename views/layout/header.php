@@ -7,8 +7,9 @@
     <title><?= escape($pageTitle) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/app.css')) ?>">
+    <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/public.css')) ?>">
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -47,8 +48,8 @@
                         <path d="M20.4 14.8A8.6 8.6 0 0 1 9.2 3.6a8.7 8.7 0 1 0 11.2 11.2Z"/>
                     </svg>
                 </button>
-                <a class="login-link" href="#cta">Log in</a>
-                <a class="button button-small" href="#cta">Creator studio</a>
+                <a class="login-link" href="<?= escape(appUrl('/login/')) ?>">Log in</a>
+                <a class="button button-small" href="<?= escape(appUrl('/studio/')) ?>">Creator studio</a>
             </div>
         </div>
     </header>

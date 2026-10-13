@@ -9,7 +9,7 @@
                 </span>
                 <span><?= SITE_NAME ?></span>
             </a>
-            <p>© <?= SITE_YEAR ?> <?= SITE_NAME ?>. Made for people who make.</p>
+            <p>© <?= SITE_YEAR ?> <?= SITE_NAME ?>. Made for love in TRM PS 09.07.</p>
             <nav aria-label="Footer navigation">
                 <a href="#discover">Instagram</a>
                 <a href="#creator">LinkedIn</a>

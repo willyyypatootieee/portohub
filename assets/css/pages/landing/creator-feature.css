@@ -1,0 +1,116 @@
+/* =============================================================================
+   pages/landing/creator-feature.css
+   Panel gelap yang menampilkan profil kreator di landing page.
+   ============================================================================= */
+
+.creator-feature {
+    padding-top: 74px;
+    padding-bottom: 90px;
+}
+
+.creator-panel {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    max-width: 888px;
+    overflow: hidden;
+    background: var(--card-dark);
+    border-radius: 2px;
+}
+
+.creator-image {
+    position: relative;
+    min-height: 420px;
+    overflow: hidden;
+}
+
+.creator-image img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.creator-image span {
+    position: absolute;
+    bottom: 17px;
+    left: 18px;
+    padding: 6px 8px;
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    border: 1px solid #8d8d8d;
+}
+
+.creator-copy {
+    padding: 57px 51px 42px;
+    color: #f6f4eb;
+}
+
+.creator-copy h2 {
+    margin-bottom: 21px;
+    font-size: 47px;
+}
+
+.creator-copy blockquote {
+    margin: 0 0 24px;
+    color: #ddd5c9;
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.creator-person {
+    display: flex;
+    gap: 11px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.creator-person > span {
+    display: grid;
+    width: 29px;
+    height: 29px;
+    place-items: center;
+    color: #e1d6c8;
+    font-size: 8px;
+    background: #855b49;
+    border-radius: 50%;
+}
+
+.creator-person p {
+    margin: 0;
+    font-size: 9px;
+}
+
+.creator-person strong,
+.creator-person small {
+    display: block;
+}
+
+.creator-person small {
+    margin-top: 3px;
+    color: #a7aaa3;
+}
+
+@media (max-width: 760px) {
+    .creator-feature {
+        padding-top: 55px;
+        padding-bottom: 58px;
+    }
+
+    .creator-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .creator-image {
+        min-height: 290px;
+    }
+
+    .creator-copy {
+        padding: 37px 30px;
+    }
+
+    .creator-copy h2 {
+        font-size: 43px;
+    }
+}

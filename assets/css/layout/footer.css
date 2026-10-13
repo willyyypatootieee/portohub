@@ -1,0 +1,42 @@
+/* =============================================================================
+   layout/footer.css
+   Footer landing page.
+   ============================================================================= */
+
+.site-footer {
+    padding: 28px 0;
+    background: var(--paper);
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.footer-inner p {
+    margin: 0;
+}
+
+.footer-inner nav {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-inner a:not(.brand):hover {
+    color: var(--purple);
+}
+
+@media (max-width: 760px) {
+    .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .footer-inner nav {
+        gap: 14px;
+    }
+}

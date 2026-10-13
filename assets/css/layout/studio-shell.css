@@ -1,0 +1,159 @@
+/* =============================================================================
+   layout/studio-shell.css
+   Rangka creator studio: sidebar, topbar, dan area konten utama.
+   ============================================================================= */
+
+.studio-shell {
+    display: grid;
+    grid-template-columns: 252px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.studio-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 24px 13px 28px;
+    background: #fff;
+    border-right: 1px solid var(--line);
+}
+
+.studio-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 7px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.8px;
+}
+
+.studio-brand span {
+    display: inline-grid;
+    width: 21px;
+    height: 21px;
+    place-items: center;
+    color: #fff;
+    font-size: 10px;
+    background: var(--ink);
+    border-radius: 5px;
+}
+
+.creator-switcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 10px;
+    margin: 28px 0 31px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 #d6d6d1;
+}
+
+.avatar {
+    display: grid;
+    width: 35px;
+    height: 35px;
+    place-items: center;
+    color: #fff;
+    font-size: 10px;
+    background: #98664e;
+    border-radius: 50%;
+}
+
+.creator-switcher strong,
+.creator-switcher small {
+    display: block;
+}
+
+.creator-switcher strong {
+    font-size: 11px;
+}
+
+.creator-switcher small {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.creator-switcher b {
+    margin-left: auto;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.sidebar-label {
+    margin: 0 10px 8px;
+    color: #73766f;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+
+.studio-navigation {
+    display: grid;
+    gap: 2px;
+    margin-bottom: 26px;
+}
+
+.studio-navigation a {
+    padding: 11px 12px;
+    color: var(--muted);
+    font-size: 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.studio-navigation a:hover,
+.studio-navigation a.is-active {
+    color: var(--ink);
+    background: var(--yellow);
+    border-color: var(--line);
+    box-shadow: 2px 2px 0 var(--line);
+}
+
+.back-discovery {
+    padding: 9px 11px;
+    margin-top: auto;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.studio-content {
+    min-width: 0;
+}
+
+.studio-topbar {
+    display: flex;
+    align-items: center;
+    min-height: 63px;
+    padding: 0 30px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-left: auto;
+}
+
+.logout-link {
+    margin-left: 8px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.sidebar-toggle {
+    display: none;
+}
+
+.studio-main {
+    width: min(100% - 70px, 1030px);
+    padding: 45px 0 65px;
+    margin: 0 auto;
+}

@@ -1,0 +1,30 @@
+# =============================================================================
+# Apache / XAMPP / Laragon front controller rules for PortfolioHub.
+#
+# DocumentRoot harus diarahkan ke folder `public/`. Semua URL aplikasi
+# dilayani dari sini, sementara kode backend (app/, views/, database/, docs/)
+# berada di luar web root sehingga tidak bisa diakses langsung dari browser.
+#
+# Syarat: mod_rewrite aktif dan AllowOverride All diizinkan untuk folder ini.
+# =============================================================================
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Jangan route berkas atau folder yang benar-benar ada (aset statis, upload).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Portfolio publik dengan URL cantik: /portfolio/{username}
+    RewriteRule ^portfolio/([a-z0-9-]+)/?$ portfolio/index.php?user=$1 [L,QSA,NC]
+
+    # Alias ramah untuk route yang memakai index.php di dalam folder.
+    RewriteRule ^login/?$ login/index.php [L,QSA]
+    RewriteRule ^login/register/?$ login/register/index.php [L,QSA]
+    RewriteRule ^login/superadmin/?$ login/superadmin/index.php [L,QSA]
+    RewriteRule ^studio/?$ studio/index.php [L,QSA]
+</IfModule>

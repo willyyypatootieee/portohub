@@ -1,0 +1,85 @@
+/* =============================================================================
+   pages/superadmin.css
+   Halaman monitoring superadmin dan halaman login-nya.
+   ============================================================================= */
+
+.superadmin-page header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    padding: 0 max(24px, calc((100vw - 1030px) / 2));
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+}
+
+.superadmin-page header nav {
+    display: flex;
+    gap: 18px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.superadmin-page main {
+    width: min(100% - 48px, 960px);
+    padding: 73px 0;
+    margin: auto;
+}
+
+.superadmin-page h1 {
+    margin-bottom: 13px;
+    font-size: clamp(48px, 7vw, 78px);
+    line-height: .94;
+}
+
+.superadmin-page .metric-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.admin-description {
+    margin-bottom: 30px;
+    color: var(--muted);
+}
+
+.superadmin-login {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 22px;
+}
+
+.superadmin-card {
+    width: min(100%, 420px);
+    padding: 30px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 5px 5px 0 var(--purple);
+}
+
+.superadmin-card .studio-brand {
+    margin-bottom: 30px;
+}
+
+.superadmin-card h1 {
+    margin-bottom: 25px;
+    font-size: 40px;
+}
+
+.superadmin-card .studio-form {
+    grid-template-columns: 1fr;
+}
+
+@media (max-width: 600px) {
+    .superadmin-page main {
+        width: min(100% - 32px, 960px);
+        padding: 52px 0;
+    }
+
+    .superadmin-page header {
+        padding: 0 16px;
+    }
+
+    .superadmin-page .metric-grid {
+        grid-template-columns: 1fr;
+    }
+}
