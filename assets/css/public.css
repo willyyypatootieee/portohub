@@ -1,0 +1,14 @@
+/* =============================================================================
+   public.css
+   CSS untuk area publik (end-user): landing page dan portofolio creator.
+   Bergantung pada app.css yang harus dimuat lebih dulu.
+   ============================================================================= */
+
+/* Section landing page */
+@import url("pages/landing/hero.css");
+@import url("pages/landing/work-grid.css");
+@import url("pages/landing/creator-feature.css");
+@import url("pages/landing/cta.css");
+
+/* Portofolio publik satu creator */
+@import url("pages/public-portfolio.css");

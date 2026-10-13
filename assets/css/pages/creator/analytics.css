@@ -1,0 +1,45 @@
+/* =============================================================================
+   pages/creator/analytics.css
+   Halaman analitik: grafik batang dan daftar insight.
+   ============================================================================= */
+
+.bar-chart {
+    display: flex;
+    align-items: end;
+    height: 210px;
+    gap: 8px;
+    padding: 12px 0 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.bar-chart span {
+    flex: 1;
+    background: var(--purple);
+    border: 1px solid var(--line);
+}
+
+.insight-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.insight-list li {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.insight-list strong,
+.insight-list span {
+    display: block;
+}
+
+.insight-list strong {
+    margin-bottom: 4px;
+    font-size: 11px;
+}
+
+.insight-list span {
+    color: var(--muted);
+    font-size: 10px;
+}

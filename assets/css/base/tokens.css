@@ -1,0 +1,43 @@
+/* =============================================================================
+   base/tokens.css
+   Design tokens (CSS custom properties) untuk seluruh aplikasi.
+   Semua komponen memakai variabel di sini supaya warna dan tipografi konsisten
+   antara landing page, creator studio, dan halaman auth.
+   ============================================================================= */
+
+:root {
+    /* Warna dasar */
+    --ink: #161817;
+    --paper: #fbfbf9;
+    --soft-paper: #f3f3ef;
+    --panel: #ffffff;
+    --muted: #737774;
+    --line: #1b1d1b;
+    --soft-line: #deded8;
+
+    /* Warna aksen */
+    --purple: #5b55e8;
+    --purple-dark: #4c47d0;
+    --yellow: #f8e76a;
+    --green: #32af72;
+
+    /* Warna panel gelap */
+    --card-dark: #1d1e1b;
+
+    /* Tipografi. Ketiganya memakai DM Sans agar konsisten di seluruh app. */
+    --sans: "DM Sans", Arial, sans-serif;
+    --serif: "DM Sans", Arial, sans-serif;
+    --mono: "DM Sans", Arial, sans-serif;
+}
+
+/* Tema gelap untuk landing page. Nilai ini hanya menimpa token di atas. */
+body.dark-theme {
+    --ink: #f5f5ee;
+    --paper: #151615;
+    --soft-paper: #20211e;
+    --panel: #1b1c1a;
+    --muted: #a9aaa5;
+    --line: #eeeeea;
+    --soft-line: #373936;
+    --card-dark: #0e0f0e;
+}

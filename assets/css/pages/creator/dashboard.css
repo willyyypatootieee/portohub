@@ -1,0 +1,154 @@
+/* =============================================================================
+   pages/creator/dashboard.css
+   Kartu ringkasan dan grafik pada dashboard creator studio.
+   ============================================================================= */
+
+.completion-banner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 23px 25px;
+    margin-bottom: 13px;
+    color: #fff;
+    background: var(--purple);
+    border: 1px solid var(--line);
+    box-shadow: 4px 4px 0 var(--line);
+}
+
+.completion-banner > strong {
+    font-family: var(--serif);
+    font-size: 40px;
+}
+
+.completion-banner h2 {
+    margin-bottom: 5px;
+    font-family: var(--sans);
+    font-size: 14px;
+    letter-spacing: 0;
+}
+
+.completion-banner p {
+    margin-bottom: 8px;
+    color: #dedcff;
+    font-size: 11px;
+}
+
+.completion-banner a {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.completion-banner > span {
+    display: grid;
+    width: 68px;
+    height: 68px;
+    margin-left: auto;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    border: 3px solid #fff;
+    border-radius: 50%;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1.6fr .9fr;
+    gap: 13px;
+    margin-top: 14px;
+}
+
+.line-chart {
+    display: flex;
+    align-items: end;
+    height: 180px;
+    gap: 8px;
+    padding: 12px 12px 0;
+    background: repeating-linear-gradient(to bottom, transparent 0, transparent 42px, #ecece7 43px);
+}
+
+.line-chart span {
+    flex: 1;
+    background: linear-gradient(#5b55e8, #a6a2ff);
+    border: 1px solid #3731a5;
+    border-bottom: 0;
+}
+
+.compact-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.compact-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.compact-list li:last-child {
+    border-bottom: 0;
+}
+
+.project-thumbnail {
+    display: grid;
+    width: 31px;
+    height: 31px;
+    place-items: center;
+    color: #fff;
+    font-family: var(--serif);
+    background: #263f51;
+}
+
+.compact-list strong,
+.compact-list small {
+    display: block;
+}
+
+.compact-list strong {
+    font-size: 10px;
+}
+
+.compact-list small {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.compact-list a {
+    margin-left: auto;
+    color: var(--purple);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.notice-banner {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 19px;
+    margin-bottom: 14px;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+    box-shadow: 3px 3px 0 var(--line);
+}
+
+.notice-banner strong {
+    font-size: 12px;
+}
+
+.notice-banner span {
+    color: #55574f;
+    font-size: 10px;
+}
+
+.notice-banner a {
+    padding: 8px;
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    background: #fff;
+    border: 1px solid var(--line);
+}

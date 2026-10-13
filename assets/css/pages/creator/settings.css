@@ -1,0 +1,35 @@
+/* =============================================================================
+   pages/creator/settings.css
+   Halaman pengaturan profil creator: navigasi samping dan form.
+   ============================================================================= */
+
+.settings-layout {
+    display: grid;
+    grid-template-columns: 175px minmax(0, 1fr);
+    gap: 30px;
+    max-width: 880px;
+}
+
+.settings-nav {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+}
+
+.settings-nav a {
+    padding: 10px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.settings-nav a.is-active {
+    color: var(--ink);
+    font-weight: 700;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0 var(--line);
+}
+
+.settings-form {
+    grid-template-columns: 1fr 1fr;
+}

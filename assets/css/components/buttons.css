@@ -1,0 +1,81 @@
+/* =============================================================================
+   components/buttons.css
+   Tombol bersama untuk landing page dan creator studio.
+   ============================================================================= */
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 47px;
+    padding: 0 21px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    background: var(--purple);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--line);
+    transition: transform .2s, box-shadow .2s, background .2s;
+}
+
+.button:hover {
+    background: var(--purple-dark);
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--line);
+}
+
+.button-small {
+    min-height: 38px;
+    padding: 0 17px;
+    font-size: 11px;
+}
+
+.button-secondary {
+    color: var(--ink);
+    background: transparent;
+    box-shadow: 2px 2px 0 var(--line);
+}
+
+.button-secondary:hover {
+    color: var(--ink);
+    background: var(--soft-paper);
+}
+
+.button-outline {
+    color: var(--ink);
+    background: #fff;
+    box-shadow: none;
+}
+
+.button-white {
+    min-height: 39px;
+    color: #28247b;
+    font-size: 10px;
+    background: white;
+    border-color: var(--line);
+    box-shadow: 3px 3px 0 #272727;
+}
+
+.button-white:hover {
+    color: #28247b;
+    background: #f1f1ef;
+}
+
+.button-dark-outline {
+    min-height: 33px;
+    padding: 0 13px;
+    color: white;
+    font-size: 10px;
+    background: transparent;
+    border-color: #676863;
+    box-shadow: none;
+}
+
+.button-dark-outline:hover {
+    color: white;
+    background: #353632;
+    box-shadow: none;
+}

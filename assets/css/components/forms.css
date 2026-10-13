@@ -1,0 +1,58 @@
+/* =============================================================================
+   components/forms.css
+   Gaya bersama untuk input, textarea, select, dan form studio.
+   ============================================================================= */
+
+.studio-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.studio-form label {
+    display: grid;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.studio-form input,
+.studio-form textarea,
+.studio-form select,
+.inline-search input {
+    width: 100%;
+    min-height: 39px;
+    padding: 9px 10px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #c8c9c2;
+    border-radius: 2px;
+    outline-color: var(--purple);
+}
+
+.studio-form textarea {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.studio-form small {
+    color: #b42d2d;
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.full-field {
+    grid-column: 1 / -1;
+}
+
+.check-field {
+    display: flex !important;
+    align-items: center;
+    gap: 8px !important;
+    padding-top: 21px;
+}
+
+.check-field input {
+    width: 16px;
+    min-height: 16px;
+}

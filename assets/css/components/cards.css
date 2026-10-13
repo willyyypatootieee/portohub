@@ -1,0 +1,111 @@
+/* =============================================================================
+   components/cards.css
+   Panel, kartu metrik, kartu media, dan tabel. Dipakai creator studio.
+   ============================================================================= */
+
+.panel,
+.metric-grid article {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0 #d6d6d0;
+}
+
+.panel {
+    padding: 18px;
+}
+
+.panel-title {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 17px;
+}
+
+.panel-title h2 {
+    margin-bottom: 4px;
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: 0;
+}
+
+.panel-title p {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.panel-title > a {
+    padding: 7px 9px;
+    color: var(--muted);
+    font-size: 10px;
+    border: 1px solid var(--soft-line);
+    border-radius: 3px;
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 14px 0;
+}
+
+.metric-grid article {
+    min-height: 128px;
+    padding: 19px;
+}
+
+.metric-grid p {
+    margin-bottom: 16px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.metric-grid strong {
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--serif);
+    font-size: 28px;
+}
+
+.metric-grid small {
+    color: var(--green);
+    font-size: 10px;
+}
+
+/* Tabel proyek / media */
+.project-table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 12px 9px;
+    font-size: 11px;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+th {
+    color: var(--muted);
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+td strong,
+td small {
+    display: block;
+}
+
+td small {
+    max-width: 240px;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 9px;
+}

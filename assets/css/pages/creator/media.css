@@ -1,0 +1,112 @@
+/* =============================================================================
+   pages/creator/media.css
+   Halaman media library: panel upload, grid kartu media, dan kartu PDF.
+   ============================================================================= */
+
+.upload-panel {
+    padding: 21px;
+    margin-bottom: 17px;
+    background: repeating-linear-gradient(-45deg, #fff, #fff 8px, #f3f3ef 8px, #f3f3ef 16px);
+    border: 1px dashed var(--line);
+}
+
+.upload-form {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr auto;
+    align-items: end;
+    gap: 15px;
+}
+
+.upload-form label {
+    display: grid;
+    gap: 7px;
+    font-size: 10px;
+}
+
+.upload-form label strong {
+    font-size: 12px;
+}
+
+.upload-form label span {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.upload-form select {
+    min-height: 39px;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #c8c9c2;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 11px;
+}
+
+.media-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0 #d6d6d0;
+}
+
+.media-card img,
+.media-card video {
+    display: block;
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    background: #e2e2dc;
+}
+
+.pdf-card {
+    display: grid;
+    height: 130px;
+    place-items: center;
+    color: #b62d35;
+    font-size: 25px;
+    font-weight: 700;
+    background: #fce8e8;
+}
+
+.pdf-card small {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.media-card > div {
+    padding: 9px;
+}
+
+.media-card strong,
+.media-card small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.media-card strong {
+    font-size: 9px;
+}
+
+.media-card small {
+    margin: 4px 0 7px;
+    color: var(--muted);
+    font-size: 8px;
+}
+
+.media-card form {
+    margin: 0;
+}
+
+.media-card button {
+    padding: 0;
+    color: #b52d2d;
+    font-size: 9px;
+    font-weight: 700;
+    background: none;
+    border: 0;
+}

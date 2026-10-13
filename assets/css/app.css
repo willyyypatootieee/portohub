@@ -1,0 +1,21 @@
+/* =============================================================================
+   app.css
+   Lapisan bersama yang dipakai semua area: landing, studio, auth, superadmin.
+   Berisi token desain, reset, tipografi, komponen, dan layout dasar.
+   Muat file ini lebih dulu, lalu tambahkan CSS spesifik area setelahnya.
+   ============================================================================= */
+
+/* Base: token, reset, dan tipografi */
+@import url("base/tokens.css");
+@import url("base/reset.css");
+@import url("base/typography.css");
+
+/* Komponen bersama */
+@import url("components/buttons.css");
+@import url("components/forms.css");
+@import url("components/cards.css");
+@import url("components/alerts.css");
+
+/* Layout bersama */
+@import url("layout/header.css");
+@import url("layout/footer.css");
