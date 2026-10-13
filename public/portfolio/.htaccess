@@ -1,0 +1,6 @@
+# Portfolio publik: URL cantik /portfolio/{username} diarahkan ke index.php.
+RewriteEngine On
+RewriteBase /portfolio/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)/?$ index.php?user=$1 [L,QSA,NC]
