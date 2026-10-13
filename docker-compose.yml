@@ -2,10 +2,12 @@ services:
   web:
     build: .
     ports:
-      - "8088:80"
+      - "${WEB_PORT:-8088}:80"
     volumes:
       - ./:/var/www/html
     environment:
+      # Docker selalu memakai kredensial container database, bukan nilai
+      # XAMPP/Laragon dari .env, supaya aplikasi bisa login ke service database.
       DB_HOST: database
       DB_PORT: 3306
       DB_NAME: ${MYSQL_DATABASE:-portfolio_hub}
@@ -28,6 +30,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/portfoliohub.sql:/docker-entrypoint-initdb.d/01-portfoliohub.sql:ro
+      - ./database/creator-studio.sql:/docker-entrypoint-initdb.d/02-creator-studio.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
       interval: 5s
@@ -38,7 +41,7 @@ services:
     image: phpmyadmin:5-apache
     restart: unless-stopped
     ports:
-      - "8082:80"
+      - "${PHPMYADMIN_PORT:-8082}:80"
     environment:
       PMA_HOST: database
       PMA_PORT: 3306

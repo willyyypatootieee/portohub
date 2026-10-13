@@ -1,0 +1,13 @@
+# Konfigurasi contoh ngrok untuk demo kelas PortfolioHub.
+# Salin menjadi ngrok.yml, ganti nilai authtoken, lalu jalankan: ngrok start portohub
+version: "2"
+
+authtoken: GANTI_DENGAN_TOKEN_NGROK_ANDA
+
+tunnels:
+  portohub:
+    proto: http
+    # Samakan dengan port web pada docker-compose.yml.
+    addr: 8088
+    # Jalankan aplikasi lebih dulu agar tidak muncul warning di awal.
+    inspect: true

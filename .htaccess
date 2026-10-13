@@ -1,0 +1,17 @@
+# =============================================================================
+# Root .htaccess — pengalih ke folder public/.
+#
+# File ini HANYA dipakai untuk kemudahan instalasi XAMPP/Laragon di mana
+# folder proyek dibuka langsung (http://localhost/portohub/).
+#
+# Untuk produksi, lebih baik arahkan DocumentRoot Apache langsung ke folder
+# public/ (lihat README bagian "Arahkan web root ke folder public"). Dengan
+# begitu kode backend tidak ikut berada di dalam web root.
+# =============================================================================
+
+RewriteEngine On
+
+# Semua permintaan diarahkan ke public/, kecuali folder assets yang berisi
+# berkas statis (CSS, JS, gambar, dan upload).
+RewriteCond %{REQUEST_URI} !^/assets/
+RewriteRule ^(.*)$ public/$1 [L]
