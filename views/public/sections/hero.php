@@ -11,7 +11,7 @@
                 and connect with the world’s most ambitious creators.
             </p>
             <div class="hero-buttons">
-                <a class="button" href="#cta">
+                <a class="button" href="<?= escape(appUrl('/login/register/')) ?>" data-auth-open="register">
                     Start building — it’s free
                     <span aria-hidden="true">→</span>
                 </a>

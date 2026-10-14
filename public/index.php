@@ -20,4 +20,5 @@ require dirname(__DIR__) . '/views/public/sections/hero.php';
 require dirname(__DIR__) . '/views/public/sections/discover-work.php';
 require dirname(__DIR__) . '/views/public/sections/creator-feature.php';
 require dirname(__DIR__) . '/views/public/sections/call-to-action.php';
+require dirname(__DIR__) . '/views/public/sections/auth-modal.php';
 require dirname(__DIR__) . '/views/layout/footer.php';

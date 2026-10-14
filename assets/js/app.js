@@ -69,4 +69,166 @@
             button.setAttribute('aria-pressed', String(isSaved));
         });
     });
+
+    // Modal login/register di landing page.
+    // Tanpa JavaScript, tautan pemicu tetap membuka halaman /login/.
+    const authModal = document.querySelector('[data-auth-modal]');
+
+    if (authModal) {
+        const authOpeners = document.querySelectorAll('[data-auth-open]');
+        const authClosers = authModal.querySelectorAll('[data-auth-close]');
+        const authTabs = authModal.querySelectorAll('[data-auth-tab]');
+        const authPanels = authModal.querySelectorAll('[data-auth-panel]');
+        let lastFocusedElement = null;
+
+        function showAuthTab(name) {
+            authTabs.forEach(function (tab) {
+                const isActive = tab.getAttribute('data-auth-tab') === name;
+                tab.classList.toggle('is-active', isActive);
+                tab.setAttribute('aria-selected', String(isActive));
+            });
+            authPanels.forEach(function (panel) {
+                panel.hidden = panel.getAttribute('data-auth-panel') !== name;
+            });
+
+            const panel = authModal.querySelector('[data-auth-panel="' + name + '"]');
+            const firstField = panel ? panel.querySelector('input:not([type="hidden"])') : null;
+            if (firstField) firstField.focus();
+        }
+
+        function openAuthModal(name) {
+            lastFocusedElement = document.activeElement;
+            authModal.hidden = false;
+            document.documentElement.classList.add('has-modal');
+            showAuthTab(name || 'login');
+        }
+
+        function closeAuthModal() {
+            authModal.hidden = true;
+            document.documentElement.classList.remove('has-modal');
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+        }
+
+        authOpeners.forEach(function (opener) {
+            opener.addEventListener('click', function (event) {
+                event.preventDefault();
+                openAuthModal(opener.getAttribute('data-auth-open'));
+            });
+        });
+
+        authClosers.forEach(function (closer) {
+            closer.addEventListener('click', closeAuthModal);
+        });
+
+        authTabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                showAuthTab(tab.getAttribute('data-auth-tab'));
+            });
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && !authModal.hidden) {
+                closeAuthModal();
+            }
+        });
+
+        // Tahan fokus (focus trap) selama modal terbuka.
+        authModal.addEventListener('keydown', function (event) {
+            if (event.key !== 'Tab' || authModal.hidden) return;
+
+            const focusable = authModal.querySelectorAll(
+                'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), [tabindex]:not([tabindex="-1"])'
+            );
+            const visible = [];
+            focusable.forEach(function (element) {
+                if (element.offsetParent !== null) visible.push(element);
+            });
+            if (visible.length === 0) return;
+
+            const first = visible[0];
+            const last = visible[visible.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
+
+        function showAuthErrors(form, errors, alertBox) {
+            const general = errors.login || errors.general || '';
+            if (general && alertBox) {
+                alertBox.textContent = general;
+                alertBox.hidden = false;
+            }
+
+            Object.keys(errors).forEach(function (field) {
+                if (field === 'login' || field === 'general') return;
+                const input = form.querySelector('[name="' + field + '"]');
+                if (!input) return;
+                const message = document.createElement('small');
+                message.className = 'auth-error';
+                message.setAttribute('data-auth-generated', '');
+                message.textContent = errors[field];
+                input.insertAdjacentElement('afterend', message);
+                input.setAttribute('aria-invalid', 'true');
+            });
+        }
+
+        // Kirim form lewat fetch supaya error tampil di dalam modal.
+        authModal.querySelectorAll('[data-auth-form]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (typeof window.fetch !== 'function') return;
+
+                event.preventDefault();
+
+                form.querySelectorAll('.auth-error[data-auth-generated]').forEach(function (node) {
+                    node.remove();
+                });
+                form.querySelectorAll('[aria-invalid="true"]').forEach(function (input) {
+                    input.removeAttribute('aria-invalid');
+                });
+
+                const alertBox = form.querySelector('[data-auth-alert]');
+                if (alertBox) {
+                    alertBox.hidden = true;
+                    alertBox.textContent = '';
+                }
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) submitButton.disabled = true;
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' },
+                    credentials: 'same-origin'
+                })
+                    .then(function (response) {
+                        return response.json().catch(function () { return null; });
+                    })
+                    .then(function (payload) {
+                        // Server membalas HTML (bukan JSON): jalankan submit biasa.
+                        if (!payload) {
+                            form.submit();
+                            return;
+                        }
+                        if (payload.ok && payload.redirect) {
+                            window.location.assign(payload.redirect);
+                            return;
+                        }
+                        if (submitButton) submitButton.disabled = false;
+                        showAuthErrors(form, payload.errors || {}, alertBox);
+                    })
+                    .catch(function () {
+                        if (submitButton) submitButton.disabled = false;
+                        form.submit();
+                    });
+            });
+        });
+    }
 }());

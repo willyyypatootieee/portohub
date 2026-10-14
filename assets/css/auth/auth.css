@@ -1,0 +1,90 @@
+/* =============================================================================
+   auth/auth.css
+   Gaya bersama untuk halaman login dan register publik.
+   Bergantung pada app.css (token, reset, tipografi, tombol, alert) yang
+   dimuat lewat @import di bawah.
+   ============================================================================= */
+
+@import url("../app.css");
+
+/* Rangka halaman: kartu berada di tengah viewport. */
+body.auth-page {
+    display: grid;
+    min-height: 100vh;
+    padding: 40px 18px;
+    background: var(--soft-paper);
+    place-items: center;
+}
+
+.auth-card {
+    width: min(100%, 440px);
+    padding: 34px 32px 30px;
+    background: var(--panel);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 6px 6px 0 var(--purple);
+}
+
+/* Brand dan judul */
+.auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 26px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -.4px;
+}
+
+.auth-brand::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    background: var(--purple);
+    border: 1.5px solid var(--line);
+    border-radius: 3px;
+    box-shadow: 2px 2px 0 var(--line);
+}
+
+.auth-card h1 {
+    margin-bottom: 11px;
+    font-size: clamp(30px, 7vw, 40px);
+}
+
+.auth-intro {
+    margin-bottom: 24px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.auth-card .studio-alert {
+    border-radius: 2px;
+}
+
+/* Gaya form (.auth-form, .auth-field, .auth-error) ada di components/forms.css
+   supaya dipakai bersama halaman auth dan modal di landing page. */
+
+/* Tautan bawah kartu */
+.auth-footer {
+    margin: 22px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+.auth-footer a {
+    color: var(--purple);
+    font-weight: 700;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 420px) {
+    .auth-card {
+        padding: 26px 20px 22px;
+        box-shadow: 4px 4px 0 var(--purple);
+    }
+}

@@ -43,7 +43,7 @@
                             <h3>Become The One</h3>
                             <p>Belum ada karya yang dipublikasikan. Jadi yang pertama dan tunjukkan karyamu di sini.</p>
                         </div>
-                        <a class="button" href="<?= escape(appUrl('/login/register/')) ?>">Mulai berkarya</a>
+                        <a class="button" href="<?= escape(appUrl('/login/register/')) ?>" data-auth-open="register">Mulai berkarya</a>
                     </div>
                 </article>
             <?php endif; ?>

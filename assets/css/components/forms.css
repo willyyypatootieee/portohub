@@ -56,3 +56,60 @@
     width: 16px;
     min-height: 16px;
 }
+
+/* -----------------------------------------------------------------------------
+   Form auth: dipakai halaman login/register dan modal di landing page.
+   ----------------------------------------------------------------------------- */
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-field {
+    display: grid;
+    gap: 7px;
+}
+
+.auth-field > span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+.auth-field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid #c8c9c2;
+    border-radius: 3px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.auth-field input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 18%, transparent);
+    outline: none;
+}
+
+.auth-field input[aria-invalid="true"] {
+    border-color: #b42d2d;
+}
+
+.auth-error {
+    color: #b42d2d;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.auth-form .button {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.auth-form .button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 3px;
+}
