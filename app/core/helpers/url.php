@@ -18,6 +18,13 @@ function appUrl(string $path = '/'): string
     $markers = ['/login/', '/studio/', '/portfolio/'];
     $basePath = dirname($scriptName);
 
+    // Saat proyek dijalankan dari root melalui .htaccess XAMPP/Laragon,
+    // Apache mengirim request ke public/index.php. Folder public adalah
+    // implementasi internal, bukan bagian dari URL yang dilihat pengguna.
+    if (str_ends_with($basePath, '/public')) {
+        $basePath = substr($basePath, 0, -strlen('/public'));
+    }
+
     foreach ($markers as $marker) {
         $position = strpos($scriptName, $marker);
 

@@ -17,6 +17,6 @@
             </nav>
         </div>
     </footer>
-    <script src="assets/js/app.js"></script>
+    <script src="<?= escape(appUrl('/assets/js/app.js')) ?>"></script>
 </body>
 </html>

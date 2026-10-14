@@ -1,7 +1,7 @@
 <section class="creator-feature section" id="creator">
     <div class="container creator-panel">
         <div class="creator-image">
-            <img src="assets/images/creator-spiral.svg" alt="A black sculptural spiral staircase">
+            <img src="<?= escape(appUrl('/assets/images/creator-spiral.svg')) ?>" alt="A black sculptural spiral staircase">
             <span>Creator of the week</span>
         </div>
         <div class="creator-copy">
