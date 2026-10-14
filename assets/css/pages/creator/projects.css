@@ -19,6 +19,7 @@
 
 .filter-tabs {
     display: flex;
+    gap: 4px;
     overflow-x: auto;
 }
 
@@ -27,13 +28,22 @@
     padding: 9px 11px;
     color: var(--muted);
     font-size: 10px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: color .15s ease, background .15s ease;
+}
+
+.filter-tabs a:hover {
+    color: var(--ink);
+    background: var(--soft-paper);
 }
 
 .filter-tabs a.is-active {
     color: var(--ink);
     font-weight: 700;
     background: var(--yellow);
-    border: 1px solid var(--line);
+    border-color: var(--line);
+    box-shadow: 2px 2px 0 var(--line);
 }
 
 .inline-search {
@@ -105,4 +115,20 @@
 
 .project-upload-form {
     margin-bottom: 18px;
+}
+
+/* Baris tabel proyek: sorot baris yang dilewati kursor. */
+.project-table-wrap tbody tr {
+    transition: background .15s ease;
+}
+
+.project-table-wrap tbody tr:hover {
+    background: var(--soft-paper);
+}
+
+/* Empty state khusus panel media dan galeri media. */
+.project-media .empty-state,
+#media-gallery .empty-state {
+    background: var(--soft-paper);
+    border: 1px dashed var(--soft-line);
 }

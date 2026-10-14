@@ -12,7 +12,15 @@ use RuntimeException;
  */
 final class MediaUploadService
 {
-    /** @param array{directory: string, max_size: int, allowed_mime_types: array<string, string>} $config */
+    /**
+     * @param array{
+     *     directory: string,
+     *     max_size: int,
+     *     max_size_label?: string,
+     *     allowed_label?: string,
+     *     allowed_mime_types: array<string, string>
+     * } $config
+     */
     public function __construct(private array $config)
     {
     }
@@ -31,7 +39,7 @@ final class MediaUploadService
 
         if ($extension === null) {
             throw new RuntimeException(
-                'Hanya JPG, PNG, WebP, GIF, MP4, WebM, dan PDF yang dapat diunggah.'
+                'Jenis berkas tidak diizinkan. Hanya ' . $this->allowedLabel() . ' yang dapat diunggah.'
             );
         }
 
@@ -71,7 +79,8 @@ final class MediaUploadService
 
         if ($uploadError === UPLOAD_ERR_INI_SIZE || $uploadError === UPLOAD_ERR_FORM_SIZE) {
             throw new RuntimeException(
-                'Berkas ditolak oleh konfigurasi PHP karena terlalu besar. Pastikan batas upload PHP minimal 25 MB.'
+                'Berkas ditolak oleh konfigurasi PHP karena terlalu besar. Pastikan batas upload PHP minimal '
+                . $this->maxSizeLabel() . '.'
             );
         }
 
@@ -80,8 +89,18 @@ final class MediaUploadService
         }
 
         if ((int) $file['size'] > $this->config['max_size']) {
-            throw new RuntimeException('Ukuran berkas maksimal adalah 25 MB.');
+            throw new RuntimeException('Ukuran berkas maksimal adalah ' . $this->maxSizeLabel() . '.');
         }
+    }
+
+    private function maxSizeLabel(): string
+    {
+        return (string) ($this->config['max_size_label'] ?? '25 MB');
+    }
+
+    private function allowedLabel(): string
+    {
+        return (string) ($this->config['allowed_label'] ?? 'JPG, PNG, WebP, GIF, MP4, WebM, dan PDF');
     }
 
     private function createDirectoryIfMissing(): void

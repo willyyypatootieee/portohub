@@ -104,34 +104,7 @@ final class StudioController
         redirect(appUrl('/studio/projects.php?edit=' . $projectId . '#project-media'));
     }
 
-    public function uploadMedia(int $userId): ?string
-    {
-        $projectId = (int) ($_POST['project_id'] ?? 0);
-
-        if ($projectId > 0 && $this->repository->findProject($userId, $projectId) === null) {
-            return 'Pilih proyek milik Anda sendiri.';
-        }
-
-        try {
-            $uploadedMedia = $this->mediaUploader->store($_FILES['portfolio_file'] ?? null);
-        } catch (RuntimeException $exception) {
-            return $exception->getMessage();
-        }
-
-        $this->repository->addMedia(
-            $userId,
-            $projectId ?: null,
-            $uploadedMedia['original_name'],
-            $uploadedMedia['stored_name'],
-            $uploadedMedia['mime_type'],
-            $uploadedMedia['file_size']
-        );
-
-        setFlash('success', 'Media berhasil diunggah.');
-        redirect(appUrl('/studio/media.php'));
-    }
-
-    public function deleteMedia(int $userId): void
+    public function deleteGalleryMedia(int $userId): void
     {
         $media = $this->repository->deleteMedia($userId, (int) ($_POST['id'] ?? 0));
 
@@ -140,7 +113,47 @@ final class StudioController
             setFlash('success', 'Media berhasil dihapus.');
         }
 
-        redirect(appUrl('/studio/media.php'));
+        redirect(appUrl('/studio/projects.php#media-gallery'));
+    }
+
+    /**
+     * Unggah atau ganti CV creator (hanya PDF). Berkas disimpan di luar web
+     * root dan hanya bisa dilihat lewat route /studio/cv.php.
+     */
+    public function uploadCv(int $userId): ?string
+    {
+        $uploader = new MediaUploadService(cvUploadConfig());
+        $storedName = null;
+
+        try {
+            $uploaded = $uploader->store($_FILES['cv_file'] ?? null);
+            $storedName = $uploaded['stored_name'];
+        } catch (RuntimeException $exception) {
+            return $exception->getMessage();
+        }
+
+        $previous = $this->repository->findUser($userId);
+        $this->repository->updateCv($userId, $storedName, $uploaded['original_name']);
+
+        if ($previous !== null && !empty($previous['cv_filename'])) {
+            $uploader->remove((string) $previous['cv_filename']);
+        }
+
+        setFlash('success', 'CV berhasil diunggah.');
+        redirect(appUrl('/studio/settings.php#cv'));
+    }
+
+    public function deleteCv(int $userId): void
+    {
+        $user = $this->repository->findUser($userId);
+
+        if ($user !== null && !empty($user['cv_filename'])) {
+            (new MediaUploadService(cvUploadConfig()))->remove((string) $user['cv_filename']);
+        }
+
+        $this->repository->clearCv($userId);
+        setFlash('success', 'CV berhasil dihapus.');
+        redirect(appUrl('/studio/settings.php#cv'));
     }
 
     /** @return array<string, string> */

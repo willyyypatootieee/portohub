@@ -16,19 +16,32 @@ $controller = new StudioController(
     new MediaUploadService(mediaUploadConfig())
 );
 $errors = [];
+$cvError = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrfToken();
-    $errors = $controller->updateProfile($userId);
+    $action = (string) ($_POST['action'] ?? 'profile');
 
-    if ($errors !== []) {
-        $user = [
-            ...$user,
-            'display_name' => trim((string) ($_POST['display_name'] ?? '')),
-            'username' => strtolower(trim((string) ($_POST['username'] ?? ''))),
-            'headline' => trim((string) ($_POST['headline'] ?? '')),
-            'bio' => trim((string) ($_POST['bio'] ?? '')),
-        ];
+    if ($action === 'upload-cv') {
+        $cvError = $controller->uploadCv($userId);
+
+        if ($cvError !== null) {
+            $user = $studioRepository->findUser($userId);
+        }
+    } elseif ($action === 'delete-cv') {
+        $controller->deleteCv($userId);
+    } else {
+        $errors = $controller->updateProfile($userId);
+
+        if ($errors !== []) {
+            $user = [
+                ...$user,
+                'display_name' => trim((string) ($_POST['display_name'] ?? '')),
+                'username' => strtolower(trim((string) ($_POST['username'] ?? ''))),
+                'headline' => trim((string) ($_POST['headline'] ?? '')),
+                'bio' => trim((string) ($_POST['bio'] ?? '')),
+            ];
+        }
     }
 }
 

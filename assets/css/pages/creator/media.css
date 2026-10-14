@@ -1,18 +1,13 @@
 /* =============================================================================
    pages/creator/media.css
-   Halaman media library: panel upload, grid kartu media, dan kartu PDF.
+   Kartu media yang dipakai panel media proyek dan galeri media di halaman
+   Projects. Berisi form upload, grid media, pratinjau, dan lencana jenis.
+   Aturan responsif ada di responsive.css.
    ============================================================================= */
-
-.upload-panel {
-    padding: 21px;
-    margin-bottom: 17px;
-    background: repeating-linear-gradient(-45deg, #fff, #fff 8px, #f3f3ef 8px, #f3f3ef 16px);
-    border: 1px dashed var(--line);
-}
 
 .upload-form {
     display: grid;
-    grid-template-columns: 1.6fr 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: end;
     gap: 15px;
 }
@@ -32,24 +27,61 @@
     font-size: 9px;
 }
 
-.upload-form select {
-    min-height: 39px;
-    padding: 8px;
-    background: #fff;
-    border: 1px solid #c8c9c2;
-}
-
 .media-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 11px;
+    gap: 12px;
 }
 
+/* Kartu media: sudut kotak, border tebal, dan hard shadow seperti panel lain. */
 .media-card {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    background: #fff;
+    background: var(--panel);
     border: 1px solid var(--line);
+    border-top: 3px solid var(--line);
     box-shadow: 2px 2px 0 #d6d6d0;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.media-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--line);
+}
+
+/* Aksen warna per jenis berkas. */
+.media-card--image {
+    border-top-color: var(--purple);
+}
+
+.media-card--video {
+    border-top-color: var(--green);
+}
+
+.media-card--file {
+    border-top-color: #b62d35;
+}
+
+.media-card-preview {
+    position: relative;
+    line-height: 0;
+}
+
+.media-thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    cursor: zoom-in;
+    background: none;
+    border: 0;
+}
+
+.media-thumb:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: -2px;
 }
 
 .media-card img,
@@ -61,6 +93,56 @@
     background: #e2e2dc;
 }
 
+.media-thumb img {
+    transition: transform .3s ease;
+}
+
+.media-thumb:hover img,
+.media-thumb:focus-visible img {
+    transform: scale(1.06);
+}
+
+/* Overlay kaca pembesar saat gambar disorot. */
+.media-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: rgb(22 24 23 / .32);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3M11 8v6M8 11h6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px;
+    opacity: 0;
+    transition: opacity .2s ease;
+    pointer-events: none;
+}
+
+.media-thumb:hover::after,
+.media-thumb:focus-visible::after {
+    opacity: 1;
+}
+
+/* Lencana jenis berkas, mengikuti gaya chip .status. */
+.media-badge {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    z-index: 2;
+    padding: 2px 6px;
+    color: var(--ink);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+}
+
+.media-card--video .media-badge {
+    background: #a9e7cf;
+}
+
 .pdf-card {
     display: grid;
     height: 130px;
@@ -69,6 +151,7 @@
     font-size: 25px;
     font-weight: 700;
     background: #fce8e8;
+    transition: background .18s ease;
 }
 
 .pdf-card small {
@@ -76,37 +159,53 @@
     font-size: 9px;
 }
 
-.media-card > div {
+.media-card:hover .pdf-card {
+    background: #f9dbdb;
+}
+
+.media-card-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     padding: 9px;
 }
 
-.media-card strong,
-.media-card small {
+.media-card-info strong,
+.media-card-info small {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.media-card strong {
+.media-card-info strong {
     font-size: 9px;
 }
 
-.media-card small {
+.media-card-info small {
     margin: 4px 0 7px;
     color: var(--muted);
     font-size: 8px;
 }
 
-.media-card form {
-    margin: 0;
+.media-card-info form {
+    margin: auto 0 0;
 }
 
-.media-card button {
-    padding: 0;
+.media-card-info button {
+    padding: 3px 7px;
     color: #b52d2d;
     font-size: 9px;
     font-weight: 700;
     background: none;
-    border: 0;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.media-card-info button:hover {
+    color: #fff;
+    background: #b52d2d;
+    border-color: #b52d2d;
 }

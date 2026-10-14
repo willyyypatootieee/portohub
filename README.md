@@ -33,9 +33,9 @@ portohub/
 │   │   └── superadmin/index.php      Masuk superadmin
 │   ├── studio/                       Halaman creator (backend)
 │   │   ├── index.php                 Dashboard
-│   │   ├── projects.php              CRUD proyek + media
-│   │   ├── media.php                 Media library
-│   │   ├── settings.php              Profil publik
+│   │   ├── projects.php              CRUD proyek + galeri media
+│   │   ├── settings.php              Profil publik + CV
+│   │   ├── cv.php                    Preview/unduh CV milik sendiri
 │   │   ├── analytics.php             Ringkasan
 │   │   └── logout.php
 │   └── portfolio/index.php           Portofolio publik satu creator
@@ -44,7 +44,7 @@ portohub/
 │   ├── config/
 │   │   ├── admin.php                 Kredensial superadmin
 │   │   ├── database.php              Konfigurasi koneksi MySQL
-│   │   ├── media.php                 Aturan upload dan MIME type
+│   │   ├── media.php                 Aturan upload media dan CV
 │   │   └── site.php                  Nama dan informasi situs
 │   ├── core/
 │   │   ├── Connection.php            Membuka koneksi PDO aplikasi
@@ -85,7 +85,7 @@ portohub/
 │   │   ├── public.css                CSS area publik (end-user)
 │   │   ├── studio.css                CSS creator studio dan superadmin
 │   │   ├── base/                     Token, reset, tipografi
-│   │   ├── components/               Tombol, form, kartu, alert
+│   │   ├── components/               Tombol, form, kartu, alert, lightbox
 │   │   ├── layout/                   Header, footer, kerangka studio
 │   │   ├── pages/                    CSS per halaman
 │   │   └── auth/                     CSS halaman login dan register (sengaja polos)
@@ -93,7 +93,8 @@ portohub/
 │   └── js/                           Interaksi landing page dan studio
 ├── database/
 │   ├── portfoliohub.sql              Tabel landing page dan data contoh
-│   └── creator-studio.sql            Tabel creator studio
+│   ├── creator-studio.sql            Tabel creator studio (schema penuh)
+│   └── migrations/                   ALTER tambahan untuk instalasi lama
 ├── docs/                             Dokumentasi Bahasa Indonesia
 ├── Dockerfile
 └── docker-compose.yml
@@ -122,8 +123,8 @@ Keduanya bukan duplikat; tugasnya berbeda:
 
 | Lokasi | Isi | Tugas |
 | --- | --- | --- |
-| `public/studio/` | `projects.php`, `media.php`, dst. | **URL / route.** File tipis: cek login, ambil data, lalu `require` view. |
-| `views/creator/` | `projects.php`, `media.php`, dst. | **Markup HTML** halaman studio. |
+| `public/studio/` | `projects.php`, `cv.php`, dst. | **URL / route.** File tipis: cek login, ambil data, lalu `require` view. |
+| `views/creator/` | `projects.php`, `settings.php`, dst. | **Markup HTML** halaman studio. |
 | `assets/css/pages/creator/` | `projects.css`, dst. | **Gaya** khusus tiap halaman studio. |
 
 Folder URL tetap bernama `studio/` karena menentukan alamat `/studio/...`,
@@ -200,7 +201,7 @@ Di XAMPP Control Panel, jalankan Apache dan MySQL.
 4. Klik **Import** atau **Go**.
 5. Ulangi langkah import untuk file `database/creator-studio.sql`.
 
-File SQL pertama membuat database `portfolio_hub`, tabel `portfolio_items`, serta enam data contoh. File SQL kedua membuat tabel creator studio: `users`, `studio_projects`, dan `media_assets`.
+File SQL pertama membuat database `portfolio_hub`, tabel `portfolio_items`, serta enam data contoh. File SQL kedua membuat tabel creator studio: `users`, `studio_projects`, dan `media_assets`, termasuk kolom CV pada `users`. Jika database sudah ada dari versi sebelum fitur CV, jalankan sekali migrasi di `database/migrations/`.
 
 Nama database pada XAMPP dan Laragon sudah otomatis diarahkan ke `portfolio_hub`. Setelah import, Anda tidak perlu mengubah `app/config/database.php` maupun membuat file `.env` selama MySQL lokal memakai konfigurasi standar `root` tanpa kata sandi.
 
@@ -351,7 +352,9 @@ Melalui dashboard, admin dapat:
 
 Creator projects, profiles, and uploads are stored in `users`, `studio_projects`, and `media_assets`. All creator-studio tables live in `database/creator-studio.sql`; the application checks at startup that they exist and never creates them by itself.
 
-Account, profile, and project fields are validated on the server using the JSON contracts in `app/data/form-schemas.json`. The media library validates MIME types server-side and accepts JPEG, PNG, WebP, GIF, MP4, WebM, and PDF (PDF can be used for CVs), up to 25 MB.
+Account, profile, and project fields are validated on the server using the JSON contracts in `app/data/form-schemas.json`. Project media is uploaded from each project panel and collected in a media gallery on the Projects page; uploads validate MIME types server-side and accept JPEG, PNG, WebP, GIF, MP4, WebM, and PDF, up to 25 MB.
+
+A creator's CV is a single PDF managed in User settings (`/studio/settings.php`). It is validated (PDF only, up to 10 MB) and stored outside the web root in `storage/cv`, then previewed or downloaded through `/studio/cv.php`, which only serves the signed-in owner and restores the original filename on download.
 
 The whole interface — landing page, studio, auth, and monitoring — uses the DM Sans typeface.
 

@@ -47,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'delete-media') {
         $controller->deleteProjectMedia($userId);
     }
+
+    if ($action === 'delete-gallery') {
+        $controller->deleteGalleryMedia($userId);
+    }
 }
 
 if ($editingProject === null && isset($_GET['edit'])) {
@@ -63,6 +67,12 @@ $status = in_array($status, $availableStatuses, true) ? $status : 'all';
 $search = trim((string) ($_GET['q'] ?? ''));
 $projects = $studioRepository->getProjects($userId, $status === 'all' ? null : $status, $search);
 $counts = $studioRepository->studioCounts($userId);
+
+$mediaFilter = (string) ($_GET['media'] ?? 'all');
+$availableMediaFilters = ['all', 'images', 'video', 'documents'];
+$mediaFilter = in_array($mediaFilter, $availableMediaFilters, true) ? $mediaFilter : 'all';
+$galleryMedia = $studioRepository->getMedia($userId, $mediaFilter);
+
 $page = 'projects';
 $pageTitle = 'Projects';
 

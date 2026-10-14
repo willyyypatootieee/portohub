@@ -70,8 +70,8 @@
     <?php
     /*
      * Panel media menyatu dengan edit proyek. Upload di sini otomatis
-     * terhubung ke proyek yang sedang dibuka, dan tetap muncul juga di
-     * Media library sebagai daftar pusat semua berkas.
+     * terhubung ke proyek yang sedang dibuka. Semua berkas creator juga
+     * tampil di galeri media di bagian bawah halaman ini.
      */
     $currentProjectId = (int) $editingProject['id'];
     ?>
@@ -79,9 +79,8 @@
         <div class="panel-title">
             <div>
                 <h2>Project media</h2>
-                <p>Unggah gambar, video, atau PDF langsung ke proyek ini. Gambar pertama menjadi cover.</p>
+                <p>Unggah gambar, GIF, video, atau PDF langsung ke proyek ini. Gambar pertama menjadi cover.</p>
             </div>
-            <a href="<?= escape(appUrl('/studio/media.php?project=' . $currentProjectId)) ?>">Lihat di media library</a>
         </div>
 
         <?php foreach ($mediaErrors as $mediaError): ?>
@@ -116,34 +115,15 @@
         <?php else: ?>
             <div class="media-grid">
                 <?php foreach ($projectMedia as $asset): ?>
-                    <?php $assetUrl = appUrl('/assets/uploads/' . rawurlencode((string) $asset['stored_name'])); ?>
-                    <article class="media-card">
-                        <?php if (str_starts_with((string) $asset['mime_type'], 'image/')): ?>
-                            <img src="<?= escape($assetUrl) ?>" alt="<?= escape($asset['original_name']) ?>">
-                        <?php elseif (str_starts_with((string) $asset['mime_type'], 'video/')): ?>
-                            <video controls preload="metadata">
-                                <source src="<?= escape($assetUrl) ?>" type="<?= escape($asset['mime_type']) ?>">
-                            </video>
-                        <?php else: ?>
-                            <a class="pdf-card" href="<?= escape($assetUrl) ?>" target="_blank" rel="noopener">
-                                PDF
-                                <small>Open document</small>
-                            </a>
-                        <?php endif; ?>
-
-                        <div>
-                            <strong><?= escape($asset['original_name']) ?></strong>
-                            <small><?= number_format((int) $asset['file_size'] / 1024, 1) ?> KB</small>
-
-                            <form method="post">
-                                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
-                                <input type="hidden" name="action" value="delete-media">
-                                <input type="hidden" name="project_id" value="<?= $currentProjectId ?>">
-                                <input type="hidden" name="id" value="<?= (int) $asset['id'] ?>">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                    </article>
+                    <?php
+                    $mediaFormFields = [
+                        'action' => 'delete-media',
+                        'id' => (int) $asset['id'],
+                        'project_id' => $currentProjectId,
+                    ];
+                    $mediaShowProject = false;
+                    require __DIR__ . '/partials/media-card.php';
+                    ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -219,6 +199,57 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
+    <?php endif; ?>
+</section>
+
+<section class="panel" id="media-gallery">
+    <div class="panel-title">
+        <div>
+            <h2>Media gallery</h2>
+            <p>Semua gambar, GIF, video, dan PDF yang terhubung ke proyek Anda. Untuk menambah berkas, buka proyek lalu unggah dari panel Project media.</p>
+        </div>
+    </div>
+
+    <div class="project-controls">
+        <nav class="filter-tabs" aria-label="Filter media">
+            <?php
+            $mediaFilters = [
+                'all' => 'All files',
+                'images' => 'Images',
+                'video' => 'Video',
+                'documents' => 'Documents',
+            ];
+            ?>
+
+            <?php foreach ($mediaFilters as $key => $label): ?>
+                <a
+                    class="<?= $mediaFilter === $key ? 'is-active' : '' ?>"
+                    href="<?= escape(appUrl('/studio/projects.php?media=' . $key)) ?>#media-gallery"
+                >
+                    <?= escape($label) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+    </div>
+
+    <?php if ($galleryMedia === []): ?>
+        <div class="empty-state">
+            <strong>Become The One</strong>
+            <p>Belum ada media. Buka atau buat proyek untuk mengunggah gambar, GIF, video, atau PDF.</p>
+        </div>
+    <?php else: ?>
+        <div class="media-grid">
+            <?php foreach ($galleryMedia as $asset): ?>
+                <?php
+                $mediaFormFields = [
+                    'action' => 'delete-gallery',
+                    'id' => (int) $asset['id'],
+                ];
+                $mediaShowProject = true;
+                require __DIR__ . '/partials/media-card.php';
+                ?>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </section>

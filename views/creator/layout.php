@@ -3,8 +3,7 @@
 $navItems = [
     'dashboard' => ['label' => 'Creator studio', 'url' => '/studio/'],
     'portfolio' => ['label' => 'My portfolio', 'url' => '/portfolio/?user=' . rawurlencode((string) $user['username'])],
-    'projects' => ['label' => 'Projects', 'url' => '/studio/projects.php'],
-    'media' => ['label' => 'Media library', 'url' => '/studio/media.php'],
+    'projects' => ['label' => 'Projects & media', 'url' => '/studio/projects.php'],
     'analytics' => ['label' => 'Analytics', 'url' => '/studio/analytics.php'],
     'settings' => ['label' => 'User settings', 'url' => '/studio/settings.php'],
 ];
@@ -40,7 +39,7 @@ $flash = pullFlash();
         </a>
         <p class="sidebar-label">Workspace</p>
         <nav class="studio-navigation" aria-label="Studio navigation">
-            <?php foreach (array_slice($navItems, 0, 5, true) as $key => $item): ?>
+            <?php foreach (array_slice($navItems, 0, 4, true) as $key => $item): ?>
                 <a class="<?= $page === $key ? 'is-active' : '' ?>" href="<?= escape(appUrl($item['url'])) ?>">
                     <?= escape($item['label']) ?>
                 </a>

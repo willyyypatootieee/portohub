@@ -11,12 +11,13 @@
 <section class="settings-layout">
     <nav class="settings-nav">
         <a class="is-active" href="#public-profile">Public profile</a>
-        <a href="<?= escape(appUrl('/studio/media.php')) ?>">Profile media</a>
+        <a href="#cv">CV / documents</a>
         <a href="<?= escape(appUrl('/studio/logout.php')) ?>">Security / sign out</a>
     </nav>
 
     <form method="post" class="panel studio-form settings-form" id="public-profile">
         <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+        <input type="hidden" name="action" value="profile">
 
         <div class="panel-title">
             <div>
@@ -64,6 +65,58 @@
         <div class="full-field">
             <button class="button" type="submit">Save changes</button>
         </div>
+    </form>
+</section>
+
+<section class="panel cv-panel" id="cv">
+    <div class="panel-title">
+        <div>
+            <h2>CV / documents</h2>
+            <p>Unggah atau ganti CV berformat PDF. Berkas disimpan di luar web root, jadi hanya Anda yang bisa melihat dan mengunduhnya.</p>
+        </div>
+    </div>
+
+    <?php if ($cvError !== null): ?>
+        <p class="studio-alert error" role="alert"><?= escape($cvError) ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($user['cv_filename'])): ?>
+        <div class="cv-card">
+            <span class="cv-thumb" aria-hidden="true">PDF</span>
+
+            <div class="cv-meta">
+                <strong title="<?= escape((string) ($user['cv_original_name'] ?? '')) ?>">
+                    <?= escape((string) ($user['cv_original_name'] ?? '') !== '' ? (string) $user['cv_original_name'] : 'Curriculum vitae.pdf') ?>
+                </strong>
+                <small>Diunggah <?= escape(date('d M Y', strtotime((string) $user['cv_uploaded_at']))) ?></small>
+            </div>
+
+            <div class="cv-actions">
+                <a class="button button-outline" href="<?= escape(appUrl('/studio/cv.php')) ?>" target="_blank" rel="noopener">Preview</a>
+                <a class="button button-outline" href="<?= escape(appUrl('/studio/cv.php?download=1')) ?>">Download</a>
+
+                <form method="post" onsubmit="return confirm('Hapus CV ini? Anda bisa mengunggahnya lagi kapan saja.');">
+                    <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                    <input type="hidden" name="action" value="delete-cv">
+                    <button class="cv-delete" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    <?php else: ?>
+        <p class="cv-empty">Belum ada CV. Unggah file PDF agar perekrut bisa melihat riwayat singkat Anda.</p>
+    <?php endif; ?>
+
+    <form method="post" enctype="multipart/form-data" class="cv-upload">
+        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+        <input type="hidden" name="action" value="upload-cv">
+
+        <label>
+            <strong><?= !empty($user['cv_filename']) ? 'Ganti file CV' : 'Unggah CV' ?></strong>
+            <span>Format PDF, maksimal 10 MB. Jenis dan ukuran berkas diverifikasi di server.</span>
+            <input type="file" name="cv_file" accept="application/pdf" required>
+        </label>
+
+        <button class="button" type="submit"><?= !empty($user['cv_filename']) ? 'Ganti CV' : 'Upload CV' ?></button>
     </form>
 </section>
 

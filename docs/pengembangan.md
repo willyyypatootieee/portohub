@@ -36,7 +36,7 @@ Supaya tetap nyaman dibaca, gunakan beberapa aturan berikut.
 - Gunakan empat spasi untuk indentasi PHP dan HTML.
 - Hindari statement panjang satu baris, terutama `if`, query SQL, dan markup.
 - Berikan nama yang menjelaskan tujuan: `$availableFilters` lebih baik dari
-  `$filters`, `uploadMedia()` lebih baik dari `upload()`.
+  `$filters`, `uploadProjectMedia()` lebih baik dari `upload()`.
 - Route boleh tipis. Pindahkan logika POST ke controller atau service.
 - Query SQL baru hanya ditaruh dalam repository.
 - Gunakan `escape()` untuk output dari database atau request.

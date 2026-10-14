@@ -97,7 +97,8 @@ membuat tabel**. Semua DDL berada di folder `database/` supaya struktur
 database mudah ditinjau dan versinya terlihat jelas:
 
 - `database/portfoliohub.sql` — tabel landing page dan data contoh;
-- `database/creator-studio.sql` — tabel creator studio (users, studio_projects, media_assets).
+- `database/creator-studio.sql` — tabel creator studio (users, studio_projects, media_assets);
+- `database/migrations/` — ALTER tambahan untuk instalasi yang sudah ada, misalnya kolom CV.
 
 Bila tabel creator belum ada, aplikasi menghentikan request dengan status
 `503` dan pesan agar file `database/creator-studio.sql` diimport lebih dulu.

@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
     headline VARCHAR(180) NOT NULL DEFAULT 'Creative professional',
     bio TEXT NOT NULL,
     avatar_filename VARCHAR(255) NULL,
+    cv_filename VARCHAR(255) NULL,
+    cv_original_name VARCHAR(255) NULL,
+    cv_uploaded_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -33,3 +33,118 @@
 .settings-form {
     grid-template-columns: 1fr 1fr;
 }
+
+/* Panel CV di halaman User settings */
+.cv-panel {
+    max-width: 880px;
+    margin-top: 24px;
+}
+
+.cv-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 18px;
+    background: var(--soft-paper);
+    border: 1px solid var(--soft-line);
+}
+
+.cv-thumb {
+    display: grid;
+    width: 44px;
+    height: 56px;
+    place-items: center;
+    color: #b62d35;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fce8e8;
+    border: 1px solid var(--line);
+}
+
+.cv-meta strong,
+.cv-meta small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cv-meta strong {
+    font-size: 12px;
+}
+
+.cv-meta small {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.cv-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cv-delete {
+    padding: 0;
+    color: #b52d2d;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    background: none;
+    border: 0;
+}
+
+.cv-delete:hover {
+    text-decoration: underline;
+}
+
+.cv-empty {
+    padding: 15px;
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-size: 11px;
+    background: var(--soft-paper);
+    border: 1px dashed var(--soft-line);
+}
+
+.cv-upload {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 15px;
+    padding-top: 18px;
+    border-top: 1px solid var(--soft-line);
+}
+
+.cv-upload label {
+    display: grid;
+    gap: 7px;
+    font-size: 10px;
+}
+
+.cv-upload label strong {
+    font-size: 12px;
+}
+
+.cv-upload label span {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+@media (max-width: 620px) {
+    .cv-card {
+        grid-template-columns: auto 1fr;
+    }
+
+    .cv-actions {
+        flex-wrap: wrap;
+        grid-column: 1 / -1;
+    }
+
+    .cv-upload {
+        grid-template-columns: 1fr;
+    }
+}

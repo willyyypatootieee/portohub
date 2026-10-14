@@ -15,6 +15,7 @@
 @import url("components/forms.css");
 @import url("components/cards.css");
 @import url("components/alerts.css");
+@import url("components/lightbox.css");
 
 /* Layout bersama */
 @import url("layout/header.css");
