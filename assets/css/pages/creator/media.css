@@ -27,6 +27,33 @@
     font-size: 9px;
 }
 
+/* Field upload media di form proyek baru (studio-form). */
+.studio-form label.media-field {
+    font-weight: 400;
+}
+
+.studio-form label.media-field strong {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.studio-form label.media-field span {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.studio-form label.media-field input[type="file"] {
+    padding: 10px;
+    font-size: 10px;
+    background: var(--soft-paper);
+    border: 1px dashed var(--soft-line);
+    cursor: pointer;
+}
+
+.studio-form label.media-field input[type="file"]:hover {
+    border-color: var(--line);
+}
+
 .media-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

@@ -58,7 +58,6 @@ $flash = pullFlash();
 
             <div class="topbar-actions">
                 <a class="button button-outline" href="<?= escape(appUrl('/portfolio/?user=' . rawurlencode((string) $user['username']))) ?>" target="_blank" rel="noopener">Preview portfolio</a>
-                <a class="button" href="<?= escape(appUrl('/studio/projects.php#project-form')) ?>">＋ New project</a>
                 <a class="logout-link" href="<?= escape(appUrl('/studio/logout.php')) ?>">Sign out</a>
             </div>
         </header>

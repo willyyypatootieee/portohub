@@ -29,8 +29,30 @@ final class StudioController
             return $errors;
         }
 
-        $this->repository->saveProject($userId, $project, $projectId ?: null);
-        setFlash('success', $projectId > 0 ? 'Proyek berhasil diperbarui.' : 'Proyek berhasil dibuat.');
+        $savedId = $this->repository->saveProject($userId, $project, $projectId ?: null);
+
+        // Proyek baru boleh menyertakan berkas media langsung dari form.
+        if ($projectId === 0) {
+            $result = $this->storeUploadedMedia(
+                $userId,
+                $savedId,
+                $this->normalizeUploadedFiles($_FILES['portfolio_files'] ?? null)
+            );
+
+            if ($result['errors'] !== []) {
+                setFlash('error', 'Proyek dibuat, tetapi sebagian media gagal diunggah: ' . implode(' | ', $result['errors']));
+            } else {
+                $message = 'Proyek berhasil dibuat.';
+                if ($result['count'] > 0) {
+                    $message .= ' ' . $result['count'] . ' berkas media berhasil diunggah.';
+                }
+                setFlash('success', $message);
+            }
+
+            redirect(appUrl('/studio/projects.php?edit=' . $savedId . '#project-media'));
+        }
+
+        setFlash('success', 'Proyek berhasil diperbarui.');
         redirect(appUrl('/studio/projects.php'));
     }
 
@@ -56,39 +78,22 @@ final class StudioController
             return ['Pilih proyek milik Anda sendiri sebelum mengunggah media.'];
         }
 
-        $files = $this->normalizeUploadedFiles($_FILES['portfolio_files'] ?? null);
-        $errors = [];
-        $uploadedCount = 0;
-        $lastUploadedName = null;
+        $result = $this->storeUploadedMedia(
+            $userId,
+            $projectId,
+            $this->normalizeUploadedFiles($_FILES['portfolio_files'] ?? null)
+        );
 
-        foreach ($files as $file) {
-            try {
-                $uploadedMedia = $this->mediaUploader->store($file);
-                $this->repository->addMedia(
-                    $userId,
-                    $projectId,
-                    $uploadedMedia['original_name'],
-                    $uploadedMedia['stored_name'],
-                    $uploadedMedia['mime_type'],
-                    $uploadedMedia['file_size']
-                );
-                $uploadedCount++;
-                $lastUploadedName = $uploadedMedia['original_name'];
-            } catch (RuntimeException $exception) {
-                $errors[] = basename((string) ($file['name'] ?? 'berkas')) . ': ' . $exception->getMessage();
-            }
-        }
-
-        if ($uploadedCount > 0) {
+        if ($result['count'] > 0) {
             setFlash(
                 'success',
-                $uploadedCount === 1
-                    ? 'Media "' . $lastUploadedName . '" berhasil diunggah.'
-                    : $uploadedCount . ' berkas media berhasil diunggah.'
+                $result['count'] === 1
+                    ? 'Media "' . $result['last'] . '" berhasil diunggah.'
+                    : $result['count'] . ' berkas media berhasil diunggah.'
             );
         }
 
-        return $errors;
+        return $result['errors'];
     }
 
     public function deleteProjectMedia(int $userId): void
@@ -190,6 +195,41 @@ final class StudioController
             'status' => (string) ($_POST['status'] ?? 'draft'),
             'featured' => isset($_POST['featured']) ? 1 : 0,
         ];
+    }
+
+    /**
+     * Menyimpan daftar berkas media ke sebuah proyek. Mengembalikan jumlah
+     * berkas yang berhasil dan pesan error per berkas agar pemanggil bisa
+     * menentukan flash message dan tampilan yang tepat.
+     *
+     * @param array<int, array<string, mixed>> $files
+     * @return array{count: int, last: string|null, errors: array<int, string>}
+     */
+    private function storeUploadedMedia(int $userId, int $projectId, array $files): array
+    {
+        $count = 0;
+        $last = null;
+        $errors = [];
+
+        foreach ($files as $file) {
+            try {
+                $uploadedMedia = $this->mediaUploader->store($file);
+                $this->repository->addMedia(
+                    $userId,
+                    $projectId,
+                    $uploadedMedia['original_name'],
+                    $uploadedMedia['stored_name'],
+                    $uploadedMedia['mime_type'],
+                    $uploadedMedia['file_size']
+                );
+                $count++;
+                $last = $uploadedMedia['original_name'];
+            } catch (RuntimeException $exception) {
+                $errors[] = basename((string) ($file['name'] ?? 'berkas')) . ': ' . $exception->getMessage();
+            }
+        }
+
+        return ['count' => $count, 'last' => $last, 'errors' => $errors];
     }
 
     /**

@@ -22,7 +22,7 @@
         <?php endif; ?>
     </div>
 
-    <form method="post" class="studio-form">
+    <form method="post" enctype="multipart/form-data" class="studio-form">
         <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="id" value="<?= (int) ($editingProject['id'] ?? 0) ?>">
@@ -60,8 +60,21 @@
             <?php if (isset($errors['description'])): ?><small><?= escape($errors['description']) ?></small><?php endif; ?>
         </label>
 
+        <?php if (!$editingProject): ?>
+            <label class="full-field media-field">
+                <strong>Media proyek (opsional)</strong>
+                <span>JPG, PNG, WebP, GIF, MP4, WebM, atau PDF — maksimal 25 MB per berkas. Bisa pilih beberapa sekaligus. Gambar pertama menjadi cover.</span>
+                <input
+                    type="file"
+                    name="portfolio_files[]"
+                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
+                    multiple
+                >
+            </label>
+        <?php endif; ?>
+
         <div class="full-field">
-            <button class="button" type="submit">Save project</button>
+            <button class="button" type="submit"><?= $editingProject ? 'Save project' : 'Save project &amp; upload' ?></button>
         </div>
     </form>
 </section>
@@ -207,7 +220,7 @@
     <div class="panel-title">
         <div>
             <h2>Media gallery</h2>
-            <p>Semua gambar, GIF, video, dan PDF yang terhubung ke proyek Anda. Untuk menambah berkas, buka proyek lalu unggah dari panel Project media.</p>
+            <p>Semua gambar, GIF, video, dan PDF yang terhubung ke proyek Anda. Tambah berkas saat membuat proyek, atau buka proyek lalu unggah dari panel Project media.</p>
         </div>
     </div>
 

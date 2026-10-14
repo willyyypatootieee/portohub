@@ -9,7 +9,7 @@ ke berkas route-nya.
 | `/login/` | `public/login/index.php` | Publik | Masuk sebagai creator. |
 | `/login/register/` | `public/login/register/index.php` | Publik | Registrasi creator. |
 | `/studio/` | `public/studio/index.php` | Creator | Ringkasan creator studio. |
-| `/studio/projects.php` | `public/studio/projects.php` | Creator | CRUD proyek, upload media per proyek, dan galeri semua media. |
+| `/studio/projects.php` | `public/studio/projects.php` | Creator | CRUD proyek, upload media saat membuat proyek atau dari panel media, dan galeri semua media. |
 | `/studio/settings.php` | `public/studio/settings.php` | Creator | Ubah profil publik dan kelola CV (PDF). |
 | `/studio/cv.php` | `public/studio/cv.php` | Creator | Preview (`inline`) dan unduh (`?download=1`) CV milik creator yang sedang masuk. |
 | `/studio/analytics.php` | `public/studio/analytics.php` | Creator | Ringkasan perkembangan portofolio. |
