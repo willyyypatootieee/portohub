@@ -129,6 +129,32 @@ final class StudioRepository
         ]);
     }
 
+    public function updateCv(int $userId, string $storedName, string $originalName): void
+    {
+        $statement = $this->database->prepare(
+            'UPDATE users
+             SET cv_filename = :cv_filename,
+                 cv_original_name = :cv_original_name,
+                 cv_uploaded_at = CURRENT_TIMESTAMP
+             WHERE id = :id'
+        );
+        $statement->execute([
+            'id' => $userId,
+            'cv_filename' => $storedName,
+            'cv_original_name' => $originalName,
+        ]);
+    }
+
+    public function clearCv(int $userId): void
+    {
+        $statement = $this->database->prepare(
+            'UPDATE users
+             SET cv_filename = NULL, cv_original_name = NULL, cv_uploaded_at = NULL
+             WHERE id = :id'
+        );
+        $statement->execute(['id' => $userId]);
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getProjects(int $userId, ?string $status = null, string $search = ''): array
     {

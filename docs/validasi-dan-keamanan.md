@@ -24,24 +24,34 @@ Validasi yang bergantung pada database tetap berada di controller, misalnya:
 - username harus unik;
 - media hanya boleh dihubungkan ke proyek milik creator yang sedang masuk.
 
-## Upload media
+## Upload media dan CV
 
-`App\Services\MediaUploadService` memusatkan proses upload.
+`App\Services\MediaUploadService` memusatkan proses upload untuk media proyek
+maupun CV. Service yang sama dipanggil dengan konfigurasi berbeda dari
+`app/config/media.php` (`mediaUploadConfig()` dan `cvUploadConfig()`).
+
+Langkah yang dijalankan setiap upload:
 
 1. Mengecek status upload PHP.
-2. Mengecek ukuran maksimal 25 MB.
+2. Mengecek ukuran maksimal (25 MB untuk media, 10 MB untuk CV).
 3. Mengecek MIME type menggunakan `finfo` dari file temporer.
 4. Memetakan MIME type yang diizinkan ke ekstensi aman.
 5. Menyimpan file dengan nama acak, bukan nama kiriman pengguna.
-6. Menyimpan metadata file di tabel `media_assets`.
+6. Menyimpan metadata di tabel `media_assets` (media) atau kolom `cv_filename`
+   pada `users` (CV).
 
-Jenis yang diterima:
+Jenis yang diterima untuk media proyek:
 
 | Kategori | MIME type |
 | --- | --- |
 | Gambar | `image/jpeg`, `image/png`, `image/webp`, `image/gif` |
 | Video | `video/mp4`, `video/webm` |
-| Dokumen/CV | `application/pdf` |
+| Dokumen | `application/pdf` |
+
+CV hanya menerima `application/pdf`. Berkas CV disimpan di luar web root
+(`storage/cv`) sehingga tidak bisa dibuka lewat URL langsung; preview dan
+unduhan dilayani `/studio/cv.php` milik creator yang sedang masuk, jadi satu
+creator tidak dapat membaca CV creator lain.
 
 Konfigurasi ini ada di `app/config/media.php`. Jika perlu menambah format baru,
 tambahkan **MIME type yang diverifikasi** di sana; jangan hanya menambah nilai

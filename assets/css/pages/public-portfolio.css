@@ -76,6 +76,7 @@
 }
 
 .public-thumb {
+    position: relative;
     display: grid;
     aspect-ratio: 1.25;
     place-items: center;
@@ -83,6 +84,17 @@
     font-family: var(--serif);
     font-size: 55px;
     background: linear-gradient(135deg, #506d80, #172634);
+}
+
+.public-thumb-button {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    cursor: zoom-in;
+    background: none;
+    border: 0;
 }
 
 .public-thumb img {
@@ -124,4 +136,43 @@
     .public-portfolio header {
         padding: 0 16px;
     }
+}
+
+/* Media proyek: gambar/GIF (klik untuk memperbesar) dan pemutaran video. */
+.public-media {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 12px 14px 0;
+}
+
+.public-media-video {
+    grid-column: 1 / -1;
+    width: 100%;
+    background: #000;
+}
+
+.public-media-thumb {
+    padding: 0;
+    line-height: 0;
+    cursor: zoom-in;
+    background: none;
+    border: 1px solid var(--line);
+}
+
+.public-media-thumb img {
+    width: 100%;
+    aspect-ratio: 1.25;
+    object-fit: cover;
+}
+
+.public-media-pdf {
+    display: grid;
+    min-height: 80px;
+    place-items: center;
+    color: #b62d35;
+    font-size: 13px;
+    font-weight: 700;
+    background: #fce8e8;
+    border: 1px solid var(--line);
 }

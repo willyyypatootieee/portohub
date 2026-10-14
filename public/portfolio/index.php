@@ -21,7 +21,9 @@ if ($creator === null) {
 $projects = $studioRepository->getProjects((int) $creator['id'], 'published');
 
 foreach ($projects as $index => $project) {
-    $projects[$index]['cover'] = $studioRepository->findProjectCover((int) $project['id']);
+    $projectId = (int) $project['id'];
+    $projects[$index]['cover'] = $studioRepository->findProjectCover($projectId);
+    $projects[$index]['media'] = $studioRepository->getProjectMedia((int) $creator['id'], $projectId);
 }
 
 require dirname(__DIR__, 2) . '/views/public/portfolio.php';
