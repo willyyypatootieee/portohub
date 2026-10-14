@@ -1,5 +1,2 @@
 /* taruh styling register disini. */
-
-body {
-    font-family: "DM Sans", Arial, sans-serif;
-}
+@import url("auth.css");

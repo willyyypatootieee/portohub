@@ -8,7 +8,7 @@
         </p>
         <h2>Ready to show the world<br>what you can do?</h2>
         <p>Join thousands of creators building their professional presence on PortfolioHub.</p>
-        <a class="button button-white" href="#top">
+        <a class="button button-white" href="<?= escape(appUrl('/login/register/')) ?>" data-auth-open="register">
             Build your portfolio
             <span aria-hidden="true">→</span>
         </a>

@@ -33,18 +33,23 @@ final class AuthController
         $errors = $this->validator->validate('login', $values + ['password' => $password]);
 
         if ($errors !== []) {
-            return compact('errors', 'values');
+            return $this->respondToForm($errors, $values);
         }
 
         $user = $this->authentication->attempt($values['email'], $password);
 
         if ($user === null) {
             $errors['login'] = 'Email atau kata sandi tidak tepat.';
-            return compact('errors', 'values');
+            return $this->respondToForm($errors, $values);
         }
 
         $this->authentication->signIn((int) $user['id']);
         setFlash('success', 'Selamat datang kembali, ' . $user['display_name'] . '.');
+
+        if (wantsJson()) {
+            jsonResponse(['ok' => true, 'redirect' => appUrl('/studio/')]);
+        }
+
         redirect(appUrl('/studio/'));
     }
 
@@ -76,7 +81,7 @@ final class AuthController
         }
 
         if ($errors !== []) {
-            return compact('errors', 'values');
+            return $this->respondToForm($errors, $values);
         }
 
         $userId = $this->repository->createUser(
@@ -87,6 +92,28 @@ final class AuthController
 
         $this->authentication->signIn($userId);
         setFlash('success', 'Akun berhasil dibuat. Lengkapi profil publik Anda untuk memulai.');
+
+        if (wantsJson()) {
+            jsonResponse(['ok' => true, 'redirect' => appUrl('/studio/settings.php')]);
+        }
+
         redirect(appUrl('/studio/settings.php'));
+    }
+
+    /**
+     * Kembalikan error ke view seperti biasa, atau balas JSON saat form
+     * dikirim lewat fetch dari modal di landing page.
+     *
+     * @param array<string, string> $errors
+     * @param array<string, string> $values
+     * @return array{errors: array<string, string>, values: array<string, string>}
+     */
+    private function respondToForm(array $errors, array $values): array
+    {
+        if (wantsJson()) {
+            jsonResponse(['ok' => false, 'errors' => $errors, 'values' => $values], 422);
+        }
+
+        return compact('errors', 'values');
     }
 }

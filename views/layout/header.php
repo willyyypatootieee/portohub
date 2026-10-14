@@ -48,7 +48,7 @@
                         <path d="M20.4 14.8A8.6 8.6 0 0 1 9.2 3.6a8.7 8.7 0 1 0 11.2 11.2Z"/>
                     </svg>
                 </button>
-                <a class="login-link" href="<?= escape(appUrl('/login/')) ?>">Log in</a>
+                <a class="login-link" href="<?= escape(appUrl('/login/')) ?>" data-auth-open="login">Log in</a>
                 <a class="button button-small" href="<?= escape(appUrl('/studio/')) ?>">Creator studio</a>
             </div>
         </div>

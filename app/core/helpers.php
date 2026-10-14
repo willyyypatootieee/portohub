@@ -15,6 +15,7 @@ declare(strict_types=1);
  *   - flash.php  : pesan flash sekali tampil
  *   - auth.php   : status login tingkat halaman
  *   - format.php : format angka untuk tampilan
+ *   - response.php : deteksi permintaan JSON dan balasan JSON
  */
 
 require_once __DIR__ . '/helpers/env.php';
@@ -24,3 +25,4 @@ require_once __DIR__ . '/helpers/url.php';
 require_once __DIR__ . '/helpers/flash.php';
 require_once __DIR__ . '/helpers/auth.php';
 require_once __DIR__ . '/helpers/format.php';
+require_once __DIR__ . '/helpers/response.php';

@@ -9,6 +9,7 @@
 @import url("pages/landing/work-grid.css");
 @import url("pages/landing/creator-feature.css");
 @import url("pages/landing/cta.css");
+@import url("pages/landing/auth-modal.css");
 
 /* Portofolio publik satu creator */
 @import url("pages/public-portfolio.css");
