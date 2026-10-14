@@ -11,7 +11,12 @@
 
 RewriteEngine On
 
-# Semua permintaan diarahkan ke public/, kecuali folder assets yang berisi
-# berkas statis (CSS, JS, gambar, dan upload).
-RewriteCond %{REQUEST_URI} !^/assets/
+# Jangan alihkan aset statis. Dalam instalasi XAMPP/Laragon di subfolder
+# (contoh: http://localhost/portohub/), REQUEST_URI berisi /portohub/assets/
+# sehingga pengecekan terhadap ^/assets/ tidak cocok. RewriteRule memakai
+# path relatif terhadap folder proyek, jadi aturan ini tetap benar baik proyek
+# dibuka dari subfolder maupun virtual host.
+RewriteRule ^assets(?:/|$) - [L]
+
+# Semua route aplikasi lainnya dilayani oleh folder public/.
 RewriteRule ^(.*)$ public/$1 [L]
