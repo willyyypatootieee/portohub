@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/public.css')) ?>">
 </head>
-<body>
+<body<?= ($bodyClass ?? '') !== '' ? ' class="' . escape($bodyClass) . '"' : '' ?>>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
         <div class="container navigation-wrap">
-            <a class="brand" href="#top" aria-label="<?= escape(SITE_NAME) ?> home">
+            <a class="brand" href="<?= escape(appUrl('/')) ?>" aria-label="<?= escape(SITE_NAME) ?> home">
                 <span class="brand-mark" aria-hidden="true">
                     <i></i>
                     <i></i>
@@ -37,9 +37,9 @@
             </button>
 
             <nav class="primary-navigation" id="primary-navigation" aria-label="Primary navigation">
-                <a href="#discover">Explore</a>
-                <a href="#creator">Creators</a>
-                <a href="#footer">Resources</a>
+                <a href="<?= escape(appUrl('/explore/')) ?>">Explore</a>
+                <a href="<?= escape(appUrl('/explore/?tab=creators')) ?>">Creators</a>
+                <a href="<?= escape(appUrl('/#footer')) ?>">Resources</a>
             </nav>
 
             <div class="navigation-actions">

@@ -1,7 +1,7 @@
     </main>
     <footer class="site-footer" id="footer">
         <div class="container footer-inner">
-            <a class="brand" href="#top" aria-label="<?= escape(SITE_NAME) ?> home">
+            <a class="brand" href="<?= escape(appUrl('/')) ?>" aria-label="<?= escape(SITE_NAME) ?> home">
                 <span class="brand-mark" aria-hidden="true">
                     <i></i>
                     <i></i>
@@ -17,6 +17,9 @@
             </nav>
         </div>
     </footer>
+    <?php foreach (($pageScripts ?? []) as $script): ?>
+        <script src="<?= escape(appUrl($script)) ?>"></script>
+    <?php endforeach; ?>
     <script src="<?= escape(appUrl('/assets/js/app.js')) ?>"></script>
 </body>
 </html>

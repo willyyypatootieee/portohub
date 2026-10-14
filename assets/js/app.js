@@ -62,6 +62,19 @@
         });
     }
 
+    // Halaman eksplorasi memakai pencarian di sisi server (GET form), jadi
+    // hanya pintasan papan tik yang ditambahkan di sini.
+    const exploreSearch = document.querySelector('#explore-search');
+
+    if (exploreSearch) {
+        document.addEventListener('keydown', function (event) {
+            if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+                event.preventDefault();
+                exploreSearch.focus();
+            }
+        });
+    }
+
     document.querySelectorAll('.save-button').forEach(function (button) {
         button.addEventListener('click', function () {
             const isSaved = button.classList.toggle('is-saved');

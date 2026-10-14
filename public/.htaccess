@@ -22,6 +22,9 @@ DirectoryIndex index.php
     # Portfolio publik dengan URL cantik: /portfolio/{username}
     RewriteRule ^portfolio/([a-z0-9-]+)/?$ portfolio/index.php?user=$1 [L,QSA,NC]
 
+    # Detail proyek dengan URL cantik: /project/{id}
+    RewriteRule ^project/([0-9]+)/?$ project/index.php?id=$1 [L,QSA]
+
     # Alias ramah untuk route yang memakai index.php di dalam folder.
     RewriteRule ^login/?$ login/index.php [L,QSA]
     RewriteRule ^login/register/?$ login/register/index.php [L,QSA]
