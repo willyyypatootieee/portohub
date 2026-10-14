@@ -29,17 +29,17 @@
         </div>
         <div class="hero-gallery" aria-label="Featured portfolio work">
             <div class="gallery-card gallery-card-back">
-                <img src="assets/images/geometry-dark.svg" alt="Abstract dark blue architecture">
+                <img src="<?= escape(appUrl('/assets/images/geometry-dark.svg')) ?>" alt="Abstract dark blue architecture">
             </div>
             <div class="gallery-card gallery-card-bottom">
-                <img src="assets/images/lines.svg" alt="Curving monochrome architectural lines">
+                <img src="<?= escape(appUrl('/assets/images/lines.svg')) ?>" alt="Curving monochrome architectural lines">
                 <span class="availability">
                     <b></b>
                     Available for work
                 </span>
             </div>
             <figure class="gallery-card gallery-card-main">
-                <img src="assets/images/architecture-blue.svg" alt="Blue modern building viewed from below">
+                <img src="<?= escape(appUrl('/assets/images/architecture-blue.svg')) ?>" alt="Blue modern building viewed from below">
                 <figcaption>
                     <small>FEATURED · PHOTOGRAPHY</small>
                     <strong>Sculpting silence</strong>
