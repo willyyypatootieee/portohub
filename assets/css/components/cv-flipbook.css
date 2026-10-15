@@ -23,7 +23,7 @@
     position: relative;
     display: grid;
     gap: 14px;
-    width: min(980px, 100%);
+    width: min(1000px, 100%);
     max-height: 100%;
     padding: 20px;
     background: var(--paper);
@@ -45,13 +45,40 @@
     white-space: nowrap;
 }
 
-.cv-flipbook-close {
-    padding: 4px 9px;
-    font-size: 12px;
-    font-weight: 700;
+/* Aksi di kepala modal: buka tab baru, unduh, tutup. */
+.cv-flipbook-actions {
+    display: flex;
+    flex: none;
+    gap: 6px;
+}
+
+.cv-flipbook-icon {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    color: var(--ink);
     cursor: pointer;
     background: var(--soft-paper);
     border: 1px solid var(--line);
+    border-radius: 4px;
+    transition: color .15s ease, background .15s ease;
+}
+
+.cv-flipbook-icon:hover {
+    color: #fff;
+    background: var(--purple);
+    border-color: var(--purple);
+}
+
+.cv-flipbook-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* Panggung flipbook: efek 3D saat halaman dibalik. */
@@ -59,49 +86,109 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 14px;
     min-height: 320px;
-    perspective: 2200px;
+    perspective: 2400px;
 }
 
+/*
+ * Buku dua halaman: menampung dua wadah halaman sejajar (kiri dan kanan)
+ * dengan garis lipatan di tengah, seperti buku terbuka.
+ */
 .cv-book {
     position: relative;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, var(--cv-page-w, 300px));
+    width: calc(var(--cv-page-w, 300px) * 2);
+    min-height: var(--cv-page-h, 424px);
     transform-style: preserve-3d;
+    transition: transform .42s ease;
 }
 
-.cv-leaf {
-    position: relative;
-    width: var(--cv-page-w, 300px);
-    height: var(--cv-page-h, 424px);
-    transform-style: preserve-3d;
-    transition: transform .55s ease;
-}
-
-.cv-leaf.is-flipped {
-    transform: rotateY(-180deg);
-}
-
-.cv-leaf-face {
+.cv-book::before {
+    content: "";
     position: absolute;
-    inset: 0;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: rgb(0 0 0 / 10%);
+    box-shadow: 0 0 14px rgb(0 0 0 / 25%);
+    transform: translateX(-1px);
+}
+
+/* Animasi balik buku saat pindah halaman. */
+.cv-book.is-flipping-next {
+    transform: rotateY(-9deg);
+}
+
+.cv-book.is-flipping-prev {
+    transform: rotateY(9deg);
+}
+
+/* Satu halaman buku: kanvas PDF di dalam bingkai putih. */
+.cv-page {
     display: grid;
     place-items: center;
     overflow: hidden;
     background: #fff;
     border: 1px solid var(--soft-line);
-    backface-visibility: hidden;
 }
 
-.cv-leaf-face canvas {
+.cv-page.is-left {
+    border-radius: 3px 0 0 3px;
+}
+
+.cv-page.is-right {
+    border-radius: 0 3px 3px 0;
+}
+
+.cv-page.is-blank {
+    background: var(--soft-paper);
+    border-style: dashed;
+}
+
+.cv-page canvas {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-.cv-leaf-face.is-back {
-    transform: rotateY(180deg);
+/* Tombol arah halaman: ikon SVG di samping buku. */
+.cv-flipbook-nav {
+    display: grid;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    color: var(--ink);
+    cursor: pointer;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 var(--line);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.cv-flipbook-nav:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--line);
+}
+
+.cv-flipbook-nav:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.cv-flipbook-nav svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .cv-page-nav {
@@ -109,20 +196,6 @@
     align-items: center;
     justify-content: center;
     gap: 14px;
-}
-
-.cv-page-nav button {
-    padding: 7px 13px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    background: var(--soft-paper);
-    border: 1px solid var(--line);
-}
-
-.cv-page-nav button:disabled {
-    opacity: .4;
-    cursor: not-allowed;
 }
 
 .cv-page-count {
@@ -198,8 +271,29 @@
         padding: 10px;
     }
 
-    .cv-leaf {
-        --cv-page-w: 200px;
-        --cv-page-h: 283px;
+    .cv-flipbook-dialog {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .cv-book {
+        --cv-page-w: 180px;
+        --cv-page-h: 255px;
+    }
+
+    .cv-flipbook-nav {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 560px) {
+    .cv-stage {
+        gap: 6px;
+    }
+
+    .cv-book {
+        --cv-page-w: 130px;
+        --cv-page-h: 184px;
     }
 }

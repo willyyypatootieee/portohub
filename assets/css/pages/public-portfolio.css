@@ -162,6 +162,9 @@
     position: absolute;
     right: 10px;
     bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 5px 9px;
     color: var(--ink);
     font-size: 9px;
@@ -178,6 +181,16 @@
 .public-work-card:hover .public-thumb-hint {
     opacity: 1;
     transform: translateY(0);
+}
+
+.public-thumb-hint svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .public-work-meta {

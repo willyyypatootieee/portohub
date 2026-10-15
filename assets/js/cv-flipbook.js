@@ -1,10 +1,14 @@
 /**
  * Flipbook CV berbasis PDF.js.
  *
- * Setiap halaman PDF dirender ke <canvas>, lalu dibalik dengan animasi 3D CSS
+ * Setiap halaman PDF dirender ke <canvas> dan ditampilkan sebagai buku
+ * dua halaman (spread kiri–kanan) dengan animasi balik 3D CSS
  * (teknik flip book: https://github.com/fchavonet/creative_coding-flip_book).
- * Dipakai di halaman Profil & CV creator dan di portofolio publik, sehingga
- * pengunjung membaca CV seperti membuka buku, bukan menonton tab PDF.
+ *
+ * Fitur:
+ * - Spread dua halaman; halaman 1 sendirian di kanan seperti sampul buku.
+ * - Navigasi tombol dan keyboard (panah kiri/kanan, Escape untuk tutup).
+ * - Tombol unduh PDF dan tombol buka di tab baru (fullscreen).
  *
  * PDF.js dimuat dari CDN saat pertama kali dibutuhkan (lazy), jadi halaman
  * yang tidak membuka CV tidak membayar biaya unduhannya.
@@ -15,6 +19,7 @@
     var PDFJS_VERSION = '4.6.82';
     var PDFJS_BASE = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VERSION + '/build/';
     var pdfjsPromise = null;
+    var FLIP_MS = 420;
 
     /** Memuat PDF.js sekali saja, lalu memakai ulang promise-nya. */
     function loadPdfJs() {
@@ -39,13 +44,27 @@
             '<div class="cv-flipbook-dialog" role="dialog" aria-modal="true" aria-label="CV flipbook">' +
                 '<div class="cv-flipbook-head">' +
                     '<strong data-cv-modal-title>CV</strong>' +
-                    '<button class="cv-flipbook-close" type="button" data-cv-close aria-label="Tutup">✕</button>' +
+                    '<div class="cv-flipbook-actions">' +
+                        '<button class="cv-flipbook-icon" type="button" data-cv-fullscreen aria-label="Buka di tab baru" title="Buka di tab baru">' +
+                            '<svg viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 13 11"/><path d="M10 20H4v-6"/><path d="m4 20 7-7"/></svg>' +
+                        '</button>' +
+                        '<a class="cv-flipbook-icon" data-cv-download aria-label="Unduh PDF" title="Unduh PDF" download>' +
+                            '<svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>' +
+                        '</a>' +
+                        '<button class="cv-flipbook-icon" type="button" data-cv-close aria-label="Tutup" title="Tutup">' +
+                            '<svg viewBox="0 0 24 24"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>' +
+                        '</button>' +
+                    '</div>' +
                 '</div>' +
                 '<p class="cv-flipbook-status" data-cv-status hidden></p>' +
                 '<div class="cv-stage">' +
-                    '<button type="button" class="button button-outline" data-cv-prev aria-label="Halaman sebelumnya">‹</button>' +
+                    '<button type="button" class="cv-flipbook-nav" data-cv-prev aria-label="Halaman sebelumnya">' +
+                        '<svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg>' +
+                    '</button>' +
                     '<div class="cv-book" data-cv-book></div>' +
-                    '<button type="button" class="button button-outline" data-cv-next aria-label="Halaman berikutnya">›</button>' +
+                    '<button type="button" class="cv-flipbook-nav" data-cv-next aria-label="Halaman berikutnya">' +
+                        '<svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg>' +
+                    '</button>' +
                 '</div>' +
                 '<div class="cv-page-nav">' +
                     '<span class="cv-page-count" data-cv-count>—</span>' +
@@ -76,18 +95,34 @@
         this.title = title;
         this.pdf = null;
         this.pageCount = 0;
-        this.current = 0;
-        this.scale = 1.4;
+        this.current = 0; // indeks halaman kiri pada spread (atau halaman tunggal).
+        this.scale = 1.1;
+        this.busy = false;
         this.modal = createModal();
         this.book = this.modal.querySelector('[data-cv-book]');
         this.status = this.modal.querySelector('[data-cv-status]');
         this.count = this.modal.querySelector('[data-cv-count]');
         this.prevButton = this.modal.querySelector('[data-cv-prev]');
         this.nextButton = this.modal.querySelector('[data-cv-next]');
+        this.fullscreenLink = this.modal.querySelector('[data-cv-fullscreen]');
+        this.downloadLink = this.modal.querySelector('[data-cv-download]');
         this.modal.querySelector('[data-cv-modal-title]').textContent = title || 'CV';
 
         this.bindEvents();
     }
+
+    /**
+     * Halaman kiri untuk spread pada posisi `page`.
+     * Halaman 1 tampil sendirian (seperti sampul), setelahnya berpasangan
+     * genap–ganji: (2,3), (4,5), dst.
+     */
+    Flipbook.prototype.leftPageAt = function (page) {
+        if (page === 0) {
+            return 0;
+        }
+
+        return page % 2 === 1 ? page : page - 1;
+    };
 
     Flipbook.prototype.bindEvents = function () {
         var self = this;
@@ -138,6 +173,11 @@
 
         this.setStatus('Memuat CV…', false);
 
+        this.fullscreenLink.href = this.src;
+        this.fullscreenLink.target = '_blank';
+        this.fullscreenLink.rel = 'noopener';
+        this.downloadLink.href = this.src + (this.src.indexOf('?') === -1 ? '?' : '&') + 'download=1';
+
         loadPdfJs()
             .then(function (pdfjs) {
                 return pdfjs.getDocument(self.src).promise;
@@ -146,10 +186,6 @@
                 self.pdf = pdf;
                 self.pageCount = pdf.numPages;
                 self.setStatus('', true);
-                return renderPage(pdf, 1, self.scale);
-            })
-            .then(function (canvas) {
-                self.book.appendChild(self.wrapLeaf(canvas, null));
                 self.showSpread();
             })
             .catch(function (error) {
@@ -157,91 +193,97 @@
             });
     };
 
-    /** Membungkus canvas jadi "lembar" yang bisa dibalik. */
-    Flipbook.prototype.wrapLeaf = function (frontCanvas, backCanvas) {
-        var leaf = document.createElement('div');
-        leaf.className = 'cv-leaf';
-
-        var front = document.createElement('div');
-        front.className = 'cv-leaf-face is-front';
-        front.appendChild(frontCanvas);
-        leaf.appendChild(front);
-
-        if (backCanvas !== null) {
-            var back = document.createElement('div');
-            back.className = 'cv-leaf-face is-back';
-            back.appendChild(backCanvas);
-            leaf.appendChild(back);
-        }
-
-        return leaf;
-    };
+    /** Elemen wadah satu halaman buku. */
+    function pageHolder() {
+        var div = document.createElement('div');
+        div.className = 'cv-page';
+        return div;
+    }
 
     /**
-     * Menampilkan pasangan halaman pada posisi `current`.
+     * Menampilkan buku dua halaman pada posisi `current` (indeks halaman kiri).
      *
-     * Cara sederhana dan kokoh: satu lembar per halaman, dibalik dengan
-     * rotasi 3D. Halaman berikutnya disiapkan di belakang lembar aktif
-     * supaya animasi terlihat seperti membuka buku.
+     * Halaman 1 tampil sendirian di kanan seperti sampul; setelah itu
+     * berpasangan genap–ganji: (2,3), (4,5), dst.
      */
     Flipbook.prototype.showSpread = function () {
-        var self = this;
+        var leftIndex = this.leftPageAt(this.current);
+        var rightIndex = leftIndex === 0 ? (this.pageCount > 1 ? 1 : null) : leftIndex + 1;
 
         this.book.innerHTML = '';
-        this.count.textContent = 'Halaman ' + (this.current + 1) + ' / ' + this.pageCount;
         this.prevButton.disabled = this.current === 0;
-        this.nextButton.disabled = this.current >= this.pageCount - 1;
+        this.nextButton.disabled = rightIndex === null || rightIndex >= this.pageCount - 1;
 
-        var layers = [];
+        var last = rightIndex === null ? leftIndex : rightIndex;
+        this.count.textContent = leftIndex === rightIndex
+            ? 'Halaman ' + (leftIndex + 1) + ' / ' + this.pageCount
+            : 'Halaman ' + (leftIndex + 1) + '–' + (last + 1) + ' / ' + this.pageCount;
 
-        // Lembar-lembar di belakang (yang belum dibuka), dari terluar ke dalam.
-        for (var i = this.pageCount - 1; i > this.current; i -= 1) {
-            layers.push(i);
+        var leftSlot = pageHolder();
+        var rightSlot = pageHolder();
+        leftSlot.classList.add('is-left');
+        rightSlot.classList.add('is-right');
+        this.book.appendChild(leftSlot);
+        this.book.appendChild(rightSlot);
+
+        var self = this;
+        var requests = [renderPage(this.pdf, leftIndex + 1, this.scale).then(function (canvas) {
+            leftSlot.appendChild(canvas);
+        })];
+
+        if (rightIndex !== null) {
+            requests.push(renderPage(this.pdf, rightIndex + 1, this.scale).then(function (canvas) {
+                rightSlot.appendChild(canvas);
+            }));
         }
 
-        // Halaman aktif dirender paling atas.
-        layers.push(this.current);
+        Promise.all(requests).catch(function () {
+            self.setStatus('Sebagian halaman CV gagal dimuat.', false);
+        });
+    };
 
-        layers.forEach(function (pageIndex) {
-            renderPage(self.pdf, pageIndex + 1, self.scale).then(function (canvas) {
-                var leaf = self.wrapLeaf(canvas, null);
-                leaf.style.zIndex = String(self.pageCount - pageIndex);
+    /** Animasi flip singkat pada buku sebelum isi diganti. */
+    Flipbook.prototype.animateFlip = function (direction) {
+        var self = this;
+        this.book.classList.add(direction === 'next' ? 'is-flipping-next' : 'is-flipping-prev');
 
-                if (pageIndex !== self.current) {
-                    leaf.style.position = 'absolute';
-                }
-
-                self.book.appendChild(leaf);
-            });
+        return new Promise(function (resolve) {
+            window.setTimeout(function () {
+                self.book.classList.remove('is-flipping-next', 'is-flipping-prev');
+                resolve();
+            }, FLIP_MS);
         });
     };
 
     Flipbook.prototype.next = function () {
-        if (this.current >= this.pageCount - 1) {
+        if (this.busy || this.nextButton.disabled) {
             return;
         }
 
-        var leaf = this.book.lastElementChild;
-
-        if (leaf) {
-            leaf.classList.add('is-flipped');
-        }
-
+        this.busy = true;
         var self = this;
 
-        window.setTimeout(function () {
-            self.current += 1;
+        this.animateFlip('next').then(function () {
+            self.current = self.current === 0 ? 1 : self.current + 2;
             self.showSpread();
-        }, 300);
+            self.busy = false;
+        });
     };
 
     Flipbook.prototype.previous = function () {
-        if (this.current === 0) {
+        if (this.busy || this.current === 0) {
             return;
         }
 
-        this.current -= 1;
-        this.showSpread();
+        this.busy = true;
+        var self = this;
+
+        this.animateFlip('prev').then(function () {
+            var target = self.current - 2;
+            self.current = target <= 0 ? 0 : target;
+            self.showSpread();
+            self.busy = false;
+        });
     };
 
     Flipbook.prototype.close = function () {

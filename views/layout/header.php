@@ -39,7 +39,6 @@
             <nav class="primary-navigation" id="primary-navigation" aria-label="Primary navigation">
                 <a href="<?= escape(appUrl('/explore/')) ?>">Explore</a>
                 <a href="<?= escape(appUrl('/explore/?tab=creators')) ?>">Creators</a>
-                <a href="<?= escape(appUrl('/#footer')) ?>">Resources</a>
             </nav>
 
             <div class="navigation-actions">

@@ -18,6 +18,20 @@ body {
     background: var(--paper);
     font-family: var(--sans);
     font-size: 14px;
+
+    /*
+     * Flex column + min-height 100vh membuat footer (margin-top: auto) selalu
+     * menempel di dasar viewport pada halaman pendek, dan tetap mengalir
+     * normal pada halaman panjang.
+     */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Area konten tumbuh mengisi ruang, sehingga footer terdorong ke bawah. */
+body > main {
+    flex: 1 0 auto;
 }
 
 button,

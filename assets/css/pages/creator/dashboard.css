@@ -58,20 +58,138 @@
     margin-top: 14px;
 }
 
-.line-chart {
-    display: flex;
-    align-items: end;
-    height: 180px;
-    gap: 8px;
-    padding: 12px 12px 0;
-    background: repeating-linear-gradient(to bottom, transparent 0, transparent 42px, #ecece7 43px);
+/* -----------------------------------------------------------------------------
+   Checklist penyelesaian profil. Menggantikan grafik aktivitas dekoratif:
+   setiap baris punya makna nyata dan bisa diklik saat belum selesai.
+   ----------------------------------------------------------------------------- */
+
+.setup-checklist {
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
-.line-chart span {
-    flex: 1;
-    background: linear-gradient(#5b55e8, #a6a2ff);
-    border: 1px solid #3731a5;
+.setup-checklist li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.setup-checklist li:last-child {
     border-bottom: 0;
+}
+
+.setup-mark {
+    display: grid;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    color: var(--muted);
+    background: var(--soft-paper);
+    border: 1px solid var(--soft-line);
+    border-radius: 50%;
+}
+
+.setup-mark svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.setup-checklist li.is-done .setup-mark {
+    color: #fff;
+    background: var(--purple);
+    border-color: var(--purple);
+}
+
+.setup-label {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.setup-label small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 400;
+}
+
+.setup-checklist li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    margin-left: auto;
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    box-shadow: 2px 2px 0 var(--line);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.setup-checklist li a:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--line);
+}
+
+.setup-checklist li a svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Titik status proyek pada daftar ringkas. */
+.status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin: 0 3px;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: var(--muted);
+}
+
+.status-dot.is-published {
+    background: #3f9d63;
+}
+
+.status-dot.is-draft {
+    background: #d9a72b;
+}
+
+.status-dot.is-archived {
+    background: var(--muted);
+}
+
+/* Ikon panah di banner penyelesaian. */
+.completion-banner a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.completion-banner a svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .compact-list {

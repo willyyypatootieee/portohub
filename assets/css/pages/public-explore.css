@@ -170,6 +170,9 @@
     position: absolute;
     right: 10px;
     bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 5px 9px;
     color: var(--ink);
     font-size: 8px;
@@ -187,6 +190,16 @@
 .work-card:hover .work-view-hint {
     opacity: 1;
     transform: translateY(0);
+}
+
+.work-view-hint svg {
+    width: 10px;
+    height: 10px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* -- Kartu creator --------------------------------------------------------- */

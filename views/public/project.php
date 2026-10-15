@@ -89,7 +89,10 @@ $creatorInitial = mb_strtoupper(mb_substr((string) $project['display_name'], 0, 
                 </dl>
                 <a class="button button-secondary project-facts-action" href="<?= escape($portfolioLink) ?>">
                     View full portfolio
-                    <span aria-hidden="true">→</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14"/>
+                        <path d="m13 6 6 6-6 6"/>
+                    </svg>
                 </a>
             </aside>
         </div>
@@ -140,7 +143,13 @@ $creatorInitial = mb_strtoupper(mb_substr((string) $project['display_name'], 0, 
             <section class="project-more">
                 <div class="project-section-heading">
                     <h2>More from <?= escape($project['display_name']) ?></h2>
-                    <a class="project-more-link" href="<?= escape($portfolioLink) ?>">View all <span aria-hidden="true">→</span></a>
+                    <a class="project-more-link" href="<?= escape($portfolioLink) ?>">
+                        View all
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h14"/>
+                            <path d="m13 6 6 6-6 6"/>
+                        </svg>
+                    </a>
                 </div>
 
                 <div class="portfolio-grid">

@@ -7,7 +7,12 @@
         <p>Draft, publish, feature, and archive your case studies.</p>
     </div>
 
-    <a class="button" href="#project-form">＋ New project</a>
+    <a class="button" href="#project-form">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New project
+    </a>
 </section>
 
 <section class="panel project-editor" id="project-form">
@@ -29,7 +34,7 @@
 
         <label>
             Project title
-            <input name="title" value="<?= escape($editingProject['title'] ?? '') ?>" required>
+            <input name="title" value="<?= escape($editingProject['title'] ?? '') ?>" placeholder="Mis. Redesign aplikasi mobile bank" required>
             <?php if (isset($errors['title'])): ?><small><?= escape($errors['title']) ?></small><?php endif; ?>
         </label>
 
@@ -51,12 +56,12 @@
 
         <label class="check-field">
             <input type="checkbox" name="featured" value="1" <?= !empty($editingProject['featured']) ? 'checked' : '' ?>>
-            Feature on my portfolio
+            <span>Feature on my portfolio</span>
         </label>
 
         <label class="full-field">
             Description
-            <textarea name="description" required><?= escape($editingProject['description'] ?? '') ?></textarea>
+            <textarea name="description" rows="5" placeholder="Jelaskan masalah, pendekatan, dan hasil proyek ini." required><?= escape($editingProject['description'] ?? '') ?></textarea>
             <?php if (isset($errors['description'])): ?><small><?= escape($errors['description']) ?></small><?php endif; ?>
         </label>
 
@@ -285,8 +290,18 @@
                                 <td class="order-actions">
                                     <?php
                                     $orderButtons = [
-                                        ['direction' => 'up', 'label' => '↑', 'title' => 'Naikkan', 'disabled' => $projectIndex === 0],
-                                        ['direction' => 'down', 'label' => '↓', 'title' => 'Turunkan', 'disabled' => $projectIndex === count($projects) - 1],
+                                        [
+                                            'direction' => 'up',
+                                            'title' => 'Naikkan',
+                                            'icon' => '<path d="M12 19V5"/><path d="m6 11 6-6 6 6"/>',
+                                            'disabled' => $projectIndex === 0,
+                                        ],
+                                        [
+                                            'direction' => 'down',
+                                            'title' => 'Turunkan',
+                                            'icon' => '<path d="M12 5v14"/><path d="m18 13-6 6-6-6"/>',
+                                            'disabled' => $projectIndex === count($projects) - 1,
+                                        ],
                                     ];
                                     ?>
                                     <?php foreach ($orderButtons as $orderButton): ?>
@@ -300,7 +315,9 @@
                                                 title="<?= escape($orderButton['title']) ?>"
                                                 aria-label="<?= escape($orderButton['title'] . ' ' . $project['title']) ?>"
                                                 <?= $orderButton['disabled'] ? 'disabled' : '' ?>
-                                            ><?= escape($orderButton['label']) ?></button>
+                                            >
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><?= $orderButton['icon'] ?></svg>
+                                            </button>
                                         </form>
                                     <?php endforeach; ?>
                                 </td>

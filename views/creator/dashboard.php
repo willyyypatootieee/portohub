@@ -2,12 +2,42 @@
 
 <?php
 /*
- * Dashboard creator: ringkasan angka, banner progres profil, grafik aktivitas
- * sederhana, dan daftar proyek terbaru. Semua data berasal dari repository.
+ * Dashboard creator: status publikasi, langkah penyelesaian profil, dan daftar
+ * proyek terbaru. Semua angka berasal dari repository untuk pengguna yang
+ * sedang masuk — tidak ada metrik contoh atau grafik dekoratif.
  */
 $firstName = explode(' ', (string) $user['display_name'])[0];
-$completion = min(100, 50 + ($counts['total'] * 10));
 $mediaCount = count($studioRepository->getMedia($userId));
+
+$hasCv = !empty($user['cv_filename']);
+$checklist = [
+    [
+        'label' => 'Isi headline & bio',
+        'done' => trim((string) $user['headline']) !== '' && trim((string) $user['bio']) !== '',
+        'url' => '/studio/settings.php#public-profile',
+    ],
+    [
+        'label' => 'Unggah CV',
+        'done' => $hasCv,
+        'url' => '/studio/settings.php#cv',
+    ],
+    [
+        'label' => 'Buat proyek pertama',
+        'done' => (int) $counts['total'] > 0,
+        'url' => '/studio/projects.php#project-form',
+    ],
+    [
+        'label' => 'Terbitkan satu proyek',
+        'done' => (int) $counts['published'] > 0,
+        'url' => '/studio/projects.php',
+    ],
+];
+
+$doneCount = count(array_filter($checklist, fn (array $item): bool => $item['done']));
+$completion = (int) round(($doneCount / count($checklist)) * 100);
+$remaining = count($checklist) - $doneCount;
+
+$statusLabels = ['published' => 'Published', 'draft' => 'Draft', 'archived' => 'Archived'];
 ?>
 
 <section class="intro-row">
@@ -24,12 +54,24 @@ $mediaCount = count($studioRepository->getMedia($userId));
     <strong><?= $completion ?>%</strong>
 
     <div>
-        <h2>Your portfolio is almost there</h2>
-        <p>Add projects and media to give visitors a reason to stay.</p>
-        <a href="<?= escape(appUrl('/studio/projects.php#project-form')) ?>">Complete your profile →</a>
+        <?php if ($remaining === 0): ?>
+            <h2>Your portfolio is complete</h2>
+            <p>Everything is set — keep adding work whenever you’re ready.</p>
+            <a href="<?= escape(appUrl('/studio/projects.php#project-form')) ?>">
+                Add another project
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </a>
+        <?php else: ?>
+            <h2>Your portfolio is almost there</h2>
+            <p><?= $remaining ?> step<?= $remaining === 1 ? '' : 's' ?> left to give visitors a reason to stay.</p>
+            <a href="<?= escape(appUrl($checklist[array_key_first(array_filter($checklist, fn (array $i): bool => !$i['done']))]['url'])) ?>">
+                Continue setup
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </a>
+        <?php endif; ?>
     </div>
 
-    <span><?= (int) $counts['total'] ?> projects</span>
+    <span><?= $doneCount ?> / <?= count($checklist) ?> done</span>
 </section>
 
 <section class="metric-grid">
@@ -56,23 +98,37 @@ $mediaCount = count($studioRepository->getMedia($userId));
     <article class="panel">
         <div class="panel-title">
             <div>
-                <h2>Portfolio activity</h2>
-                <p>Your studio collection at a glance</p>
+                <h2>Finish your portfolio</h2>
+                <p>Complete these steps to look your best</p>
             </div>
+            <span class="panel-badge <?= $remaining === 0 ? '' : 'is-warning' ?>">
+                <?= $completion ?>%
+            </span>
         </div>
 
-        <div class="line-chart" aria-label="Illustrative portfolio activity chart">
-            <span style="height: 24%"></span>
-            <span style="height: 39%"></span>
-            <span style="height: 35%"></span>
-            <span style="height: 54%"></span>
-            <span style="height: 50%"></span>
-            <span style="height: 70%"></span>
-            <span style="height: 64%"></span>
-            <span style="height: 79%"></span>
-            <span style="height: 73%"></span>
-            <span style="height: 91%"></span>
-        </div>
+        <ul class="setup-checklist">
+            <?php foreach ($checklist as $item): ?>
+                <li class="<?= $item['done'] ? 'is-done' : '' ?>">
+                    <span class="setup-mark" aria-hidden="true">
+                        <?php if ($item['done']): ?>
+                            <svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                        <?php else: ?>
+                            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                        <?php endif; ?>
+                    </span>
+                    <span class="setup-label">
+                        <?= escape($item['label']) ?>
+                        <small><?= $item['done'] ? 'Done' : 'Not yet' ?></small>
+                    </span>
+                    <?php if (!$item['done']): ?>
+                        <a href="<?= escape(appUrl($item['url'])) ?>">
+                            Start
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                        </a>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
     </article>
 
     <article class="panel">
@@ -98,7 +154,11 @@ $mediaCount = count($studioRepository->getMedia($userId));
 
                         <div>
                             <strong><?= escape($project['title']) ?></strong>
-                            <small><?= escape($project['category']) ?> · <?= escape($project['status']) ?></small>
+                            <small>
+                                <?= escape($project['category']) ?>
+                                <span class="status-dot is-<?= escape((string) $project['status']) ?>"></span>
+                                <?= escape($statusLabels[$project['status']] ?? ucfirst((string) $project['status'])) ?>
+                            </small>
                         </div>
 
                         <a href="<?= escape(appUrl('/studio/projects.php?edit=' . (int) $project['id'] . '#project-form')) ?>">Edit</a>

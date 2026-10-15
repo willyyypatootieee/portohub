@@ -254,8 +254,18 @@
 }
 
 .empty-work-mark {
+    display: inline-flex;
     color: var(--purple);
-    font-size: 48px;
+}
+
+.empty-work-mark svg {
+    width: 44px;
+    height: 44px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .work-placeholder {

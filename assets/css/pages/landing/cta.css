@@ -39,10 +39,22 @@
 }
 
 .call-to-action small {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-top: 11px;
     color: #d7d5ff;
     font-size: 8px;
+}
+
+.call-to-action small svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .cta-circle {

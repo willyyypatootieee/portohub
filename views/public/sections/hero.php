@@ -2,7 +2,9 @@
     <div class="container hero-grid">
         <div class="hero-copy">
             <p class="eyebrow eyebrow-outline">
-                <span>✦</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9Z"/>
+                </svg>
                 <?= escape(SITE_TAGLINE) ?>
             </p>
             <h1>Great work<br>deserves to be <em>seen.</em></h1>
@@ -13,7 +15,10 @@
             <div class="hero-buttons">
                 <a class="button" href="<?= escape(appUrl('/login/register/')) ?>" data-auth-open="register">
                     Start building — it’s free
-                    <span aria-hidden="true">→</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14"/>
+                        <path d="m13 6 6 6-6 6"/>
+                    </svg>
                 </a>
                 <a class="button button-secondary" href="#discover">Explore portfolios</a>
             </div>

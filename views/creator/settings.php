@@ -156,6 +156,7 @@ $profileComplete = trim((string) $user['headline']) !== '' && trim((string) $use
                     data-cv-open
                     data-cv-src="<?= escape(appUrl('/studio/cv.php')) ?>"
                     data-cv-title="<?= escape((string) ($user['cv_original_name'] ?? 'Curriculum vitae.pdf')) ?>"
+                    data-cv-download="<?= escape(appUrl('/studio/cv.php?download=1')) ?>"
                 >
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 6.5C10.4 5.2 8.3 4.5 5.5 4.5v13c2.8 0 4.9.7 6.5 2 1.6-1.3 3.7-2 6.5-2v-13c-2.8 0-4.9.7-6.5 2Z"/>

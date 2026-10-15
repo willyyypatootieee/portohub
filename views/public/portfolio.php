@@ -39,6 +39,7 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                     data-cv-open
                     data-cv-src="<?= escape($cvUrl) ?>"
                     data-cv-title="<?= escape($cvTitle) ?>"
+                    data-cv-download="<?= escape($cvDownloadUrl) ?>"
                 >
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H14l6 6v9.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5Z"/>
@@ -117,7 +118,13 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                             <?php else: ?>
                                 <span><?= escape(strtoupper(mb_substr((string) $project['title'], 0, 1))) ?></span>
                             <?php endif; ?>
-                            <span class="public-thumb-hint">View project <span aria-hidden="true">→</span></span>
+                            <span class="public-thumb-hint">
+                                View project
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 12h14"/>
+                                    <path d="m13 6 6 6-6 6"/>
+                                </svg>
+                            </span>
                         </a>
 
                         <div class="public-work-meta">

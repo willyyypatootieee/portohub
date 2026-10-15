@@ -13,7 +13,7 @@ $navItems = [
     ],
     'portfolio' => [
         'label' => 'My portfolio',
-        'url' => '/portfolio/?user=' . rawurlencode((string) $user['username']),
+        'url' => '/studio/portfolio.php',
         'icon' => '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5Z"/>',
     ],
     'projects' => [

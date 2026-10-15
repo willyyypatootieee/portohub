@@ -185,7 +185,13 @@ $hasFilters = $search !== '' || $category !== '';
                                     <?php endif; ?>
                                 </a>
                                 <span class="work-category"><?= escape($project['category']) ?></span>
-                                <span class="work-view-hint" aria-hidden="true">View project <span>→</span></span>
+                                <span class="work-view-hint" aria-hidden="true">
+                                    View project
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M5 12h14"/>
+                                        <path d="m13 6 6 6-6 6"/>
+                                    </svg>
+                                </span>
                             </div>
 
                             <div class="work-details">

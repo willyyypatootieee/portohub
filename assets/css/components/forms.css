@@ -16,6 +16,10 @@
     font-weight: 700;
 }
 
+/* -----------------------------------------------------------------------------
+   Form proyek: input, textarea, dan baris khusus (checkbox fitur).
+   ----------------------------------------------------------------------------- */
+
 .studio-form input,
 .studio-form textarea,
 .studio-form select,
@@ -24,14 +28,22 @@
     min-height: 39px;
     padding: 9px 10px;
     color: var(--ink);
-    background: #fff;
+    background: var(--panel);
     border: 1px solid #c8c9c2;
-    border-radius: 2px;
+    border-radius: 4px;
     outline-color: var(--purple);
 }
 
+.studio-form input:focus,
+.studio-form textarea:focus,
+.studio-form select:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 16%, transparent);
+    outline: none;
+}
+
 .studio-form textarea {
-    min-height: 115px;
+    min-height: 118px;
     resize: vertical;
 }
 
@@ -45,16 +57,60 @@
     grid-column: 1 / -1;
 }
 
+/*
+ * Baris checkbox: sejajar dengan input di sebelahnya, bukan didorong turun
+ * dengan padding besar (itu yang membuat kartu upload tampak terlalu tinggi).
+ */
 .check-field {
     display: flex !important;
     align-items: center;
-    gap: 8px !important;
-    padding-top: 21px;
+    gap: 9px !important;
+    align-self: end;
+    min-height: 39px;
+    padding: 0 11px;
+    font-weight: 600 !important;
+    cursor: pointer;
+    background: var(--soft-paper);
+    border: 1px solid var(--soft-line);
+    border-radius: 4px;
 }
 
 .check-field input {
-    width: 16px;
-    min-height: 16px;
+    width: 15px;
+    min-height: 15px;
+    margin: 0;
+    accent-color: var(--purple);
+}
+
+/* Area unggah berkas: tinggi wajar, bukan kartu raksasa. */
+.media-field,
+.cv-drop {
+    padding: 14px;
+    background: var(--soft-paper);
+    border: 1px dashed var(--soft-line);
+    border-radius: 4px;
+}
+
+.media-field {
+    display: grid;
+    gap: 6px;
+}
+
+.media-field > strong {
+    font-size: 12px;
+}
+
+.media-field > span {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.media-field input[type="file"] {
+    min-height: auto;
+    padding: 9px;
+    background: var(--panel);
 }
 
 /* -----------------------------------------------------------------------------

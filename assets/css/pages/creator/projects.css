@@ -1,7 +1,33 @@
-/* =============================================================================
-   pages/creator/projects.css
+/* -----------------------------------------------------------------------------
    Halaman daftar proyek dan editor proyek.
-   ============================================================================= */
+   ----------------------------------------------------------------------------- */
+
+/* Ikon SVG pada tombol intro dan tombol urutan. */
+.intro-row .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.intro-row .button svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.order-actions button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
 .project-editor {
     margin-bottom: 18px;

@@ -1,0 +1,63 @@
+
+.studio-portfolio-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 16px;
+    margin-bottom: 22px;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--line);
+}
+
+.studio-portfolio-bar p {
+    margin: 0;
+    color: #55574f;
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.studio-portfolio-bar strong {
+    color: var(--ink);
+}
+
+.studio-portfolio-bar .button {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+}
+
+.studio-portfolio-bar .button svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/*
+ * Kontainer publik memakai padding besar dan lebar layar penuh. Karena di
+ * sini ia bersarang di dalam .studio-main, kita lepaskan padding itu agar
+ * tidak ada ruang ganda.
+ */
+.studio-portfolio .container {
+    width: 100%;
+    padding: 0;
+}
+
+/* Bagian hero publik berlatar penuh; di dalam studio cukup jadi blok biasa. */
+.studio-portfolio .portfolio-hero {
+    padding-top: 0;
+}
+
+@media (max-width: 700px) {
+    .studio-portfolio-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

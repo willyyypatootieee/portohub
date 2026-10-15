@@ -6,7 +6,13 @@
                 <h2>Discover remarkable work</h2>
                 <p class="section-intro">A daily selection of standout projects from independent creatives.</p>
             </div>
-            <a class="button button-secondary" href="<?= escape(appUrl('/explore/')) ?>">View all work <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="<?= escape(appUrl('/explore/')) ?>">
+                View all work
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14"/>
+                    <path d="m13 6 6 6-6 6"/>
+                </svg>
+            </a>
         </div>
 
         <div class="work-controls">
@@ -36,7 +42,11 @@
             <?php if ($showcaseProjects === []): ?>
                 <article class="work-card work-card-empty">
                     <div class="work-image">
-                        <span class="empty-work-mark">✦</span>
+                        <span class="empty-work-mark">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9Z"/>
+                            </svg>
+                        </span>
                     </div>
                     <div class="work-details">
                         <div>
