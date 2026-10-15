@@ -60,6 +60,25 @@
             <?php if (isset($errors['description'])): ?><small><?= escape($errors['description']) ?></small><?php endif; ?>
         </label>
 
+        <label>
+            Technologies used
+            <input name="technologies" value="<?= escape($editingProject['technologies'] ?? '') ?>" placeholder="PHP, MySQL, Figma">
+            <span class="field-hint">Pisahkan dengan koma, maksimal 12 teknologi.</span>
+            <?php if (isset($errors['technologies'])): ?><small><?= escape($errors['technologies']) ?></small><?php endif; ?>
+        </label>
+
+        <label>
+            Demo link <span class="field-optional">(opsional)</span>
+            <input type="url" name="demo_url" value="<?= escape($editingProject['demo_url'] ?? '') ?>" placeholder="https://contoh.com/demo">
+            <?php if (isset($errors['demo_url'])): ?><small><?= escape($errors['demo_url']) ?></small><?php endif; ?>
+        </label>
+
+        <label>
+            Repository link <span class="field-optional">(opsional)</span>
+            <input type="url" name="repo_url" value="<?= escape($editingProject['repo_url'] ?? '') ?>" placeholder="https://github.com/username/proyek">
+            <?php if (isset($errors['repo_url'])): ?><small><?= escape($errors['repo_url']) ?></small><?php endif; ?>
+        </label>
+
         <?php if (!$editingProject): ?>
             <label class="full-field media-field">
                 <strong>Media proyek (opsional)</strong>
@@ -143,6 +162,60 @@
     </section>
 <?php endif; ?>
 
+<?php if ($editingProject && (int) ($editingProject['id'] ?? 0) > 0): ?>
+    <?php $coverProjectId = (int) $editingProject['id']; ?>
+    <section class="panel project-cover" id="project-cover">
+        <div class="panel-title">
+            <div>
+                <h2>Cover image</h2>
+                <p>Sampul dipakai sebagai gambar utama proyek di portofolio publik. Kalau belum diunggah, gambar pertama pada media proyek yang jadi sampul.</p>
+            </div>
+        </div>
+
+        <?php if ($coverError !== null): ?>
+            <p class="studio-alert error" role="alert"><?= escape($coverError) ?></p>
+        <?php endif; ?>
+
+        <div class="cover-editor">
+            <div class="cover-preview">
+                <?php if (!empty($editingProject['cover_filename'])): ?>
+                    <img
+                        src="<?= escape(appUrl('/assets/uploads/' . rawurlencode((string) $editingProject['cover_filename']))) ?>"
+                        alt="Gambar sampul proyek <?= escape((string) $editingProject['title']) ?>"
+                    >
+                <?php else: ?>
+                    <span class="cover-placeholder">Belum ada sampul khusus</span>
+                <?php endif; ?>
+            </div>
+
+            <div class="cover-actions">
+                <form method="post" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                    <input type="hidden" name="action" value="upload-cover">
+                    <input type="hidden" name="project_id" value="<?= $coverProjectId ?>">
+
+                    <label>
+                        <strong><?= !empty($editingProject['cover_filename']) ? 'Ganti gambar sampul' : 'Unggah gambar sampul' ?></strong>
+                        <span>JPG, PNG, WebP, atau GIF — maksimal 10 MB.</span>
+                        <input type="file" name="cover_file" accept="image/jpeg,image/png,image/webp,image/gif" required>
+                    </label>
+
+                    <button class="button" type="submit">Simpan sampul</button>
+                </form>
+
+                <?php if (!empty($editingProject['cover_filename'])): ?>
+                    <form method="post" onsubmit="return confirm('Hapus gambar sampul proyek ini?');">
+                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                        <input type="hidden" name="action" value="remove-cover">
+                        <input type="hidden" name="project_id" value="<?= $coverProjectId ?>">
+                        <button class="button button-secondary" type="submit">Hapus sampul</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
+
 <section class="panel">
     <div class="project-controls">
         <nav class="filter-tabs">
@@ -172,6 +245,8 @@
         </form>
     </div>
 
+    <?php $canReorder = $status === 'all' && $search === ''; ?>
+
     <?php if ($projects === []): ?>
         <div class="empty-state">
             <strong>Become The One</strong>
@@ -186,11 +261,12 @@
                         <th>Category</th>
                         <th>Status</th>
                         <th>Assets</th>
+                        <?php if ($canReorder): ?><th>Urutan</th><?php endif; ?>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($projects as $project): ?>
+                    <?php foreach ($projects as $projectIndex => $project): ?>
                         <tr>
                             <td>
                                 <strong><?= escape($project['title']) ?></strong>
@@ -199,6 +275,30 @@
                             <td><?= escape($project['category']) ?></td>
                             <td><span class="status <?= escape($project['status']) ?>"><?= escape($project['status']) ?></span></td>
                             <td><?= (int) $project['media_count'] ?></td>
+                            <?php if ($canReorder): ?>
+                                <td class="order-actions">
+                                    <?php
+                                    $orderButtons = [
+                                        ['direction' => 'up', 'label' => '↑', 'title' => 'Naikkan', 'disabled' => $projectIndex === 0],
+                                        ['direction' => 'down', 'label' => '↓', 'title' => 'Turunkan', 'disabled' => $projectIndex === count($projects) - 1],
+                                    ];
+                                    ?>
+                                    <?php foreach ($orderButtons as $orderButton): ?>
+                                        <form method="post">
+                                            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                            <input type="hidden" name="action" value="reorder">
+                                            <input type="hidden" name="id" value="<?= (int) $project['id'] ?>">
+                                            <input type="hidden" name="direction" value="<?= escape($orderButton['direction']) ?>">
+                                            <button
+                                                type="submit"
+                                                title="<?= escape($orderButton['title']) ?>"
+                                                aria-label="<?= escape($orderButton['title'] . ' ' . $project['title']) ?>"
+                                                <?= $orderButton['disabled'] ? 'disabled' : '' ?>
+                                            ><?= escape($orderButton['label']) ?></button>
+                                        </form>
+                                    <?php endforeach; ?>
+                                </td>
+                            <?php endif; ?>
                             <td class="row-actions">
                                 <a href="<?= escape(appUrl('/studio/projects.php?edit=' . (int) $project['id'] . '#project-media')) ?>">Edit &amp; media</a>
                                 <form method="post" onsubmit="return confirm('Delete this project and its media links?');">

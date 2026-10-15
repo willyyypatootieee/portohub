@@ -17,6 +17,7 @@ $controller = new StudioController(
 );
 $errors = [];
 $mediaErrors = [];
+$coverError = null;
 $editingProject = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,14 +30,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'save') {
         $errors = $controller->saveProject($userId);
+        $submittedId = (int) ($_POST['id'] ?? 0);
+        $existing = $submittedId > 0 ? $studioRepository->findProject($userId, $submittedId) : null;
         $editingProject = [
-            'id' => (int) ($_POST['id'] ?? 0),
+            ...($existing ?? []),
+            'id' => $submittedId,
             'title' => trim((string) ($_POST['title'] ?? '')),
             'category' => trim((string) ($_POST['category'] ?? '')),
             'description' => trim((string) ($_POST['description'] ?? '')),
+            'technologies' => trim((string) ($_POST['technologies'] ?? '')),
+            'demo_url' => trim((string) ($_POST['demo_url'] ?? '')),
+            'repo_url' => trim((string) ($_POST['repo_url'] ?? '')),
             'status' => (string) ($_POST['status'] ?? 'draft'),
             'featured' => isset($_POST['featured']) ? 1 : 0,
         ];
+    }
+
+    if ($action === 'reorder') {
+        $controller->reorderProject($userId);
+    }
+
+    if ($action === 'upload-cover') {
+        $coverError = $controller->uploadProjectCover($userId);
+
+        if ($coverError !== null) {
+            $editingProject = $studioRepository->findProject($userId, (int) ($_POST['project_id'] ?? 0));
+        }
+    }
+
+    if ($action === 'remove-cover') {
+        $controller->removeProjectCover($userId);
     }
 
     if ($action === 'upload-media') {

@@ -64,3 +64,34 @@ function cvUploadConfig(): array
         ],
     ];
 }
+
+/**
+ * Konfigurasi upload gambar sampul proyek.
+ *
+ * Sampul wajib berupa gambar supaya grid portofolio publik selalu punya
+ * pratinjau yang seragam. Berkas disimpan bersama media lain di
+ * assets/uploads agar bisa disajikan langsung lewat URL.
+ *
+ * @return array{
+ *     directory: string,
+ *     max_size: int,
+ *     max_size_label: string,
+ *     allowed_label: string,
+ *     allowed_mime_types: array<string, string>
+ * }
+ */
+function projectCoverUploadConfig(): array
+{
+    return [
+        'directory' => dirname(__DIR__, 2) . '/assets/uploads',
+        'max_size' => 10 * 1024 * 1024,
+        'max_size_label' => '10 MB',
+        'allowed_label' => 'JPG, PNG, WebP, dan GIF',
+        'allowed_mime_types' => [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'image/gif' => 'gif',
+        ],
+    ];
+}

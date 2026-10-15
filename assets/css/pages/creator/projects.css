@@ -132,3 +132,107 @@
     background: var(--soft-paper);
     border: 1px dashed var(--soft-line);
 }
+
+/* -----------------------------------------------------------------------------
+   Panel gambar sampul proyek.
+   ----------------------------------------------------------------------------- */
+
+.project-cover {
+    margin-bottom: 18px;
+}
+
+.cover-editor {
+    display: grid;
+    grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.cover-preview {
+    display: grid;
+    place-items: center;
+    min-height: 150px;
+    overflow: hidden;
+    background: var(--soft-paper);
+    border: 1px dashed var(--soft-line);
+    border-radius: 4px;
+}
+
+.cover-preview img {
+    display: block;
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.cover-placeholder {
+    padding: 20px 14px;
+    color: var(--muted);
+    font-size: 10px;
+    text-align: center;
+}
+
+.cover-actions {
+    display: grid;
+    gap: 14px;
+}
+
+.cover-actions form {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Tombol urutan proyek (naik / turun).
+   ----------------------------------------------------------------------------- */
+
+.order-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.order-actions form {
+    margin: 0;
+}
+
+.order-actions button {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    background: #fff;
+    border: 1px solid var(--soft-line);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.order-actions button:hover:not(:disabled) {
+    background: var(--yellow);
+    border-color: var(--line);
+}
+
+.order-actions button:disabled {
+    color: #babab4;
+    cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------------
+   Teks bantuan di dalam form (berbeda dari pesan error berwarna merah).
+   ----------------------------------------------------------------------------- */
+
+.studio-form .field-hint,
+.upload-form .field-hint {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.field-optional {
+    color: var(--muted);
+    font-weight: 400;
+}
