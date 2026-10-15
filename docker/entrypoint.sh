@@ -8,11 +8,16 @@
 # =============================================================================
 set -e
 
-UPLOAD_DIR="/var/www/html/assets/uploads"
+# Semua folder tempat aplikasi menulis berkas upload. Tambahkan direktori baru
+# di sini ketika ada fitur upload baru (lihat app/config/media.php).
+UPLOAD_DIRS="/var/www/html/assets/uploads
+/var/www/html/storage/cv"
 
-mkdir -p "$UPLOAD_DIR"
-chown -R www-data:www-data "$UPLOAD_DIR"
-chmod -R 775 "$UPLOAD_DIR"
+for dir in $UPLOAD_DIRS; do
+    mkdir -p "$dir"
+    chown -R www-data:www-data "$dir"
+    chmod -R 775 "$dir"
+done
 
 # Lanjutkan ke command bawaan image (apache2-foreground).
 exec "$@"

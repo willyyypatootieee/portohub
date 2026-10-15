@@ -324,6 +324,25 @@ Database awal diimpor otomatis ketika volume MySQL dibuat pertama kali dari `dat
 docker compose down
 ```
 
+### Izin folder upload
+
+Aplikasi menulis berkas upload ke dua folder: `assets/uploads` (media proyek) dan
+`storage/cv` (CV creator). Karena keduanya di-bind mount dari host, Apache
+(`www-data`) tidak otomatis punya izin tulis. Script `docker/entrypoint.sh`
+menyamakan kepemilikannya setiap container start, jadi tidak ada langkah manual
+yang diperlukan.
+
+Jika fitur upload Anda gagal dengan `Permission denied`, pastikan container web
+memakai script terbaru — script ini di-`COPY` saat build, sehingga perubahan
+pada `docker/entrypoint.sh` butuh rebuild:
+
+```bash
+docker compose up -d --build
+```
+
+Menambahkan fitur upload baru? Tambahkan folder tujuan barunya ke variabel
+`UPLOAD_DIRS` di `docker/entrypoint.sh` (rujuk `app/config/media.php`).
+
 Untuk menghapus database Docker dan membuat ulang data awal, jalankan:
 
 ```bash
