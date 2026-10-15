@@ -15,7 +15,7 @@ function redirect(string $location): never
 function appUrl(string $path = '/'): string
 {
     $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
-    $markers = ['/login/', '/studio/', '/portfolio/'];
+    $markers = ['/login/', '/studio/', '/portfolio/', '/explore/', '/project/'];
     $basePath = dirname($scriptName);
 
     // Route yang memakai index.php di dalam folder (mis. /login/index.php)

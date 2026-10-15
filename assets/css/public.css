@@ -11,5 +11,7 @@
 @import url("pages/landing/cta.css");
 @import url("pages/landing/auth-modal.css");
 
-/* Portofolio publik satu creator */
+/* Halaman publik: eksplorasi, detail proyek, dan portofolio creator */
+@import url("pages/public-explore.css");
+@import url("pages/public-project.css");
 @import url("pages/public-portfolio.css");

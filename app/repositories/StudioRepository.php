@@ -325,7 +325,7 @@ final class StudioRepository
     public function findPublishedProject(int $projectId): ?array
     {
         $statement = $this->database->prepare(
-            "SELECT p.*, u.display_name, u.username, u.headline
+            "SELECT p.*, u.display_name, u.username, u.headline, u.bio, u.avatar_filename
              FROM studio_projects p
              INNER JOIN users u ON u.id = p.user_id
              WHERE p.id = :id AND p.status = 'published' AND p.is_hidden = 0
@@ -335,6 +335,200 @@ final class StudioRepository
         $project = $statement->fetch();
 
         return $project === false ? null : $project;
+    }
+
+    /**
+     * Proyek published untuk halaman eksplorasi: pencarian teks bebas (judul,
+     * kategori, deskripsi, nama/username creator) dan filter kategori.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function searchPublishedProjects(string $search = '', string $category = '', int $limit = 60, int $offset = 0): array
+    {
+        [$where, $params] = $this->publishedProjectFilters($search, $category);
+
+        $statement = $this->database->prepare(
+            'SELECT p.id, p.title, p.category, p.description, p.updated_at, p.featured,
+                    u.display_name, u.username, u.headline,
+                    (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count
+             FROM studio_projects p
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE ' . $where . '
+             ORDER BY p.featured DESC, p.updated_at DESC, p.id DESC
+             LIMIT :limit OFFSET :offset'
+        );
+
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value);
+        }
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        $projects = $statement->fetchAll();
+
+        foreach ($projects as $index => $project) {
+            $projects[$index]['cover'] = $this->findProjectCover((int) $project['id']);
+        }
+
+        return $projects;
+    }
+
+    public function countPublishedProjects(string $search = '', string $category = ''): int
+    {
+        [$where, $params] = $this->publishedProjectFilters($search, $category);
+
+        $statement = $this->database->prepare(
+            'SELECT COUNT(*)
+             FROM studio_projects p
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE ' . $where
+        );
+        $statement->execute($params);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    /**
+     * Creator yang memiliki minimal satu karya published, untuk pencarian
+     * pengguna di halaman eksplorasi.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function searchCreators(string $search = '', int $limit = 60): array
+    {
+        $sql = "SELECT u.id, u.display_name, u.username, u.headline, u.bio,
+                       COUNT(p.id) AS project_count
+                FROM users u
+                INNER JOIN studio_projects p ON p.user_id = u.id AND p.status = 'published'
+                WHERE 1 = 1";
+        $params = [];
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $sql .= ' AND (u.display_name LIKE :search_name OR u.username LIKE :search_username'
+                . ' OR u.headline LIKE :search_headline OR u.bio LIKE :search_bio)';
+            $params[':search_name'] = $like;
+            $params[':search_username'] = $like;
+            $params[':search_headline'] = $like;
+            $params[':search_bio'] = $like;
+        }
+
+        $sql .= ' GROUP BY u.id, u.display_name, u.username, u.headline, u.bio
+                  ORDER BY project_count DESC, u.display_name ASC
+                  LIMIT :limit';
+
+        $statement = $this->database->prepare($sql);
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value);
+        }
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
+
+        $creators = $statement->fetchAll();
+
+        foreach ($creators as $index => $creator) {
+            $creators[$index]['cover'] = $this->findCreatorCover((int) $creator['id']);
+        }
+
+        return $creators;
+    }
+
+    public function countPublishedProjectsForUser(int $userId): int
+    {
+        $statement = $this->database->prepare(
+            "SELECT COUNT(*) FROM studio_projects WHERE user_id = :user_id AND status = 'published'"
+        );
+        $statement->execute(['user_id' => $userId]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    /**
+     * Proyek published lain milik seorang creator (dipakai bagian "More from…"
+     * di halaman detail proyek).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getPublishedProjectsByUser(int $userId, ?int $excludeProjectId = null, int $limit = 3): array
+    {
+        $sql = "SELECT p.id, p.title, p.category, p.updated_at, p.featured,
+                       (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count
+                FROM studio_projects p
+                WHERE p.user_id = :user_id AND p.status = 'published'";
+        $params = ['user_id' => $userId];
+
+        if ($excludeProjectId !== null) {
+            $sql .= ' AND p.id <> :exclude_id';
+            $params['exclude_id'] = $excludeProjectId;
+        }
+
+        $sql .= ' ORDER BY p.featured DESC, p.updated_at DESC, p.id DESC LIMIT :limit';
+
+        $statement = $this->database->prepare($sql);
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value);
+        }
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
+
+        $projects = $statement->fetchAll();
+
+        foreach ($projects as $index => $project) {
+            $projects[$index]['cover'] = $this->findProjectCover((int) $project['id']);
+        }
+
+        return $projects;
+    }
+
+    /**
+     * Gambar cover seorang creator: gambar dari karya published terbaru.
+     *
+     * @return array{stored_name: string, mime_type: string}|null
+     */
+    public function findCreatorCover(int $userId): ?array
+    {
+        $statement = $this->database->prepare(
+            "SELECT m.stored_name, m.mime_type
+             FROM media_assets m
+             INNER JOIN studio_projects p ON p.id = m.project_id
+             WHERE p.user_id = :user_id AND p.status = 'published' AND m.mime_type LIKE 'image/%'
+             ORDER BY p.featured DESC, p.updated_at DESC, m.created_at ASC, m.id ASC
+             LIMIT 1"
+        );
+        $statement->execute(['user_id' => $userId]);
+        $cover = $statement->fetch();
+
+        return $cover === false ? null : $cover;
+    }
+
+    /**
+     * Menyusun klausa WHERE + parameter untuk pencarian proyek published.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private function publishedProjectFilters(string $search, string $category): array
+    {
+        $where = ["p.status = 'published'"];
+        $params = [];
+
+        if ($category !== '') {
+            $where[] = 'p.category = :category';
+            $params[':category'] = $category;
+        }
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = '(p.title LIKE :search_title OR p.category LIKE :search_category OR p.description LIKE :search_description
+                         OR u.display_name LIKE :search_name OR u.username LIKE :search_username)';
+            $params[':search_title'] = $like;
+            $params[':search_category'] = $like;
+            $params[':search_description'] = $like;
+            $params[':search_name'] = $like;
+            $params[':search_username'] = $like;
+        }
+
+        return [implode(' AND ', $where), $params];
     }
 
     /** @return array<string, int> */

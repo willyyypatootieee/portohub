@@ -8,6 +8,8 @@ Data kartu karya pada halaman utama diambil dari proyek creator yang sudah berst
 
 - Landing page responsif dengan hero, koleksi karya, profil kreator, dan call to action
 - Grid karya dinamis dari proyek creator yang published (`studio_projects`)
+- Halaman eksplorasi `/explore/` untuk menjelajah semua karya published, dengan pencarian proyek **dan** creator serta filter kategori (semuanya di sisi server sehingga URL bisa dibagikan dan tetap jalan tanpa JavaScript)
+- Halaman detail proyek `/project/{id}/` berisi galeri media (gambar, GIF, video, PDF), info creator, dan karya lain dari creator yang sama
 - Creator studio untuk membuat, mengubah, dan menghapus proyek beserta medianya
 - Filter kategori dan pencarian karya pada landing page
 - Tema terang/gelap dan menu navigasi untuk perangkat kecil
@@ -38,6 +40,8 @@ portohub/
 │   │   ├── cv.php                    Preview/unduh CV milik sendiri
 │   │   ├── analytics.php             Ringkasan
 │   │   └── logout.php
+│   ├── explore/index.php             Eksplorasi karya + pencarian & filter
+│   ├── project/index.php             Detail satu proyek + galeri media
 │   └── portfolio/index.php           Portofolio publik satu creator
 ├── app/                              Backend aplikasi (tidak diakses browser)
 │   ├── bootstrap.php                 Titik muat: session, helper, koneksi, repo
@@ -76,6 +80,9 @@ portohub/
 │   ├── layout/                       Header dan footer landing page
 │   ├── public/
 │   │   ├── portfolio.php             Tampilan portofolio publik
+│   │   ├── explore.php               Tampilan halaman eksplorasi
+│   │   ├── project.php               Tampilan detail proyek
+│   │   ├── not-found.php             Tampilan 404 halaman publik
 │   │   ├── auth/                     Tampilan login dan register
 │   │   └── sections/                 Bagian-bagian landing page
 │   ├── creator/                      Tampilan creator studio
@@ -106,7 +113,7 @@ portohub/
 - **Route / URL (web root):** semua file yang diakses browser ada di `public/`.
   Contoh `public/studio/projects.php` melayani `/studio/projects.php`.
 - **End-user (pengunjung):** tampilan di `views/public/` + `views/layout/`,
-  CSS di `public.css`, logika data lewat `PortfolioRepository`.
+  CSS di `public.css`, logika data lewat `StudioRepository`.
 - **Creator studio (backend):** tampilan di `views/creator/`, CSS di
   `studio.css`, logika lewat `StudioController` + `StudioRepository`.
 - **Auth:** alur di `AuthController` + `AuthenticationService`, tampilan di

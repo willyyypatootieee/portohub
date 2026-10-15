@@ -1,0 +1,367 @@
+/* =============================================================================
+   pages/public-explore.css
+   Halaman eksplorasi karya (pencarian + filter) dan pesan not-found.
+   Dipakai juga oleh halaman detail proyek untuk kartu "More from …".
+   ============================================================================= */
+
+.explore-hero {
+    padding: 70px 0 8px;
+}
+
+.explore-hero h1 {
+    margin: 8px 0 0;
+    font-size: clamp(46px, 8vw, 88px);
+    line-height: .94;
+}
+
+.explore-hero h1 em {
+    font-style: italic;
+}
+
+.explore-hero-intro {
+    max-width: 560px;
+    margin: 20px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.explore.section {
+    padding-top: 34px;
+}
+
+/* -- Toolbar: pencarian + tab --------------------------------------------- */
+
+.explore-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.explore-search {
+    width: 100%;
+    max-width: 420px;
+    min-height: 42px;
+    padding: 0 12px;
+    border-color: var(--line);
+}
+
+.explore-search input {
+    font-size: 12px;
+}
+
+.explore-submit {
+    min-height: 42px;
+}
+
+.explore-tabs {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    padding: 3px;
+    background: var(--soft-paper);
+    border: 1px solid var(--soft-line);
+    border-radius: 4px;
+}
+
+.explore-tab {
+    padding: 8px 18px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 3px;
+    transition: color .15s, background .15s;
+}
+
+.explore-tab:hover {
+    color: var(--ink);
+}
+
+.explore-tab.is-active {
+    color: #fff;
+    background: var(--purple);
+    box-shadow: 2px 2px 0 var(--line);
+}
+
+/* -- Filter kategori ------------------------------------------------------- */
+
+.explore-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 18px;
+}
+
+.chip {
+    padding: 7px 13px;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    transition: background .15s, color .15s;
+}
+
+.chip:hover {
+    background: var(--soft-paper);
+}
+
+.chip.is-active {
+    color: #fff;
+    background: var(--ink);
+}
+
+/* -- Baris ringkasan hasil ------------------------------------------------- */
+
+.explore-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 22px 0 18px;
+}
+
+.explore-meta p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.explore-meta strong {
+    color: var(--ink);
+}
+
+.explore-reset {
+    flex: 0 0 auto;
+    color: var(--purple);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.explore-reset:hover {
+    text-decoration: underline;
+}
+
+/* -- Kartu karya pada grid eksplorasi -------------------------------------- */
+
+.explore .work-details h3 {
+    font-size: 13px;
+}
+
+.explore .work-details p {
+    font-size: 10px;
+}
+
+.explore .work-details a:hover {
+    color: var(--purple);
+    text-decoration: none;
+}
+
+.work-cover-link {
+    display: block;
+    height: 100%;
+}
+
+.work-view-hint {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    padding: 5px 9px;
+    color: var(--ink);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .2s, transform .2s;
+}
+
+.work-card:hover .work-view-hint {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* -- Kartu creator --------------------------------------------------------- */
+
+.creator-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.creator-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 4px 4px 0 var(--line);
+    transition: transform .18s, box-shadow .18s;
+}
+
+.creator-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--line);
+}
+
+.creator-card-cover {
+    display: grid;
+    aspect-ratio: 2.4;
+    place-items: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #506d80, #172634);
+    border-bottom: 1px solid var(--line);
+}
+
+.creator-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.creator-card-initials {
+    color: #fff;
+    font-family: var(--serif);
+    font-size: 46px;
+}
+
+.creator-card-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+}
+
+.creator-card-body h3 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 20px;
+    letter-spacing: -.6px;
+}
+
+.creator-card-body h3 a:hover {
+    color: var(--purple);
+}
+
+.creator-badge {
+    display: grid;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+
+.creator-card-headline {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.creator-card-stats {
+    margin: 0 0 0 auto;
+    color: var(--muted);
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+/* -- Hasil kosong ---------------------------------------------------------- */
+
+.explore-empty {
+    padding: 64px 24px;
+    text-align: center;
+    background: var(--panel);
+    border: 1px dashed var(--soft-line);
+    border-radius: 4px;
+}
+
+.explore-empty strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 26px;
+}
+
+.explore-empty p {
+    max-width: 420px;
+    margin: 8px auto 22px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+/* -- Halaman tidak ditemukan ---------------------------------------------- */
+
+.public-notice {
+    padding: 96px 0;
+}
+
+.public-notice h1 {
+    margin: 6px 0 14px;
+    font-size: clamp(40px, 6vw, 64px);
+}
+
+.public-notice-text {
+    max-width: 480px;
+    margin: 0 0 26px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.public-notice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .creator-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .explore-tabs {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .explore-hero {
+        padding-top: 48px;
+    }
+
+    .creator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .explore-search {
+        max-width: none;
+    }
+
+    .explore-submit {
+        flex: 1 1 100%;
+    }
+
+    .explore-tabs {
+        width: 100%;
+    }
+
+    .explore-tab {
+        flex: 1;
+        text-align: center;
+    }
+
+    .public-notice {
+        padding: 64px 0;
+    }
+}
