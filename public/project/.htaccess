@@ -1,0 +1,6 @@
+# Portfolio publik: URL cantik /project/{id} diarahkan ke index.php.
+RewriteEngine On
+RewriteBase /project/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9]+)/?$ index.php?id=$1 [L,QSA]

@@ -18,5 +18,11 @@ RewriteEngine On
 # dibuka dari subfolder maupun virtual host.
 RewriteRule ^assets(?:/|$) - [L]
 
+# URL cantik untuk halaman detail proyek dan portofolio publik. Aturan ini
+# ditulis di sini karena per-dir .htaccess di public/ tidak selalu diproses
+# ulang setelah rewrite root pada instalasi subfolder XAMPP/Laragon.
+RewriteRule ^project/([0-9]+)/?$ public/project/index.php?id=$1 [L,QSA]
+RewriteRule ^portfolio/([a-z0-9-]+)/?$ public/portfolio/index.php?user=$1 [L,QSA,NC]
+
 # Semua route aplikasi lainnya dilayani oleh folder public/.
 RewriteRule ^(.*)$ public/$1 [L]

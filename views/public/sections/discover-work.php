@@ -6,7 +6,7 @@
                 <h2>Discover remarkable work</h2>
                 <p class="section-intro">A daily selection of standout projects from independent creatives.</p>
             </div>
-            <a class="button button-secondary" href="#portfolio-grid">View all work <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="<?= escape(appUrl('/explore/')) ?>">View all work <span aria-hidden="true">→</span></a>
         </div>
 
         <div class="work-controls">
