@@ -75,7 +75,9 @@ if (!$studioRepository->hasRequiredSchema()) {
     http_response_code(503);
     exit(
         'Struktur creator studio belum tersedia. '
-        . 'Import <code>database/creator-studio.sql</code> terlebih dahulu.'
+        . 'Import <code>database/creator-studio.sql</code> terlebih dahulu. '
+        . 'Untuk database lama, jalankan juga '
+        . '<code>database/migrations/2026-10-tambah-kolom-superadmin.sql</code>.'
     );
 }
 

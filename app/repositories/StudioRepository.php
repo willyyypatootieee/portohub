@@ -13,8 +13,8 @@ final class StudioRepository
     }
 
     /**
-     * Memeriksa tabel creator tanpa melakukan perubahan struktur database.
-     * Struktur tabel dikelola lewat file SQL di folder database/.
+     * Memeriksa tabel dan kolom creator tanpa melakukan perubahan struktur
+     * database. Struktur tabel dikelola lewat file SQL di folder database/.
      */
     public function hasRequiredSchema(): bool
     {
@@ -22,6 +22,13 @@ final class StudioRepository
             'users',
             'studio_projects',
             'media_assets',
+        ];
+
+        // Kolom yang ditambahkan lewat migrasi superadmin. Database lama yang
+        // belum dimigrasi akan gagal di sini, bukan dengan PDOException mentah.
+        $requiredColumns = [
+            'users' => ['is_active'],
+            'studio_projects' => ['is_hidden'],
         ];
 
         $placeholders = implode(', ', array_fill(0, count($requiredTables), '?'));
@@ -33,7 +40,27 @@ final class StudioRepository
         );
         $statement->execute($requiredTables);
 
-        return (int) $statement->fetchColumn() === count($requiredTables);
+        if ((int) $statement->fetchColumn() !== count($requiredTables)) {
+            return false;
+        }
+
+        foreach ($requiredColumns as $table => $columns) {
+            $parameterPlaceholders = implode(', ', array_fill(0, count($columns), '?'));
+            $columnStatement = $this->database->prepare(
+                'SELECT COUNT(*)
+                 FROM information_schema.columns
+                 WHERE table_schema = DATABASE()
+                   AND table_name = ?
+                   AND column_name IN (' . $parameterPlaceholders . ')'
+            );
+            $columnStatement->execute(array_merge([$table], $columns));
+
+            if ((int) $columnStatement->fetchColumn() !== count($columns)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** @return array<string, mixed>|null */
