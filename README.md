@@ -290,6 +290,44 @@ Dashboard admin berada di `/admin/`, misalnya `http://portohub.test/admin/`.
 
 Laragon standar juga biasanya menggunakan pengguna MySQL `root` tanpa kata sandi. Gunakan file `.env` bila konfigurasi Laragon Anda berbeda.
 
+### Izin folder upload (XAMPP/Laragon)
+
+Aplikasi menulis berkas upload ke dua folder di dalam proyek:
+
+| Folder | Isi |
+| --- | --- |
+| `assets/uploads` | Media proyek (gambar, GIF, video, PDF) |
+| `storage/cv` | CV creator (PDF) |
+
+Keduanya harus dapat **ditulis oleh pengguna yang menjalankan Apache**. Aplikasi
+membuat folder yang belum ada secara otomatis, tetapi tidak dapat mengubah izin
+folder yang sudah ada. Jika upload gagal dengan pesan "tidak dapat ditulis oleh
+web server", perbaiki izinnya satu kali.
+
+**Windows (XAMPP/Laragon bawaan).** Apache berjalan sebagai pengguna yang sama
+dengan Anda, sehingga biasanya sudah bisa menulis dan tidak ada langkah
+tambahan. Bila tetap gagal, klik kanan folder → **Properties** → tab
+**Security** → beri izin **Modify** kepada pengguna Anda.
+
+**Linux/macOS (XAMPP di `/opt/lampp`, atau Laragon di Wine).** Samakan
+kepemilikan folder dengan pengguna Apache (`daemon` pada XAMPP Linux, atau
+`www-data` pada paket distro):
+
+```bash
+# XAMPP Linux biasanya memakai pengguna "daemon".
+sudo chown -R daemon:daemon /opt/lampp/htdocs/portohub/assets/uploads
+sudo chown -R daemon:daemon /opt/lampp/htdocs/portohub/storage
+sudo chmod -R 775 /opt/lampp/htdocs/portohub/assets/uploads
+sudo chmod -R 775 /opt/lampp/htdocs/portohub/storage
+```
+
+Untuk Laragon di Linux/macOS atau paket Apache distro, ganti `daemon:daemon`
+dengan `www-data:www-data`. Bila proyek berada di luar web root (Virtual Host),
+sesuaikan path di atas dengan lokasi proyek Anda.
+
+Folder `storage/` sengaja menghindari `chmod 777`: izin `775` dengan pemilik
+yang benar sudah cukup dan lebih aman.
+
 ## Menjalankan dengan Docker
 
 Docker menjalankan tiga layanan: PHP Apache, MySQL, dan phpMyAdmin.
@@ -324,7 +362,7 @@ Database awal diimpor otomatis ketika volume MySQL dibuat pertama kali dari `dat
 docker compose down
 ```
 
-### Izin folder upload
+### Izin folder upload (Docker)
 
 Aplikasi menulis berkas upload ke dua folder: `assets/uploads` (media proyek) dan
 `storage/cv` (CV creator). Karena keduanya di-bind mount dari host, Apache

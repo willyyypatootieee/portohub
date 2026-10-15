@@ -47,8 +47,17 @@ final class MediaUploadService
         $storedName = bin2hex(random_bytes(16)) . '.' . $extension;
         $targetPath = $this->config['directory'] . '/' . $storedName;
 
-        if (!move_uploaded_file($temporaryPath, $targetPath)) {
-            throw new RuntimeException('Berkas tidak dapat disimpan. Silakan coba lagi.');
+        // Panggilan ini memancarkan warning PHP bila gagal (mis. izin folder).
+        // Warning disembunyikan agar pengguna menerima pesan yang jelas, dan
+        // penyebabnya dicatat supaya mudah didiagnosis.
+        if (!@move_uploaded_file($temporaryPath, $targetPath)) {
+            $reason = error_get_last()['message'] ?? 'penyebab tidak diketahui';
+            error_log('PortfolioHub: gagal menyimpan upload ke ' . $targetPath . ' — ' . $reason);
+
+            throw new RuntimeException(
+                'Berkas tidak dapat disimpan. Pastikan folder penyimpanan dapat ditulis '
+                . 'oleh web server, lalu coba lagi.'
+            );
         }
 
         return [
@@ -105,8 +114,21 @@ final class MediaUploadService
 
     private function createDirectoryIfMissing(): void
     {
-        if (!is_dir($this->config['directory'])) {
-            mkdir($this->config['directory'], 0755, true);
+        $directory = $this->config['directory'];
+
+        if (!is_dir($directory) && !@mkdir($directory, 0775, true) && !is_dir($directory)) {
+            throw new RuntimeException(
+                'Folder penyimpanan "' . $directory . '" tidak dapat dibuat. '
+                . 'Pastikan folder storage/ dapat ditulis oleh pengguna web server.'
+            );
+        }
+
+        if (!is_writable($directory)) {
+            throw new RuntimeException(
+                'Folder penyimpanan "' . $directory . '" tidak dapat ditulis oleh web server. '
+                . 'Di XAMPP/Laragon, izinkan akses tulis pada folder tersebut '
+                . '(lihat README bagian "Izin folder upload").'
+            );
         }
     }
 }
