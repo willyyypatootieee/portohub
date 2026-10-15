@@ -12,8 +12,10 @@
 @import url("pages/creator/projects.css");
 @import url("pages/creator/media.css");
 @import url("pages/creator/settings.css");
-@import url("pages/creator/analytics.css");
 @import url("pages/creator/responsive.css");
 
 /* Monitoring superadmin */
 @import url("pages/superadmin.css");
+
+/* Komponen bersama: flipbook CV di halaman Profil & CV */
+@import url("components/cv-flipbook.css");

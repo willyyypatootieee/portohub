@@ -30,6 +30,34 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
 
         <p class="portfolio-bio"><?= nl2br(escape($creator['bio'])) ?></p>
 
+        <?php if (!empty($hasCv)): ?>
+            <div class="portfolio-actions">
+                <?php /* Tombol CV: membuka flipbook, bukan mengunduh. */ ?>
+                <button
+                    class="public-cv-cta"
+                    type="button"
+                    data-cv-open
+                    data-cv-src="<?= escape($cvUrl) ?>"
+                    data-cv-title="<?= escape($cvTitle) ?>"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H14l6 6v9.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5Z"/>
+                        <path d="M14 3v6h6"/>
+                        <path d="M8.5 13.5h7M8.5 16.5h4.5"/>
+                    </svg>
+                    Lihat CV
+                </button>
+                <a class="public-cv-download" href="<?= escape($cvDownloadUrl) ?>">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v12"/>
+                        <path d="m7.5 10.5 4.5 4.5 4.5-4.5"/>
+                        <path d="M4.5 19.5h15"/>
+                    </svg>
+                    Unduh PDF
+                </a>
+            </div>
+        <?php endif; ?>
+
         <dl class="portfolio-stats">
             <div>
                 <dt>Published works</dt>

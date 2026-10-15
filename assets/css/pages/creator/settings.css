@@ -1,42 +1,169 @@
 /* =============================================================================
    pages/creator/settings.css
-   Halaman pengaturan profil creator: navigasi samping dan form.
+   Halaman Profil & CV creator: kartu pratinjau profil, form identitas,
+   pengelolaan CV, dan flipbook.
    ============================================================================= */
 
-.settings-layout {
+/* -- Tata letak: pratinjau identitas di samping form ----------------------- */
+
+.profile-layout {
     display: grid;
-    grid-template-columns: 175px minmax(0, 1fr);
-    gap: 30px;
-    max-width: 880px;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 24px;
+    max-width: 980px;
+    align-items: start;
 }
 
-.settings-nav {
+/* -- Kartu pratinjau profil ------------------------------------------------ */
+
+.profile-preview {
     display: grid;
-    align-content: start;
-    gap: 5px;
+    justify-items: center;
+    gap: 6px;
+    padding: 26px 20px 20px;
+    text-align: center;
+    background: var(--soft-paper);
+    border: 1px solid var(--line);
+    box-shadow: 4px 4px 0 var(--line);
 }
 
-.settings-nav a {
-    padding: 10px;
+.profile-preview-avatar {
+    display: grid;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 6px;
+    place-items: center;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    background: var(--purple);
+    border-radius: 50%;
+}
+
+.profile-preview-name {
+    font-size: 15px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.profile-preview-handle {
     color: var(--muted);
     font-size: 10px;
 }
 
-.settings-nav a.is-active {
-    color: var(--ink);
-    font-weight: 700;
-    background: var(--yellow);
-    border: 1px solid var(--line);
-    box-shadow: 2px 2px 0 var(--line);
+.profile-preview-headline {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
 }
+
+.profile-preview-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 0;
+    margin: 12px 0 0;
+    border-top: 1px solid var(--soft-line);
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.profile-preview-stats div {
+    display: grid;
+    gap: 3px;
+}
+
+.profile-preview-stats dt {
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+}
+
+.profile-preview-stats dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.profile-preview-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.profile-preview-link svg {
+    flex: none;
+    width: 13px;
+    height: 13px;
+}
+
+.profile-preview-stats dd.is-ready {
+    color: #2f7a4d;
+}
+
+.profile-preview-stats dd.is-missing {
+    color: var(--muted);
+}
+
+/* Ikon SVG pada tombol: garis, mengikuti warna teks tombol. */
+.intro-action,
+.cv-icon-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.intro-action svg,
+.cv-icon-button svg,
+.cv-delete svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cv-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* -- Form identitas -------------------------------------------------------- */
 
 .settings-form {
     grid-template-columns: 1fr 1fr;
 }
 
-/* Panel CV di halaman User settings */
+.panel-badge {
+    padding: 3px 9px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    border: 1px solid var(--line);
+}
+
+.panel-badge.is-warning {
+    background: transparent;
+    color: var(--muted);
+    border-style: dashed;
+}
+
+/* -- Panel CV -------------------------------------------------------------- */
+
 .cv-panel {
-    max-width: 880px;
+    max-width: 980px;
     margin-top: 24px;
 }
 
@@ -119,22 +246,31 @@
     border-top: 1px solid var(--soft-line);
 }
 
-.cv-upload label {
+.cv-drop {
     display: grid;
     gap: 7px;
     font-size: 10px;
 }
 
-.cv-upload label strong {
+.cv-drop strong {
     font-size: 12px;
 }
 
-.cv-upload label span {
+.cv-drop span {
     color: var(--muted);
     font-size: 9px;
 }
 
-@media (max-width: 620px) {
+/* -- Flipbook CV ----------------------------------------------------------- */
+
+/* Gaya flipbook ada di components/cv-flipbook.css karena dipakai bersama
+   halaman studio dan portofolio publik. */
+
+@media (max-width: 820px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
     .cv-card {
         grid-template-columns: auto 1fr;
     }
@@ -146,5 +282,9 @@
 
     .cv-upload {
         grid-template-columns: 1fr;
+    }
+
+    .cv-flipbook-modal {
+        padding: 10px;
     }
 }

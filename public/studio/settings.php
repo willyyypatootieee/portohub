@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page = 'settings';
-$pageTitle = 'User settings';
+$pageTitle = 'Profile & CV';
+$counts = $studioRepository->studioCounts($userId);
 
 require dirname(__DIR__, 2) . '/views/creator/settings.php';

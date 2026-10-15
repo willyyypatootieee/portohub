@@ -15,3 +15,6 @@
 @import url("pages/public-explore.css");
 @import url("pages/public-project.css");
 @import url("pages/public-portfolio.css");
+
+/* Komponen bersama: flipbook CV pada portofolio publik */
+@import url("components/cv-flipbook.css");

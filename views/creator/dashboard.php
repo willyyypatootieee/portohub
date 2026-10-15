@@ -59,7 +59,6 @@ $mediaCount = count($studioRepository->getMedia($userId));
                 <h2>Portfolio activity</h2>
                 <p>Your studio collection at a glance</p>
             </div>
-            <a href="<?= escape(appUrl('/studio/analytics.php')) ?>">Last 30 days</a>
         </div>
 
         <div class="line-chart" aria-label="Illustrative portfolio activity chart">

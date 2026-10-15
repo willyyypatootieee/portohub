@@ -52,7 +52,19 @@ foreach ($projects as $index => $project) {
 
 $pageTitle = $creator['display_name'] . ' — Portfolio';
 $bodyClass = 'public-portfolio';
-$pageScripts = ['/assets/js/lightbox.js'];
+
+// CV dipublikasikan bila creator sudah mengunggahnya. Tombolnya membuka
+// flipbook, yang memuat PDF lewat /portfolio/cv.php.
+$hasCv = !empty($creator['cv_filename']);
+$cvUrl = appUrl('/portfolio/cv.php?user=' . rawurlencode((string) $creator['username']));
+$cvDownloadUrl = $cvUrl . '&download=1';
+$cvTitle = (string) ($creator['cv_original_name'] ?? '') !== ''
+    ? (string) $creator['cv_original_name']
+    : 'Curriculum vitae.pdf';
+
+$pageScripts = $hasCv
+    ? ['/assets/js/cv-flipbook.js', '/assets/js/lightbox.js']
+    : ['/assets/js/lightbox.js'];
 
 require dirname(__DIR__, 2) . '/views/layout/header.php';
 require dirname(__DIR__, 2) . '/views/public/portfolio.php';

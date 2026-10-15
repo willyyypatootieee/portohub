@@ -23,12 +23,22 @@
     }
 
     .sidebar-toggle {
-        display: block;
+        display: grid;
         padding: 0;
         margin-right: 14px;
-        font-size: 19px;
+        place-items: center;
+        color: var(--ink);
         background: none;
         border: 0;
+    }
+
+    .sidebar-toggle svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.9;
+        stroke-linecap: round;
     }
 
     .studio-topbar {
@@ -58,8 +68,7 @@
         font-size: 12px;
     }
 
-    .topbar-actions .button-outline,
-    .logout-link {
+    .topbar-actions .button-outline {
         display: none;
     }
 
