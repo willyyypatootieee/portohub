@@ -140,6 +140,19 @@
     width: 356px;
     height: 375px;
     transform: rotate(-1.5deg);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+/* Kartu unggulan bisa diklik: seluruh kartu menjadi tautan. */
+.gallery-card-main:hover {
+    transform: rotate(-1.5deg) translate(-3px, -3px);
+    box-shadow: 8px 8px 0 rgb(0 0 0 / .16);
+}
+
+.gallery-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
 }
 
 .gallery-card-main img {
@@ -157,6 +170,8 @@
     color: #8a8077;
     font-size: 8px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
 }
 
 .gallery-card-main strong {

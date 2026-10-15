@@ -15,6 +15,13 @@ $pageTitle = SITE_NAME . ' — Great work deserves to be seen';
 $showcaseProjects = $studioRepository->getShowcaseProjects();
 $showcaseCategories = $studioRepository->getShowcaseCategories();
 
+// Data nyata untuk hero dan bagian "Meet the creator": jumlah creator,
+// proyek unggulan, creator unggulan, dan avatar komunitas.
+$creatorCount = $studioRepository->countPublicCreators();
+$featuredProject = $studioRepository->getFeaturedProject();
+$featuredCreator = $studioRepository->getFeaturedCreator();
+$creatorFaces = $studioRepository->getCreatorFaces(4);
+
 require dirname(__DIR__) . '/views/layout/header.php';
 require dirname(__DIR__) . '/views/public/sections/hero.php';
 require dirname(__DIR__) . '/views/public/sections/discover-work.php';

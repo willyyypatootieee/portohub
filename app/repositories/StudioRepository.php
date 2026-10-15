@@ -728,6 +728,98 @@ final class StudioRepository
         return (int) $statement->fetchColumn();
     }
 
+    /**
+     * Jumlah creator (pengguna aktif) untuk statistik landing page.
+     *
+     * Dihitung langsung dari tabel users supaya angka di beranda selalu
+     * mengikuti data nyata, bukan angka karangan.
+     */
+    public function countPublicCreators(): int
+    {
+        $statement = $this->database->query('SELECT COUNT(*) FROM users WHERE is_active = 1');
+
+        return (int) $statement->fetchColumn();
+    }
+
+    /**
+     * Kreator unggulan untuk bagian "Meet the creator".
+     *
+     * Dipilih dari pengguna yang punya minimal satu proyek published, diurut
+     * berdasarkan jumlah proyek lalu aktivitas terakhir. Mengembalikan null
+     * bila belum ada karya published sama sekali.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getFeaturedCreator(): ?array
+    {
+        $statement = $this->database->query(
+            "SELECT u.id, u.display_name, u.username, u.headline, u.bio,
+                    COUNT(p.id) AS project_count
+             FROM users u
+             INNER JOIN studio_projects p ON p.user_id = u.id
+             WHERE p.status = 'published' AND p.is_hidden = 0 AND u.is_active = 1
+             GROUP BY u.id
+             ORDER BY project_count DESC, MAX(p.updated_at) DESC, u.created_at DESC
+             LIMIT 1"
+        );
+        $creator = $statement->fetch();
+
+        if ($creator === false) {
+            return null;
+        }
+
+        $creatorId = (int) $creator['id'];
+        $creator['cover'] = $this->findCreatorCover($creatorId);
+
+        return $creator;
+    }
+
+    /**
+     * Proyek unggulan untuk kartu "FEATURED" di hero landing page.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getFeaturedProject(): ?array
+    {
+        $statement = $this->database->query(
+            "SELECT p.id, p.title, p.category, u.display_name, u.username
+             FROM studio_projects p
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE p.status = 'published' AND p.is_hidden = 0 AND u.is_active = 1
+             ORDER BY p.featured DESC, p.sort_order ASC, p.updated_at DESC, p.id DESC
+             LIMIT 1"
+        );
+        $project = $statement->fetch();
+
+        if ($project === false) {
+            return null;
+        }
+
+        $project['cover'] = $this->findProjectCover((int) $project['id']);
+
+        return $project;
+    }
+
+    /**
+     * Beberapa creator aktif untuk deretan avatar di hero landing page.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getCreatorFaces(int $limit = 4): array
+    {
+        $statement = $this->database->prepare(
+            'SELECT display_name, username, avatar_filename
+             FROM users
+             WHERE is_active = 1
+             ORDER BY created_at DESC, id DESC
+             LIMIT :limit'
+        );
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
     public function setUserActive(int $userId, bool $active): void
     {
         $statement = $this->database->prepare('UPDATE users SET is_active = :is_active WHERE id = :id');

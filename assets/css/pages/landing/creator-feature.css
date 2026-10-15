@@ -24,6 +24,7 @@
 }
 
 .creator-image img {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
@@ -49,6 +50,8 @@
 .creator-copy h2 {
     margin-bottom: 21px;
     font-size: 47px;
+    line-height: 1.02;
+    overflow-wrap: anywhere;
 }
 
 .creator-copy blockquote {
