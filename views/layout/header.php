@@ -48,7 +48,41 @@
                         <path d="M20.4 14.8A8.6 8.6 0 0 1 9.2 3.6a8.7 8.7 0 1 0 11.2 11.2Z"/>
                     </svg>
                 </button>
-                <a class="login-link" href="<?= escape(appUrl('/login/')) ?>" data-auth-open="login">Log in</a>
+                <?php
+                $currentUser = null;
+                $currentUserId = currentUserId();
+
+                if ($currentUserId !== null && isset($studioRepository)) {
+                    $currentUser = $studioRepository->findUser($currentUserId);
+                }
+
+                $currentUserName = $currentUser !== null
+                    ? (string) ($currentUser['display_name'] ?: $currentUser['username'])
+                    : null;
+                ?>
+                <?php if ($currentUser !== null): ?>
+                    <div class="account-menu" data-account-menu>
+                        <button
+                            class="account-trigger"
+                            type="button"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            data-account-trigger
+                        >
+                            <span class="account-avatar" aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($currentUserName, 0, 1))) ?></span>
+                            <span class="account-name"><?= escape($currentUserName) ?></span>
+                        </button>
+                        <div class="account-dropdown" data-account-dropdown hidden>
+                            <p class="account-dropdown-label">Masuk sebagai</p>
+                            <p class="account-dropdown-user"><?= escape($currentUserName) ?></p>
+                            <a href="<?= escape(appUrl('/studio/')) ?>">Creator studio</a>
+                            <a href="<?= escape(appUrl('/portfolio/' . rawurlencode((string) $currentUser['username']) . '/')) ?>">Portofolio publik</a>
+                            <a class="account-logout" href="<?= escape(appUrl('/studio/logout.php')) ?>">Keluar</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a class="login-link" href="<?= escape(appUrl('/login/')) ?>" data-auth-open="login">Log in</a>
+                <?php endif; ?>
                 <a class="button button-small" href="<?= escape(appUrl('/studio/')) ?>">Creator studio</a>
             </div>
         </div>

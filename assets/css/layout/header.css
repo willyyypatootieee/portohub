@@ -76,6 +76,101 @@
     color: var(--purple);
 }
 
+/* Menu akun: nama creator yang sedang login di navbar. */
+.account-menu {
+    position: relative;
+}
+
+.account-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.account-trigger:hover {
+    box-shadow: 2px 2px 0 var(--line);
+    transform: translate(-1px, -1px);
+}
+
+.account-avatar {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--purple);
+    border-radius: 50%;
+}
+
+.account-name {
+    max-width: 130px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 40;
+    display: grid;
+    min-width: 190px;
+    padding: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    box-shadow: 4px 4px 0 var(--line);
+}
+
+.account-dropdown[hidden] {
+    display: none;
+}
+
+.account-dropdown-label {
+    margin: 4px 8px 0;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.account-dropdown-user {
+    margin: 2px 8px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.account-dropdown a {
+    padding: 7px 8px;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.account-dropdown a:hover {
+    background: color-mix(in srgb, var(--purple) 12%, transparent);
+}
+
+.account-dropdown .account-logout {
+    color: #b62d35;
+}
+
 .navigation-actions {
     display: flex;
     align-items: center;

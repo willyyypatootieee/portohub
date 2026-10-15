@@ -26,6 +26,41 @@
         });
     }
 
+    // Menu akun (nama creator yang sedang login)
+    const accountMenu = document.querySelector('[data-account-menu]');
+
+    if (accountMenu) {
+        const accountTrigger = accountMenu.querySelector('[data-account-trigger]');
+        const accountDropdown = accountMenu.querySelector('[data-account-dropdown]');
+
+        if (accountTrigger && accountDropdown) {
+            function closeAccountMenu() {
+                accountDropdown.hidden = true;
+                accountTrigger.setAttribute('aria-expanded', 'false');
+            }
+
+            accountTrigger.addEventListener('click', function (event) {
+                event.stopPropagation();
+                const willOpen = accountDropdown.hidden;
+                accountDropdown.hidden = !willOpen;
+                accountTrigger.setAttribute('aria-expanded', String(willOpen));
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!accountMenu.contains(event.target)) {
+                    closeAccountMenu();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeAccountMenu();
+                    accountTrigger.focus();
+                }
+            });
+        }
+    }
+
     let activeCategory = 'all';
     function updateVisibleCards() {
         const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
