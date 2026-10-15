@@ -39,7 +39,9 @@ final class AuthController
         $user = $this->authentication->attempt($values['email'], $password);
 
         if ($user === null) {
-            $errors['login'] = 'Email atau kata sandi tidak tepat.';
+            $errors['login'] = $this->authentication->isDeactivatedAccount($values['email'], $password)
+                ? 'Akun Anda dinonaktifkan oleh pengelola platform.'
+                : 'Email atau kata sandi tidak tepat.';
             return $this->respondToForm($errors, $values);
         }
 

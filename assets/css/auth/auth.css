@@ -82,6 +82,15 @@ body.auth-page {
     text-decoration: underline;
 }
 
+/* Tautan sekunder menuju pintu masuk superadmin. Sengaja dibuat lebih redup
+   agar tidak mengganggu alur masuk pengguna biasa. */
+.auth-footer-admin {
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+    font-size: 11px;
+}
+
 @media (max-width: 420px) {
     .auth-card {
         padding: 26px 20px 22px;

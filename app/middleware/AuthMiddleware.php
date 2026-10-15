@@ -27,6 +27,10 @@ final class AuthMiddleware
 
     /**
      * Mengembalikan id creator yang sedang login, atau redirect bila belum.
+     *
+     * Selain memastikan session masih valid, pemeriksaan menolak akun yang
+     * dinonaktifkan pengelola platform supaya mereka tidak bisa memakai studio
+     * meski session lamanya masih hidup.
      */
     public function requireSessionUserId(): int
     {
@@ -36,9 +40,16 @@ final class AuthMiddleware
             $this->reject('Silakan masuk untuk mengakses creator studio.');
         }
 
-        if (!$this->userStillExists($userId)) {
+        $user = $this->repository->findUser($userId);
+
+        if ($user === null) {
             $this->forgetSession();
             $this->reject('Sesi Anda sudah berakhir. Silakan masuk kembali.');
+        }
+
+        if ((int) ($user['is_active'] ?? 1) === 0) {
+            $this->forgetSession();
+            $this->reject('Akun Anda dinonaktifkan oleh pengelola platform.');
         }
 
         return $userId;
@@ -63,16 +74,8 @@ final class AuthMiddleware
     }
 
     /**
-     * Memastikan akun masih ada. Berguna ketika user dihapus admin saat
-     * session-nya masih hidup.
-     */
-    private function userStillExists(int $userId): bool
-    {
-        return $this->repository->findUser($userId) !== null;
-    }
-
-    /**
-     * Menghapus data login dari session yang sudah tidak sah.
+     * Memastikan akun masih ada dan aktif. Berguna ketika user dihapus atau
+     * dinonaktifkan admin saat session-nya masih hidup.
      */
     private function forgetSession(): void
     {

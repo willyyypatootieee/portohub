@@ -33,12 +33,227 @@
 }
 
 .superadmin-page .metric-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .admin-description {
     margin-bottom: 30px;
     color: var(--muted);
+}
+
+/* Navigasi antar halaman superadmin. */
+.superadmin-page header nav a {
+    position: relative;
+    padding: 6px 2px;
+    color: var(--muted);
+    font-weight: 600;
+    transition: color .15s ease;
+}
+
+.superadmin-page header nav a:hover {
+    color: var(--ink);
+}
+
+.superadmin-page header nav a.is-active {
+    color: var(--ink);
+}
+
+.superadmin-page header nav a.is-active::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -3px;
+    left: 0;
+    height: 2px;
+    background: var(--purple);
+}
+
+/* Toolbar pencarian dan filter. */
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 13px;
+    margin-bottom: 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0 #d6d6d0;
+}
+
+.admin-search {
+    display: flex;
+    flex: 1 1 260px;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+}
+
+.admin-search span {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.admin-search input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0;
+    font-size: 11px;
+    background: transparent;
+    border: 0;
+    outline: none;
+}
+
+.admin-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 12px;
+    color: var(--muted);
+    font-size: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+}
+
+.admin-select select {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    outline: none;
+}
+
+.admin-reset {
+    padding: 0 6px;
+    color: var(--muted);
+    font-size: 10px;
+    text-decoration: underline;
+}
+
+/* Tabel monitoring: lencana status dan tombol aksi. */
+.status.visible {
+    background: #dcdcff;
+}
+
+.status.hidden {
+    color: #fff;
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
+.admin-table .is-actions {
+    text-align: right;
+}
+
+.admin-table .row-actions {
+    justify-content: flex-end;
+}
+
+.admin-table .row-actions a,
+.admin-table .row-actions button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 13px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0 var(--line);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.admin-table .row-actions a:hover,
+.admin-table .row-actions button:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--line);
+}
+
+.admin-table .row-actions button.button-danger {
+    color: #fff;
+    background: #b52d2d;
+    border-color: #7d1f1f;
+    box-shadow: 2px 2px 0 #7d1f1f;
+}
+
+.admin-table .row-actions button.button-danger:hover {
+    background: #9c2626;
+}
+
+.admin-table .row-actions button.button-secondary {
+    background: var(--soft-paper);
+}
+
+.is-hidden-row {
+    background: rgba(181, 45, 45, .05);
+}
+
+.is-hidden-row:hover {
+    background: rgba(181, 45, 45, .09);
+}
+
+.admin-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 15px;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 10px;
+    border-top: 1px solid var(--soft-line);
+}
+
+.admin-pagination a {
+    font-weight: 700;
+    color: var(--purple);
+}
+
+/* Dashboard: aktivitas creator berdampingan dengan aksi cepat. */
+.admin-split {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+    align-items: start;
+}
+
+.admin-quick {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-quick-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 13px;
+    color: var(--ink);
+    background: var(--soft-paper);
+    border: 1px solid var(--soft-line);
+    transition: border-color .15s ease, transform .15s ease;
+}
+
+.admin-quick-link:hover {
+    border-color: var(--purple);
+    transform: translateX(2px);
+}
+
+.admin-quick-link strong {
+    font-size: 12px;
+}
+
+.admin-quick-link span {
+    color: var(--muted);
+    font-size: 10px;
 }
 
 .superadmin-login {
@@ -69,6 +284,16 @@
     grid-template-columns: 1fr;
 }
 
+@media (max-width: 900px) {
+    .superadmin-page .metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-split {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 @media (max-width: 600px) {
     .superadmin-page main {
         width: min(100% - 32px, 960px);
@@ -76,10 +301,26 @@
     }
 
     .superadmin-page header {
-        padding: 0 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .superadmin-page header nav {
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
     .superadmin-page .metric-grid {
         grid-template-columns: 1fr;
+    }
+
+    .admin-toolbar {
+        padding: 11px;
+    }
+
+    .admin-search,
+    .admin-select {
+        flex: 1 1 100%;
     }
 }

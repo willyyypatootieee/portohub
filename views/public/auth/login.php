@@ -39,6 +39,7 @@
         </form>
 
         <p class="auth-footer">Belum punya akun? <a href="<?= escape(appUrl('/login/register/')) ?>">Daftar sekarang</a></p>
+        <p class="auth-footer auth-footer-admin">Pengelola platform? <a href="<?= escape(appUrl('/login/superadmin/')) ?>">Masuk sebagai superadmin</a></p>
     </main>
 </body>
 </html>

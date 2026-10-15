@@ -155,11 +155,23 @@ final class StudioRepository
         $statement->execute(['id' => $userId]);
     }
 
-    /** @return array<int, array<string, mixed>> */
-    public function getProjects(int $userId, ?string $status = null, string $search = ''): array
+    /**
+     * Proyek milik satu creator.
+     *
+     * Studio milik creator sendiri memakai $includeHidden = true agar proyek
+     * yang disembunyikan pengelola tetap terlihat (dengan penanda khusus).
+     * Halaman publik memakai $includeHidden = false supaya proyek yang
+     * disembunyikan tidak pernah ikut tampil.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getProjects(int $userId, ?string $status = null, string $search = '', bool $includeHidden = true): array
     {
         $sql = 'SELECT p.*, (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count FROM studio_projects p WHERE p.user_id = :user_id';
         $params = ['user_id' => $userId];
+        if (!$includeHidden) {
+            $sql .= ' AND p.is_hidden = 0';
+        }
         if ($status !== null && in_array($status, ['draft', 'published', 'archived'], true)) {
             $sql .= ' AND p.status = :status';
             $params['status'] = $status;
@@ -327,7 +339,7 @@ final class StudioRepository
                     (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count
              FROM studio_projects p
              INNER JOIN users u ON u.id = p.user_id
-             WHERE p.status = 'published'
+             WHERE p.status = 'published' AND p.is_hidden = 0
              ORDER BY p.featured DESC, p.sort_order ASC, p.updated_at DESC, p.id DESC
              LIMIT :limit"
         );
@@ -348,7 +360,7 @@ final class StudioRepository
         $statement = $this->database->query(
             "SELECT DISTINCT category
              FROM studio_projects
-             WHERE status = 'published' AND category <> ''
+             WHERE status = 'published' AND is_hidden = 0 AND category <> ''
              ORDER BY category ASC"
         );
         return array_column($statement->fetchAll(), 'category');
@@ -423,7 +435,7 @@ final class StudioRepository
             "SELECT p.*, u.display_name, u.username, u.headline
              FROM studio_projects p
              INNER JOIN users u ON u.id = p.user_id
-             WHERE p.id = :id AND p.status = 'published'
+             WHERE p.id = :id AND p.status = 'published' AND p.is_hidden = 0
              LIMIT 1"
         );
         $statement->execute(['id' => $projectId]);
@@ -448,6 +460,8 @@ final class StudioRepository
             'creators' => (int) $this->database->query('SELECT COUNT(*) FROM users')->fetchColumn(),
             'projects' => (int) $this->database->query('SELECT COUNT(*) FROM studio_projects')->fetchColumn(),
             'published' => (int) $this->database->query("SELECT COUNT(*) FROM studio_projects WHERE status = 'published'")->fetchColumn(),
+            'hidden' => (int) $this->database->query('SELECT COUNT(*) FROM studio_projects WHERE is_hidden = 1')->fetchColumn(),
+            'inactive' => (int) $this->database->query('SELECT COUNT(*) FROM users WHERE is_active = 0')->fetchColumn(),
             'assets' => (int) $this->database->query('SELECT COUNT(*) FROM media_assets')->fetchColumn(),
         ];
     }
@@ -455,7 +469,173 @@ final class StudioRepository
     /** @return array<int, array<string, mixed>> */
     public function recentCreatorActivity(): array
     {
-        return $this->database->query('SELECT u.display_name, u.email, COUNT(p.id) AS project_count, MAX(p.updated_at) AS last_activity FROM users u LEFT JOIN studio_projects p ON p.user_id = u.id GROUP BY u.id ORDER BY last_activity DESC, u.created_at DESC LIMIT 20')->fetchAll();
+        return $this->database->query('SELECT u.id, u.display_name, u.username, u.email, u.is_active, COUNT(p.id) AS project_count, MAX(p.updated_at) AS last_activity FROM users u LEFT JOIN studio_projects p ON p.user_id = u.id GROUP BY u.id ORDER BY last_activity DESC, u.created_at DESC LIMIT 20')->fetchAll();
+    }
+
+    /**
+     * Daftar pengguna untuk halaman monitoring superadmin.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function listUsers(string $search = '', string $status = 'all', int $limit = 50, int $offset = 0): array
+    {
+        [$where, $params] = $this->userFilters($search, $status);
+
+        $statement = $this->database->prepare(
+            'SELECT u.id, u.name, u.email, u.display_name, u.username, u.headline, u.is_active, u.created_at,
+                    (SELECT COUNT(*) FROM studio_projects p WHERE p.user_id = u.id) AS project_count,
+                    (SELECT COUNT(*) FROM studio_projects p WHERE p.user_id = u.id AND p.status = \'published\' AND p.is_hidden = 0) AS published_count
+             FROM users u
+             WHERE ' . $where . '
+             ORDER BY u.created_at DESC, u.id DESC
+             LIMIT :limit OFFSET :offset'
+        );
+        $this->bindParams($statement, $params);
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function countUsers(string $search = '', string $status = 'all'): int
+    {
+        [$where, $params] = $this->userFilters($search, $status);
+        $statement = $this->database->prepare('SELECT COUNT(*) FROM users u WHERE ' . $where);
+        $statement->execute($params);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    public function setUserActive(int $userId, bool $active): void
+    {
+        $statement = $this->database->prepare('UPDATE users SET is_active = :is_active WHERE id = :id');
+        $statement->bindValue('is_active', $active ? 1 : 0, PDO::PARAM_INT);
+        $statement->bindValue('id', $userId, PDO::PARAM_INT);
+        $statement->execute();
+    }
+
+    /**
+     * Seluruh proyek dari semua creator, untuk halaman konten superadmin.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function listAllProjects(string $search = '', string $status = 'all', string $visibility = 'all', int $limit = 60, int $offset = 0): array
+    {
+        [$where, $params] = $this->adminProjectFilters($search, $status, $visibility);
+
+        $statement = $this->database->prepare(
+            'SELECT p.id, p.title, p.category, p.status, p.is_hidden, p.featured, p.updated_at,
+                    u.id AS user_id, u.display_name, u.username, u.is_active,
+                    (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count
+             FROM studio_projects p
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE ' . $where . '
+             ORDER BY p.is_hidden DESC, p.updated_at DESC, p.id DESC
+             LIMIT :limit OFFSET :offset'
+        );
+        $this->bindParams($statement, $params);
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+        $projects = $statement->fetchAll();
+
+        foreach ($projects as $index => $project) {
+            $projects[$index]['cover'] = $this->findProjectCover((int) $project['id']);
+        }
+
+        return $projects;
+    }
+
+    public function countAllProjects(string $search = '', string $status = 'all', string $visibility = 'all'): int
+    {
+        [$where, $params] = $this->adminProjectFilters($search, $status, $visibility);
+        $statement = $this->database->prepare(
+            'SELECT COUNT(*)
+             FROM studio_projects p
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE ' . $where
+        );
+        $statement->execute($params);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    public function setProjectHidden(int $projectId, bool $hidden): void
+    {
+        $statement = $this->database->prepare('UPDATE studio_projects SET is_hidden = :is_hidden WHERE id = :id');
+        $statement->bindValue('is_hidden', $hidden ? 1 : 0, PDO::PARAM_INT);
+        $statement->bindValue('id', $projectId, PDO::PARAM_INT);
+        $statement->execute();
+    }
+
+    /**
+     * Filter bersama untuk daftar pengguna superadmin.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private function userFilters(string $search, string $status): array
+    {
+        $where = ['1 = 1'];
+        $params = [];
+
+        if ($status === 'active') {
+            $where[] = 'u.is_active = 1';
+        } elseif ($status === 'inactive') {
+            $where[] = 'u.is_active = 0';
+        }
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = '(u.display_name LIKE :search_name OR u.username LIKE :search_username OR u.email LIKE :search_email OR u.name LIKE :search_full)';
+            $params['search_name'] = $like;
+            $params['search_username'] = $like;
+            $params['search_email'] = $like;
+            $params['search_full'] = $like;
+        }
+
+        return [implode(' AND ', $where), $params];
+    }
+
+    /**
+     * Filter bersama untuk daftar proyek superadmin.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private function adminProjectFilters(string $search, string $status, string $visibility): array
+    {
+        $where = ['1 = 1'];
+        $params = [];
+
+        if (in_array($status, ['draft', 'published', 'archived'], true)) {
+            $where[] = 'p.status = :status';
+            $params['status'] = $status;
+        }
+
+        if ($visibility === 'hidden') {
+            $where[] = 'p.is_hidden = 1';
+        } elseif ($visibility === 'visible') {
+            $where[] = 'p.is_hidden = 0';
+        }
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = '(p.title LIKE :search_title OR p.category LIKE :search_category OR u.display_name LIKE :search_name OR u.username LIKE :search_username)';
+            $params['search_title'] = $like;
+            $params['search_category'] = $like;
+            $params['search_name'] = $like;
+            $params['search_username'] = $like;
+        }
+
+        return [implode(' AND ', $where), $params];
+    }
+
+    /** @param array<string, string> $params */
+    private function bindParams(\PDOStatement $statement, array $params): void
+    {
+        foreach ($params as $key => $value) {
+            $statement->bindValue(':' . $key, $value);
+        }
     }
 
     private function makeAvailableUsername(string $name): string

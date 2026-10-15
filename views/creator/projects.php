@@ -267,13 +267,19 @@
                 </thead>
                 <tbody>
                     <?php foreach ($projects as $projectIndex => $project): ?>
-                        <tr>
+                        <?php $isHidden = (int) ($project['is_hidden'] ?? 0) === 1; ?>
+                        <tr class="<?= $isHidden ? 'is-hidden-row' : '' ?>">
                             <td>
                                 <strong><?= escape($project['title']) ?></strong>
                                 <small><?= escape(mb_strimwidth((string) $project['description'], 0, 70, '…')) ?></small>
                             </td>
                             <td><?= escape($project['category']) ?></td>
-                            <td><span class="status <?= escape($project['status']) ?>"><?= escape($project['status']) ?></span></td>
+                            <td>
+                                <span class="status <?= escape($project['status']) ?>"><?= escape($project['status']) ?></span>
+                                <?php if ($isHidden): ?>
+                                    <span class="status hidden">Hidden by admin</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= (int) $project['media_count'] ?></td>
                             <?php if ($canReorder): ?>
                                 <td class="order-actions">

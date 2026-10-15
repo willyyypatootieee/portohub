@@ -26,5 +26,7 @@ DirectoryIndex index.php
     RewriteRule ^login/?$ login/index.php [L,QSA]
     RewriteRule ^login/register/?$ login/register/index.php [L,QSA]
     RewriteRule ^login/superadmin/?$ login/superadmin/index.php [L,QSA]
+    RewriteRule ^login/superadmin/users/?$ login/superadmin/users.php [L,QSA]
+    RewriteRule ^login/superadmin/projects/?$ login/superadmin/projects.php [L,QSA]
     RewriteRule ^studio/?$ studio/index.php [L,QSA]
 </IfModule>
