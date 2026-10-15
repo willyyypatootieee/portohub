@@ -110,10 +110,11 @@
         });
     }
 
+    // Tombol simpan hanya mengganti status; ikon hati memakai <svg> di markup
+    // dan terisi otomatis lewat CSS .is-saved, jadi tidak perlu ganti teks.
     document.querySelectorAll('.save-button').forEach(function (button) {
         button.addEventListener('click', function () {
             const isSaved = button.classList.toggle('is-saved');
-            button.textContent = isSaved ? '♥' : '♡';
             button.setAttribute('aria-pressed', String(isSaved));
         });
     });

@@ -120,6 +120,12 @@ $pageHref = static fn (int $number): string => appUrl('/login/superadmin/project
                                             <?= $isHidden ? 'Unhide' : 'Hide' ?>
                                         </button>
                                     </form>
+                                    <form method="post" onsubmit="return confirm('Delete this project and all of its media? This cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                        <input type="hidden" name="project_id" value="<?= (int) $project['id'] ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button class="button-small button-danger" type="submit">Delete</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

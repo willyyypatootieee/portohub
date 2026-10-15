@@ -96,6 +96,9 @@ $pageHref = static fn (int $number): string => appUrl('/login/superadmin/users.p
                             <td><?= escape(date('M j, Y', strtotime((string) $account['created_at']))) ?></td>
                             <td class="is-actions">
                                 <div class="row-actions">
+                                    <button class="button-small button-secondary" type="button" data-admin-edit="<?= (int) $account['id'] ?>">
+                                        Edit
+                                    </button>
                                     <a class="button-small button-outline" href="<?= escape(appUrl('/portfolio/?user=' . rawurlencode((string) $account['username']))) ?>" target="_blank" rel="noopener">Portfolio</a>
                                     <form method="post">
                                         <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
@@ -105,7 +108,44 @@ $pageHref = static fn (int $number): string => appUrl('/login/superadmin/users.p
                                             <?= $isActive ? 'Deactivate' : 'Activate' ?>
                                         </button>
                                     </form>
+                                    <form method="post" onsubmit="return confirm('Delete <?= escape($account['display_name']) ?> and all of their projects and media? This cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                        <input type="hidden" name="user_id" value="<?= (int) $account['id'] ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button class="button-small button-danger" type="submit">Delete</button>
+                                    </form>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr class="admin-edit-row" data-admin-edit-row="<?= (int) $account['id'] ?>" hidden>
+                            <td colspan="6">
+                                <form method="post" class="admin-edit-form">
+                                    <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                    <input type="hidden" name="user_id" value="<?= (int) $account['id'] ?>">
+                                    <input type="hidden" name="action" value="update">
+
+                                    <label>
+                                        Display name
+                                        <input name="display_name" value="<?= escape($account['display_name']) ?>" required>
+                                    </label>
+                                    <label>
+                                        Username
+                                        <input name="username" value="<?= escape($account['username']) ?>" required>
+                                    </label>
+                                    <label>
+                                        Email
+                                        <input type="email" name="email" value="<?= escape($account['email']) ?>" required>
+                                    </label>
+                                    <label>
+                                        Headline
+                                        <input name="headline" value="<?= escape($account['headline']) ?>" required>
+                                    </label>
+
+                                    <div class="admin-edit-actions">
+                                        <button class="button-small" type="submit">Save changes</button>
+                                        <button class="button-small button-secondary" type="button" data-admin-edit-close="<?= (int) $account['id'] ?>">Cancel</button>
+                                    </div>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

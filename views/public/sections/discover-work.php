@@ -44,7 +44,11 @@
                     <div class="work-image">
                         <span class="empty-work-mark">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9Z"/>
+                                <rect x="3" y="4.5" width="18" height="15" rx="2"/>
+                                <path d="M3 9h18"/>
+                                <circle cx="6.2" cy="6.7" r=".6"/>
+                                <circle cx="8.4" cy="6.7" r=".6"/>
+                                <path d="m8 16 3-3 2.4 2.4L17 12l2 2.2"/>
                             </svg>
                         </span>
                     </div>
@@ -80,7 +84,9 @@
 
                         <span class="work-category"><?= escape($project['category']) ?></span>
                         <button class="save-button" type="button" aria-label="Save <?= escape($project['title']) ?>" title="Save this work">
-                            ♡
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 20s-7-4.4-7-9.4A4.1 4.1 0 0 1 12 7.7a4.1 4.1 0 0 1 7 2.9c0 5-7 9.4-7 9.4Z"/>
+                            </svg>
                         </button>
                     </div>
 

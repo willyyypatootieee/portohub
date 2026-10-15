@@ -1,8 +1,7 @@
 /* =============================================================================
    components/cv-flipbook.css
    Flipbook CV berbasis PDF.js. Dipakai bersama oleh halaman Profil & CV
-   creator (studio.css) dan portofolio publik (public.css), jadi gaya-nya
-   diletakkan di sini, bukan di salah satu halaman saja.
+   creator (studio.css) dan portofolio publik (public.css).
    ============================================================================= */
 
 .cv-flipbook-modal {
@@ -19,16 +18,30 @@
     display: none;
 }
 
+.cv-flipbook-modal.is-fullscreen {
+    padding: 0;
+    background: var(--paper);
+}
+
 .cv-flipbook-dialog {
     position: relative;
     display: grid;
     gap: 14px;
-    width: min(1000px, 100%);
+    width: min(1080px, 100%);
     max-height: 100%;
-    padding: 20px;
-    background: var(--paper);
+    padding: 18px;
+    background: var(--panel);
     border: 1px solid var(--line);
     box-shadow: 6px 6px 0 rgb(0 0 0 / 40%);
+}
+
+.cv-flipbook-modal.is-fullscreen .cv-flipbook-dialog {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    align-content: center;
+    border: 0;
+    box-shadow: none;
 }
 
 .cv-flipbook-head {
@@ -45,14 +58,12 @@
     white-space: nowrap;
 }
 
-/* Aksi di kepala modal: buka tab baru, unduh, tutup. */
-.cv-flipbook-actions {
+.cv-flipbook-tools {
     display: flex;
-    flex: none;
     gap: 6px;
 }
 
-.cv-flipbook-icon {
+.cv-tool {
     display: grid;
     width: 32px;
     height: 32px;
@@ -60,103 +71,130 @@
     color: var(--ink);
     cursor: pointer;
     background: var(--soft-paper);
-    border: 1px solid var(--line);
+    border: 1px solid var(--soft-line);
     border-radius: 4px;
-    transition: color .15s ease, background .15s ease;
+    transition: color .15s ease, background .15s ease, border-color .15s ease;
 }
 
-.cv-flipbook-icon:hover {
+.cv-tool:hover {
     color: #fff;
     background: var(--purple);
     border-color: var(--purple);
 }
 
-.cv-flipbook-icon svg {
-    width: 16px;
-    height: 16px;
+.cv-tool svg {
+    width: 15px;
+    height: 15px;
     fill: none;
     stroke: currentColor;
-    stroke-width: 2;
+    stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
-/* Panggung flipbook: efek 3D saat halaman dibalik. */
+/* Panggung flipbook: efek 3D saat lembar dibalik. */
 .cv-stage {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    min-height: 320px;
-    perspective: 2400px;
+    gap: 16px;
+    min-height: 300px;
+    perspective: 2600px;
 }
 
 /*
- * Buku dua halaman: menampung dua wadah halaman sejajar (kiri dan kanan)
- * dengan garis lipatan di tengah, seperti buku terbuka.
+ * Buku: wadah dua halaman dengan garis lipatan di tengah. Spread memakai
+ * grid dua kolom; lembar yang bisa dibalik berputar dari lipatan.
  */
 .cv-book {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(2, var(--cv-page-w, 300px));
-    width: calc(var(--cv-page-w, 300px) * 2);
-    min-height: var(--cv-page-h, 424px);
+    grid-template-columns: var(--cv-page-w, 302px) var(--cv-page-w, 302px);
+    justify-content: center;
     transform-style: preserve-3d;
-    transition: transform .42s ease;
 }
 
-.cv-book::before {
+.cv-book::after {
     content: "";
     position: absolute;
-    z-index: 2;
+    z-index: 4;
     top: 0;
     left: 50%;
     width: 2px;
     height: 100%;
-    background: rgb(0 0 0 / 10%);
-    box-shadow: 0 0 14px rgb(0 0 0 / 25%);
+    background: linear-gradient(rgb(0 0 0 / 6%), rgb(0 0 0 / 16%), rgb(0 0 0 / 6%));
     transform: translateX(-1px);
+    pointer-events: none;
 }
 
-/* Animasi balik buku saat pindah halaman. */
-.cv-book.is-flipping-next {
-    transform: rotateY(-9deg);
+/* Sampul (hanya satu halaman): tidak ada lipatan, halaman di tengah. */
+.cv-book.is-single {
+    grid-template-columns: var(--cv-page-w, 302px);
 }
 
-.cv-book.is-flipping-prev {
-    transform: rotateY(9deg);
+.cv-book.is-single::after {
+    display: none;
 }
 
-/* Satu halaman buku: kanvas PDF di dalam bingkai putih. */
+.cv-book.is-single .cv-leaf {
+    grid-column: 1;
+}
+
+/* Satu halaman statis (sisi kiri yang sudah terbuka). */
 .cv-page {
-    display: grid;
-    place-items: center;
+    width: var(--cv-page-w, 302px);
+    height: var(--cv-page-h, 427px);
     overflow: hidden;
     background: #fff;
     border: 1px solid var(--soft-line);
 }
 
-.cv-page.is-left {
-    border-radius: 3px 0 0 3px;
-}
-
-.cv-page.is-right {
-    border-radius: 0 3px 3px 0;
-}
-
-.cv-page.is-blank {
-    background: var(--soft-paper);
-    border-style: dashed;
-}
-
 .cv-page canvas {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-/* Tombol arah halaman: ikon SVG di samping buku. */
-.cv-flipbook-nav {
+/* Lembar dua sisi yang bisa dibalik (sisi kanan buku). */
+.cv-leaf {
+    position: relative;
+    grid-column: 2;
+    width: var(--cv-page-w, 302px);
+    height: var(--cv-page-h, 427px);
+    transform-style: preserve-3d;
+    transform-origin: left center;
+    transition: transform .38s ease-in;
+}
+
+.cv-leaf.is-flipped {
+    transform: rotateY(-180deg);
+}
+
+.cv-leaf-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--soft-line);
+    backface-visibility: hidden;
+}
+
+.cv-leaf-face canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cv-leaf-face.is-back {
+    transform: rotateY(180deg);
+}
+
+/* Tombol arah halaman di kiri-kanan buku. */
+.cv-nav {
     display: grid;
     flex: none;
     width: 40px;
@@ -171,17 +209,17 @@
     transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.cv-flipbook-nav:hover:not(:disabled) {
+.cv-nav:hover:not(:disabled) {
     transform: translate(-1px, -1px);
     box-shadow: 3px 3px 0 var(--line);
 }
 
-.cv-flipbook-nav:disabled {
-    opacity: .35;
+.cv-nav:disabled {
+    opacity: .32;
     cursor: not-allowed;
 }
 
-.cv-flipbook-nav svg {
+.cv-nav svg {
     width: 18px;
     height: 18px;
     fill: none;
@@ -266,34 +304,29 @@
     color: var(--purple);
 }
 
-@media (max-width: 820px) {
+@media (max-width: 900px) {
     .cv-flipbook-modal {
         padding: 10px;
     }
 
-    .cv-flipbook-dialog {
-        gap: 10px;
-        padding: 14px;
-    }
-
     .cv-book {
-        --cv-page-w: 180px;
-        --cv-page-h: 255px;
-    }
-
-    .cv-flipbook-nav {
-        width: 32px;
-        height: 32px;
+        --cv-page-w: 210px;
+        --cv-page-h: 297px;
     }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
     .cv-stage {
         gap: 6px;
     }
 
     .cv-book {
-        --cv-page-w: 130px;
-        --cv-page-h: 184px;
+        --cv-page-w: 150px;
+        --cv-page-h: 212px;
+    }
+
+    .cv-nav {
+        width: 32px;
+        height: 32px;
     }
 }

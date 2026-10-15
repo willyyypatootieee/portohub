@@ -1,58 +1,44 @@
+/* =============================================================================
+   pages/creator/portfolio-preview.css
+   Portofolio publik yang ditampilkan di dalam rangka studio.
 
-.studio-portfolio-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    padding: 13px 16px;
-    margin-bottom: 22px;
-    background: var(--yellow);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 var(--line);
-}
+   Halaman ini memakai view yang sama dengan portofolio publik, tetapi hidup
+   di dalam .studio-main yang lebih sempit. Bilah pratinjau dan penyesuaian
+   kontainer dasar ada di layout/studio-shell.css; berkas ini hanya merapikan
+   hero dan bagian karya agar tidak terlalu besar di dalam studio.
+   ============================================================================= */
 
-.studio-portfolio-bar p {
-    margin: 0;
-    color: #55574f;
-    font-size: 10px;
-    line-height: 1.6;
-}
-
-.studio-portfolio-bar strong {
-    color: var(--ink);
-}
-
-.studio-portfolio-bar .button {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 6px;
-}
-
-.studio-portfolio-bar .button svg {
-    width: 13px;
-    height: 13px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-/*
- * Kontainer publik memakai padding besar dan lebar layar penuh. Karena di
- * sini ia bersarang di dalam .studio-main, kita lepaskan padding itu agar
- * tidak ada ruang ganda.
- */
-.studio-portfolio .container {
-    width: 100%;
-    padding: 0;
-}
-
-/* Bagian hero publik berlatar penuh; di dalam studio cukup jadi blok biasa. */
+/* Hero publik dibuat lebih ringkas di dalam studio. */
 .studio-portfolio .portfolio-hero {
     padding-top: 0;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--soft-line);
+}
+
+.studio-portfolio .portfolio-hero-top {
+    gap: 20px;
+}
+
+.studio-portfolio .portfolio-avatar {
+    width: 68px;
+    height: 68px;
+    font-size: 26px;
+}
+
+.studio-portfolio .portfolio-hero h1 {
+    font-size: clamp(30px, 5vw, 44px);
+}
+
+.studio-portfolio .portfolio-stats {
+    margin-top: 20px;
+}
+
+.studio-portfolio .portfolio-work {
+    padding-top: 26px;
+}
+
+.studio-portfolio .section-heading h2 {
+    font-size: 24px;
 }
 
 @media (max-width: 700px) {

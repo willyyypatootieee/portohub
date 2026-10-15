@@ -12,7 +12,12 @@
 </head>
 <body class="superadmin-login">
     <main class="superadmin-card">
-        <a class="studio-brand" href="<?= escape(appUrl('/')) ?>">▮▮ <?= escape(SITE_NAME) ?></a>
+        <a class="studio-brand" href="<?= escape(appUrl('/')) ?>">
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/></svg>
+            </span>
+            <?= escape(SITE_NAME) ?>
+        </a>
         <p class="eyebrow">Restricted monitoring</p>
         <h1>Superadmin sign in</h1>
 

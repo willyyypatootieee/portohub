@@ -737,6 +737,62 @@ final class StudioRepository
     }
 
     /**
+     * Memperbarui identitas publik seorang pengguna dari panel superadmin.
+     *
+     * @param array<string, string> $fields
+     */
+    public function adminUpdateUser(int $userId, array $fields): void
+    {
+        $allowed = ['display_name', 'username', 'headline', 'email'];
+        $assignments = [];
+        $params = ['id' => $userId];
+
+        foreach ($allowed as $column) {
+            if (array_key_exists($column, $fields)) {
+                $assignments[] = $column . ' = :' . $column;
+                $params[$column] = $fields[$column];
+            }
+        }
+
+        if ($assignments === []) {
+            return;
+        }
+
+        $statement = $this->database->prepare('UPDATE users SET ' . implode(', ', $assignments) . ' WHERE id = :id');
+        $statement->execute($params);
+    }
+
+    /**
+     * Menghapus pengguna beserta seluruh kontennya.
+     *
+     * Menghapus baris anak lebih dulu (media, proyek) supaya aman walau
+     * skema belum memakai ON DELETE CASCADE.
+     */
+    public function deleteUser(int $userId): void
+    {
+        $this->database->prepare('DELETE FROM media_assets WHERE user_id = :id')->execute(['id' => $userId]);
+        $this->database->prepare('DELETE FROM studio_projects WHERE user_id = :id')->execute(['id' => $userId]);
+        $this->database->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => $userId]);
+    }
+
+    /**
+     * Menghapus proyek milik siapa pun (aksi superadmin).
+     *
+     * @return array<int, array<string, mixed>> media yang ikut terhapus
+     */
+    public function adminDeleteProject(int $projectId): array
+    {
+        $find = $this->database->prepare('SELECT * FROM media_assets WHERE project_id = :id');
+        $find->execute(['id' => $projectId]);
+        $media = $find->fetchAll();
+
+        $this->database->prepare('DELETE FROM media_assets WHERE project_id = :id')->execute(['id' => $projectId]);
+        $this->database->prepare('DELETE FROM studio_projects WHERE id = :id')->execute(['id' => $projectId]);
+
+        return $media;
+    }
+
+    /**
      * Seluruh proyek dari semua creator, untuk halaman konten superadmin.
      *
      * @return array<int, array<string, mixed>>

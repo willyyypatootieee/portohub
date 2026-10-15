@@ -7,7 +7,7 @@
         <p>Draft, publish, feature, and archive your case studies.</p>
     </div>
 
-    <a class="button" href="#project-form">
+    <a class="button" href="#project-form" data-project-toggle aria-expanded="false">
         <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14"/>
         </svg>
@@ -15,7 +15,7 @@
     </a>
 </section>
 
-<section class="panel project-editor" id="project-form">
+<section class="panel project-editor<?= $editingProject ? '' : ' is-collapsed' ?>" id="project-form">
     <div class="panel-title">
         <div>
             <h2><?= $editingProject ? 'Edit project' : 'Start a new project' ?></h2>
@@ -23,7 +23,9 @@
         </div>
 
         <?php if ($editingProject): ?>
-            <a href="<?= escape(appUrl('/studio/projects.php')) ?>">Cancel</a>
+            <a href="<?= escape(appUrl('/studio/projects.php')) ?>" data-project-close>Cancel</a>
+        <?php else: ?>
+            <a href="#project-form" data-project-close>Close</a>
         <?php endif; ?>
     </div>
 

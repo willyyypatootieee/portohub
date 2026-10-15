@@ -15,6 +15,13 @@
 @import url("pages/creator/portfolio-preview.css");
 @import url("pages/creator/responsive.css");
 
+/*
+ * Tampilan portofolio publik juga dipakai di dalam studio
+ * (public/studio/portfolio.php menampilkan view publik di dalam rangka
+ * studio), jadi gaya-nya perlu dimuat di sini juga.
+ */
+@import url("pages/public-portfolio.css");
+
 /* Monitoring superadmin */
 @import url("pages/superadmin.css");
 

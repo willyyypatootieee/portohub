@@ -48,11 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $projectId = (int) ($_POST['project_id'] ?? 0);
     $action = (string) ($_POST['action'] ?? '');
 
-    if ($projectId > 0 && in_array($action, ['hide', 'unhide'], true)) {
-        $studioRepository->setProjectHidden($projectId, $action === 'hide');
-        setFlash('success', $action === 'hide'
-            ? 'Project hidden from public pages.'
-            : 'Project is visible again.');
+    if ($projectId > 0 && in_array($action, ['hide', 'unhide', 'delete'], true)) {
+        if ($action === 'delete') {
+            $studioRepository->adminDeleteProject($projectId);
+            setFlash('success', 'Project and its media were deleted.');
+        } else {
+            $studioRepository->setProjectHidden($projectId, $action === 'hide');
+            setFlash('success', $action === 'hide'
+                ? 'Project hidden from public pages.'
+                : 'Project is visible again.');
+        }
     }
 
     redirect(appUrl('/login/superadmin/projects.php') . $listQuery());

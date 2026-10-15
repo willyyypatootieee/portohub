@@ -31,6 +31,12 @@
 
 .project-editor {
     margin-bottom: 18px;
+    overflow: hidden;
+}
+
+/* Editor dilipat: hanya kepala panel yang tampak sampai dibuka. */
+.project-editor.is-collapsed {
+    display: none;
 }
 
 .project-controls {
@@ -41,6 +47,15 @@
     padding-bottom: 13px;
     margin-bottom: 2px;
     border-bottom: 1px solid var(--soft-line);
+}
+
+/* Baris filter status proyek vs. filter media: beda warna latar agar jelas. */
+.project-controls .filter-tabs a {
+    background: var(--soft-paper);
+}
+
+.project-controls .filter-tabs a.is-active {
+    background: var(--yellow);
 }
 
 .filter-tabs {

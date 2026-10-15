@@ -30,7 +30,12 @@ $adminPage = $page ?? 'overview';
 </head>
 <body class="superadmin-page">
     <header>
-        <a class="studio-brand" href="<?= escape(appUrl('/login/superadmin/')) ?>">▮▮ <?= escape(SITE_NAME) ?></a>
+        <a class="studio-brand" href="<?= escape(appUrl('/login/superadmin/')) ?>">
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/></svg>
+            </span>
+            <?= escape(SITE_NAME) ?>
+        </a>
         <nav>
             <?php foreach ($adminNavItems as $key => $item): ?>
                 <a class="<?= $adminPage === $key ? 'is-active' : '' ?>" href="<?= escape(appUrl($item['url'])) ?>"><?= escape($item['label']) ?></a>
