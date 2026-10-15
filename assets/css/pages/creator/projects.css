@@ -29,16 +29,6 @@
     stroke-linejoin: round;
 }
 
-.project-editor {
-    margin-bottom: 18px;
-    overflow: hidden;
-}
-
-/* Editor dilipat: hanya kepala panel yang tampak sampai dibuka. */
-.project-editor.is-collapsed {
-    display: none;
-}
-
 .project-controls {
     display: flex;
     align-items: center;
@@ -154,10 +144,6 @@
     margin-bottom: 18px;
 }
 
-.project-upload-form {
-    margin-bottom: 18px;
-}
-
 /* Baris tabel proyek: sorot baris yang dilewati kursor. */
 .project-table-wrap tbody tr {
     transition: background .15s ease;
@@ -222,6 +208,33 @@
     display: grid;
     gap: 12px;
     margin: 0;
+}
+
+.cover-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Tombol aksi di kepala panel proyek (Upload files, Add cover). */
+.project-media .panel-title .button,
+.project-cover .panel-title .button {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 7px;
+}
+
+.project-media .panel-title .button svg,
+.project-cover .panel-title .button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* -----------------------------------------------------------------------------

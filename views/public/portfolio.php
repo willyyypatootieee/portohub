@@ -118,6 +118,11 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                             <?php else: ?>
                                 <span><?= escape(strtoupper(mb_substr((string) $project['title'], 0, 1))) ?></span>
                             <?php endif; ?>
+
+                            <?php if ($technologies !== []): ?>
+                                <span class="public-thumb-tag"><?= escape($technologies[0]) ?></span>
+                            <?php endif; ?>
+
                             <span class="public-thumb-hint">
                                 View project
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -127,34 +132,52 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                             </span>
                         </a>
 
-                        <div class="public-work-meta">
-                            <p class="public-work-category"><?= escape($project['category']) ?></p>
-                            <h3><a href="<?= escape($projectLink) ?>"><?= escape($project['title']) ?></a></h3>
-                            <span class="public-work-description"><?= nl2br(escape($project['description'])) ?></span>
-                        </div>
-
-                        <?php if ($technologies !== []): ?>
-                            <ul class="public-tech-chips" aria-label="Teknologi yang digunakan">
-                                <?php foreach ($technologies as $technology): ?>
-                                    <li><?= escape($technology) ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-
-                        <?php if (!empty($project['demo_url']) || !empty($project['repo_url'])): ?>
-                            <div class="public-project-links">
-                                <?php if (!empty($project['demo_url'])): ?>
-                                    <a href="<?= escape((string) $project['demo_url']) ?>" target="_blank" rel="noopener">Live demo</a>
-                                <?php endif; ?>
-                                <?php if (!empty($project['repo_url'])): ?>
-                                    <a href="<?= escape((string) $project['repo_url']) ?>" target="_blank" rel="noopener">Repository</a>
-                                <?php endif; ?>
+                        <div class="public-work-body">
+                            <div class="public-work-meta">
+                                <p class="public-work-category"><?= escape($project['category']) ?></p>
+                                <h3><a href="<?= escape($projectLink) ?>"><?= escape($project['title']) ?></a></h3>
+                                <span class="public-work-description"><?= nl2br(escape($project['description'])) ?></span>
                             </div>
-                        <?php endif; ?>
+
+                            <?php if (count($technologies) > 1): ?>
+                                <ul class="public-tech-chips" aria-label="Teknologi yang digunakan">
+                                    <?php foreach (array_slice($technologies, 1, 3) as $technology): ?>
+                                        <li><?= escape($technology) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+
+                            <div class="public-work-foot">
+                                <span class="public-work-count">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="3" y="4.5" width="18" height="15" rx="2"/>
+                                        <path d="M3 9.5h18"/>
+                                        <path d="m8 15 2-2 2.4 2.4L17 12"/>
+                                    </svg>
+                                    <?= count($media) ?> file<?= count($media) === 1 ? '' : 's' ?>
+                                </span>
+
+                                <div class="public-project-links">
+                                    <?php if (!empty($project['demo_url'])): ?>
+                                        <a href="<?= escape((string) $project['demo_url']) ?>" target="_blank" rel="noopener">Live demo</a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($project['repo_url'])): ?>
+                                        <a href="<?= escape((string) $project['repo_url']) ?>" target="_blank" rel="noopener">Repository</a>
+                                    <?php endif; ?>
+                                    <a class="public-work-open" href="<?= escape($projectLink) ?>">
+                                        View project
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M5 12h14"/>
+                                            <path d="m13 6 6 6-6 6"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
                         <?php if ($gallery !== []): ?>
                             <div class="public-media">
-                                <?php foreach ($gallery as $item): ?>
+                                <?php foreach (array_slice($gallery, 0, 4) as $item): ?>
                                     <?php
                                     $itemUrl = appUrl('/assets/uploads/' . rawurlencode((string) $item['stored_name']));
                                     $itemType = (string) $item['mime_type'];
@@ -175,9 +198,21 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                                             <img src="<?= escape($itemUrl) ?>" alt="<?= escape($itemName) ?>" loading="lazy">
                                         </button>
                                     <?php else: ?>
-                                        <a class="public-media-pdf" href="<?= escape($itemUrl) ?>" target="_blank" rel="noopener">PDF</a>
+                                        <a class="public-media-pdf" href="<?= escape($itemUrl) ?>" target="_blank" rel="noopener">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H14l6 6v9.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5Z"/>
+                                                <path d="M14 3v6h6"/>
+                                            </svg>
+                                            PDF
+                                        </a>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
+
+                                <?php if (count($gallery) > 4): ?>
+                                    <a class="public-media-more" href="<?= escape($projectLink) ?>">
+                                        +<?= count($gallery) - 4 ?> more
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </article>

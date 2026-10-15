@@ -18,39 +18,9 @@
     }
 
     /*
-     * Editor proyek dilipat secara default. Tombol "New project" dan tautan
-     * "Cancel" membuka/menutupnya, sehingga halaman daftar proyek tidak
-     * dipenuhi form raksasa saat creator hanya ingin melihat daftar.
+     * Konfirmasi sebelum menghapus media dari galeri: kartu media memakai
+     * form biasa, jadi sebagian aksi sensitif dijaga lewat atribut onsubmit
+     * di markup. Tidak ada lagi editor proyek yang perlu dilipat — form
+     * sekarang hidup di dalam modal (lihat assets/js/modal.js).
      */
-    var editor = document.getElementById('project-form');
-    var openers = document.querySelectorAll('[data-project-toggle]');
-    var closers = document.querySelectorAll('[data-project-close]');
-
-    if (editor) {
-        var setOpen = function (open) {
-            editor.classList.toggle('is-collapsed', !open);
-            openers.forEach(function (el) { el.setAttribute('aria-expanded', open ? 'true' : 'false'); });
-
-            if (open) {
-                editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                var field = editor.querySelector('input[name="title"]');
-                if (field) { field.focus(); }
-            }
-        };
-
-        openers.forEach(function (el) {
-            el.addEventListener('click', function (event) {
-                event.preventDefault();
-                setOpen(editor.classList.contains('is-collapsed'));
-            });
-        });
-
-        closers.forEach(function (el) {
-            el.addEventListener('click', function (event) {
-                event.preventDefault();
-                setOpen(false);
-                history.replaceState(null, '', location.pathname + location.search);
-            });
-        });
-    }
 }());

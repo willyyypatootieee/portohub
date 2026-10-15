@@ -7,103 +7,115 @@
         <p>Draft, publish, feature, and archive your case studies.</p>
     </div>
 
-    <a class="button" href="#project-form" data-project-toggle aria-expanded="false">
+    <button class="button" type="button" data-modal-open="project-form">
         <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14"/>
         </svg>
         New project
-    </a>
+    </button>
 </section>
 
-<section class="panel project-editor<?= $editingProject ? '' : ' is-collapsed' ?>" id="project-form">
-    <div class="panel-title">
-        <div>
-            <h2><?= $editingProject ? 'Edit project' : 'Start a new project' ?></h2>
-            <p>Semua field wajib divalidasi di server dari JSON schema proyek.</p>
+<?php
+/*
+ * Editor proyek kini hidup di dalam modal. Modal dibuka otomatis saat
+ * creator menekan "Edit & media" (?edit=) atau saat validasi server gagal,
+ * supaya pesan kesalahan langsung terlihat di depannya.
+ */
+$editorAutoOpen = $editingProject !== null || $errors !== [];
+?>
+<div class="modal" id="project-form" <?= $editorAutoOpen ? 'data-modal-auto' : '' ?> hidden>
+    <div class="modal-dialog modal-dialog--wide" role="dialog" aria-modal="true" aria-labelledby="project-form-title">
+        <div class="modal-head">
+            <div>
+                <h2 id="project-form-title"><?= $editingProject ? 'Edit project' : 'Start a new project' ?></h2>
+                <p>Field bertanda wajib divalidasi di server; simpan untuk melihat hasilnya.</p>
+            </div>
+            <button class="modal-close" type="button" data-modal-close aria-label="Tutup">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>
+            </button>
         </div>
 
-        <?php if ($editingProject): ?>
-            <a href="<?= escape(appUrl('/studio/projects.php')) ?>" data-project-close>Cancel</a>
-        <?php else: ?>
-            <a href="#project-form" data-project-close>Close</a>
-        <?php endif; ?>
+        <div class="modal-body">
+            <form method="post" enctype="multipart/form-data" class="studio-form">
+                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                <input type="hidden" name="action" value="save">
+                <input type="hidden" name="id" value="<?= (int) ($editingProject['id'] ?? 0) ?>">
+
+                <label>
+                    Project title
+                    <input name="title" value="<?= escape($editingProject['title'] ?? '') ?>" placeholder="Mis. Redesign aplikasi mobile bank" required>
+                    <?php if (isset($errors['title'])): ?><small><?= escape($errors['title']) ?></small><?php endif; ?>
+                </label>
+
+                <label>
+                    Category
+                    <input name="category" value="<?= escape($editingProject['category'] ?? '') ?>" placeholder="Branding, UI/UX, Photography…" required>
+                    <?php if (isset($errors['category'])): ?><small><?= escape($errors['category']) ?></small><?php endif; ?>
+                </label>
+
+                <label>
+                    Status
+                    <select name="status">
+                        <option value="draft" <?= ($editingProject['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
+                        <option value="published" <?= ($editingProject['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
+                        <option value="archived" <?= ($editingProject['status'] ?? '') === 'archived' ? 'selected' : '' ?>>Archived</option>
+                    </select>
+                    <?php if (isset($errors['status'])): ?><small><?= escape($errors['status']) ?></small><?php endif; ?>
+                </label>
+
+                <label class="check-field">
+                    <input type="checkbox" name="featured" value="1" <?= !empty($editingProject['featured']) ? 'checked' : '' ?>>
+                    <span>Feature on my portfolio</span>
+                </label>
+
+                <label class="full-field">
+                    Description
+                    <textarea name="description" rows="5" placeholder="Jelaskan masalah, pendekatan, dan hasil proyek ini." required><?= escape($editingProject['description'] ?? '') ?></textarea>
+                    <?php if (isset($errors['description'])): ?><small><?= escape($errors['description']) ?></small><?php endif; ?>
+                </label>
+
+                <label>
+                    Technologies used
+                    <input name="technologies" value="<?= escape($editingProject['technologies'] ?? '') ?>" placeholder="PHP, MySQL, Figma">
+                    <span class="field-hint">Pisahkan dengan koma, maksimal 12 teknologi.</span>
+                    <?php if (isset($errors['technologies'])): ?><small><?= escape($errors['technologies']) ?></small><?php endif; ?>
+                </label>
+
+                <label>
+                    Demo link <span class="field-optional">(opsional)</span>
+                    <input type="url" name="demo_url" value="<?= escape($editingProject['demo_url'] ?? '') ?>" placeholder="https://contoh.com/demo">
+                    <?php if (isset($errors['demo_url'])): ?><small><?= escape($errors['demo_url']) ?></small><?php endif; ?>
+                </label>
+
+                <label>
+                    Repository link <span class="field-optional">(opsional)</span>
+                    <input type="url" name="repo_url" value="<?= escape($editingProject['repo_url'] ?? '') ?>" placeholder="https://github.com/username/proyek">
+                    <?php if (isset($errors['repo_url'])): ?><small><?= escape($errors['repo_url']) ?></small><?php endif; ?>
+                </label>
+
+                <?php if (!$editingProject): ?>
+                    <label class="full-field media-field">
+                        <strong>Media proyek (opsional)</strong>
+                        <span>JPG, PNG, WebP, GIF, MP4, WebM, atau PDF — maksimal 25 MB per berkas. Bisa pilih beberapa sekaligus. Gambar pertama menjadi cover.</span>
+                        <input
+                            type="file"
+                            name="portfolio_files[]"
+                            accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
+                            multiple
+                        >
+                    </label>
+                <?php endif; ?>
+            </form>
+        </div>
+
+        <div class="modal-foot">
+            <button class="button button-secondary" type="button" data-modal-close>Cancel</button>
+            <button class="button" type="button" data-modal-submit>
+                <?= $editingProject ? 'Save project' : 'Save project &amp; upload' ?>
+            </button>
+        </div>
     </div>
-
-    <form method="post" enctype="multipart/form-data" class="studio-form">
-        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
-        <input type="hidden" name="action" value="save">
-        <input type="hidden" name="id" value="<?= (int) ($editingProject['id'] ?? 0) ?>">
-
-        <label>
-            Project title
-            <input name="title" value="<?= escape($editingProject['title'] ?? '') ?>" placeholder="Mis. Redesign aplikasi mobile bank" required>
-            <?php if (isset($errors['title'])): ?><small><?= escape($errors['title']) ?></small><?php endif; ?>
-        </label>
-
-        <label>
-            Category
-            <input name="category" value="<?= escape($editingProject['category'] ?? '') ?>" placeholder="Branding, UI/UX, Photography…" required>
-            <?php if (isset($errors['category'])): ?><small><?= escape($errors['category']) ?></small><?php endif; ?>
-        </label>
-
-        <label>
-            Status
-            <select name="status">
-                <option value="draft" <?= ($editingProject['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
-                <option value="published" <?= ($editingProject['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
-                <option value="archived" <?= ($editingProject['status'] ?? '') === 'archived' ? 'selected' : '' ?>>Archived</option>
-            </select>
-            <?php if (isset($errors['status'])): ?><small><?= escape($errors['status']) ?></small><?php endif; ?>
-        </label>
-
-        <label class="check-field">
-            <input type="checkbox" name="featured" value="1" <?= !empty($editingProject['featured']) ? 'checked' : '' ?>>
-            <span>Feature on my portfolio</span>
-        </label>
-
-        <label class="full-field">
-            Description
-            <textarea name="description" rows="5" placeholder="Jelaskan masalah, pendekatan, dan hasil proyek ini." required><?= escape($editingProject['description'] ?? '') ?></textarea>
-            <?php if (isset($errors['description'])): ?><small><?= escape($errors['description']) ?></small><?php endif; ?>
-        </label>
-
-        <label>
-            Technologies used
-            <input name="technologies" value="<?= escape($editingProject['technologies'] ?? '') ?>" placeholder="PHP, MySQL, Figma">
-            <span class="field-hint">Pisahkan dengan koma, maksimal 12 teknologi.</span>
-            <?php if (isset($errors['technologies'])): ?><small><?= escape($errors['technologies']) ?></small><?php endif; ?>
-        </label>
-
-        <label>
-            Demo link <span class="field-optional">(opsional)</span>
-            <input type="url" name="demo_url" value="<?= escape($editingProject['demo_url'] ?? '') ?>" placeholder="https://contoh.com/demo">
-            <?php if (isset($errors['demo_url'])): ?><small><?= escape($errors['demo_url']) ?></small><?php endif; ?>
-        </label>
-
-        <label>
-            Repository link <span class="field-optional">(opsional)</span>
-            <input type="url" name="repo_url" value="<?= escape($editingProject['repo_url'] ?? '') ?>" placeholder="https://github.com/username/proyek">
-            <?php if (isset($errors['repo_url'])): ?><small><?= escape($errors['repo_url']) ?></small><?php endif; ?>
-        </label>
-
-        <?php if (!$editingProject): ?>
-            <label class="full-field media-field">
-                <strong>Media proyek (opsional)</strong>
-                <span>JPG, PNG, WebP, GIF, MP4, WebM, atau PDF — maksimal 25 MB per berkas. Bisa pilih beberapa sekaligus. Gambar pertama menjadi cover.</span>
-                <input
-                    type="file"
-                    name="portfolio_files[]"
-                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
-                    multiple
-                >
-            </label>
-        <?php endif; ?>
-
-        <div class="full-field">
-            <button class="button" type="submit"><?= $editingProject ? 'Save project' : 'Save project &amp; upload' ?></button>
-        </div>
-    </form>
-</section>
+</div>
 
 <?php if ($editingProject && (int) ($editingProject['id'] ?? 0) > 0): ?>
     <?php
@@ -118,33 +130,59 @@
         <div class="panel-title">
             <div>
                 <h2>Project media</h2>
-                <p>Unggah gambar, GIF, video, atau PDF langsung ke proyek ini. Gambar pertama menjadi cover.</p>
+                <p>Gambar, GIF, video, atau PDF yang menempel pada proyek ini. Gambar pertama menjadi cover.</p>
             </div>
+
+            <button class="button button-secondary" type="button" data-modal-open="media-upload">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Upload files
+            </button>
         </div>
 
         <?php foreach ($mediaErrors as $mediaError): ?>
             <p class="studio-alert error" role="alert"><?= escape($mediaError) ?></p>
         <?php endforeach; ?>
 
-        <form method="post" enctype="multipart/form-data" class="upload-form project-upload-form">
-            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
-            <input type="hidden" name="action" value="upload-media">
-            <input type="hidden" name="project_id" value="<?= $currentProjectId ?>">
+        <div class="modal" id="media-upload" <?= $mediaErrors !== [] ? 'data-modal-auto' : '' ?> hidden>
+            <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="media-upload-title">
+                <div class="modal-head">
+                    <div>
+                        <h2 id="media-upload-title">Upload to project</h2>
+                        <p>Tambahkan berkas ke <strong><?= escape((string) $editingProject['title']) ?></strong>.</p>
+                    </div>
+                    <button class="modal-close" type="button" data-modal-close aria-label="Tutup">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>
+                    </button>
+                </div>
 
-            <label>
-                <strong>Tambahkan berkas ke proyek</strong>
-                <span>JPG, PNG, WebP, GIF, MP4, WebM, atau PDF — maksimal 25 MB per berkas. Bisa pilih beberapa sekaligus.</span>
-                <input
-                    type="file"
-                    name="portfolio_files[]"
-                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
-                    multiple
-                    required
-                >
-            </label>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" class="upload-form project-upload-form">
+                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                        <input type="hidden" name="action" value="upload-media">
+                        <input type="hidden" name="project_id" value="<?= $currentProjectId ?>">
 
-            <button class="button" type="submit">Upload ke proyek</button>
-        </form>
+                        <label class="media-field">
+                            <strong>Pilih berkas</strong>
+                            <span>JPG, PNG, WebP, GIF, MP4, WebM, atau PDF — maksimal 25 MB per berkas. Bisa pilih beberapa sekaligus.</span>
+                            <input
+                                type="file"
+                                name="portfolio_files[]"
+                                accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
+                                multiple
+                                required
+                            >
+                        </label>
+                    </form>
+                </div>
+
+                <div class="modal-foot">
+                    <button class="button button-secondary" type="button" data-modal-close>Cancel</button>
+                    <button class="button" type="button" data-modal-submit>Upload</button>
+                </div>
+            </div>
+        </div>
 
         <?php if ($projectMedia === []): ?>
             <div class="empty-state">
@@ -177,11 +215,51 @@
                 <h2>Cover image</h2>
                 <p>Sampul dipakai sebagai gambar utama proyek di portofolio publik. Kalau belum diunggah, gambar pertama pada media proyek yang jadi sampul.</p>
             </div>
+
+            <button class="button button-secondary" type="button" data-modal-open="cover-upload">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <?= !empty($editingProject['cover_filename']) ? 'Change cover' : 'Add cover' ?>
+            </button>
         </div>
 
         <?php if ($coverError !== null): ?>
             <p class="studio-alert error" role="alert"><?= escape($coverError) ?></p>
         <?php endif; ?>
+
+        <div class="modal" id="cover-upload" <?= $coverError !== null ? 'data-modal-auto' : '' ?> hidden>
+            <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cover-upload-title">
+                <div class="modal-head">
+                    <div>
+                        <h2 id="cover-upload-title"><?= !empty($editingProject['cover_filename']) ? 'Change cover image' : 'Upload cover image' ?></h2>
+                        <p>JPG, PNG, WebP, atau GIF — maksimal 10 MB. Sampul tampil paling besar di portofolio.</p>
+                    </div>
+                    <button class="modal-close" type="button" data-modal-close aria-label="Tutup">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" class="upload-form">
+                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                        <input type="hidden" name="action" value="upload-cover">
+                        <input type="hidden" name="project_id" value="<?= $coverProjectId ?>">
+
+                        <label class="media-field">
+                            <strong>File gambar</strong>
+                            <span>Gunakan gambar lanskap agar tampil rapi di kartu proyek.</span>
+                            <input type="file" name="cover_file" accept="image/jpeg,image/png,image/webp,image/gif" required>
+                        </label>
+                    </form>
+                </div>
+
+                <div class="modal-foot">
+                    <button class="button button-secondary" type="button" data-modal-close>Cancel</button>
+                    <button class="button" type="button" data-modal-submit>Save cover</button>
+                </div>
+            </div>
+        </div>
 
         <div class="cover-editor">
             <div class="cover-preview">
@@ -196,19 +274,11 @@
             </div>
 
             <div class="cover-actions">
-                <form method="post" enctype="multipart/form-data" class="upload-form">
-                    <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
-                    <input type="hidden" name="action" value="upload-cover">
-                    <input type="hidden" name="project_id" value="<?= $coverProjectId ?>">
-
-                    <label>
-                        <strong><?= !empty($editingProject['cover_filename']) ? 'Ganti gambar sampul' : 'Unggah gambar sampul' ?></strong>
-                        <span>JPG, PNG, WebP, atau GIF — maksimal 10 MB.</span>
-                        <input type="file" name="cover_file" accept="image/jpeg,image/png,image/webp,image/gif" required>
-                    </label>
-
-                    <button class="button" type="submit">Simpan sampul</button>
-                </form>
+                <p class="cover-hint">
+                    <?= !empty($editingProject['cover_filename'])
+                        ? 'Sampul khusus sudah dipasang. Ganti atau hapus kapan saja.'
+                        : 'Belum ada sampul khusus. Gambar pertama dari media proyek akan dipakai.' ?>
+                </p>
 
                 <?php if (!empty($editingProject['cover_filename'])): ?>
                     <form method="post" onsubmit="return confirm('Hapus gambar sampul proyek ini?');">
@@ -325,7 +395,7 @@
                                 </td>
                             <?php endif; ?>
                             <td class="row-actions">
-                                <a href="<?= escape(appUrl('/studio/projects.php?edit=' . (int) $project['id'] . '#project-media')) ?>">Edit &amp; media</a>
+                                <a href="<?= escape(appUrl('/studio/projects.php?edit=' . (int) $project['id'])) ?>#project-media">Edit &amp; media</a>
                                 <form method="post" onsubmit="return confirm('Delete this project and its media links?');">
                                     <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
                                     <input type="hidden" name="action" value="delete">

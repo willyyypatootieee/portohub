@@ -7,6 +7,9 @@
 /* Rangka studio: sidebar dan topbar */
 @import url("layout/studio-shell.css");
 
+/* Komponen studio: kotak dialog (modal) */
+@import url("components/modal.css");
+
 /* Halaman studio */
 @import url("pages/creator/dashboard.css");
 @import url("pages/creator/projects.css");
