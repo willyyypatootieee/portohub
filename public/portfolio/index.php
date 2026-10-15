@@ -18,7 +18,7 @@ if ($creator === null) {
     exit('Portfolio not found.');
 }
 
-$projects = $studioRepository->getProjects((int) $creator['id'], 'published');
+$projects = $studioRepository->getProjects((int) $creator['id'], 'published', '', false);
 
 foreach ($projects as $index => $project) {
     $projectId = (int) $project['id'];

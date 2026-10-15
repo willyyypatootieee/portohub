@@ -41,7 +41,7 @@ app/                Backend (tidak diakses browser)
 ├── core/           Koneksi, JSON validator, dan helper per topik
 │   └── helpers/    Helper dipisah: env, output, csrf, url, flash, auth, format
 ├── data/           Kontrak validasi form dalam JSON
-├── middleware/     AuthMiddleware: pintu tunggal validasi login creator
+├── middleware/     AuthMiddleware + SuperadminMiddleware: penjaga akses
 ├── repositories/   Semua query dan akses database
 └── services/       Layanan reusable: autentikasi dan upload media
 
@@ -52,7 +52,7 @@ views/              Tampilan (tidak diakses browser)
 │   ├── portfolio.php
 │   └── sections/   Bagian-bagian landing page
 ├── creator/        Tampilan creator studio dan layout bersama
-└── superadmin/     Tampilan monitoring terpisah
+└── superadmin/     Tampilan monitoring terpisah (layout, overview, users, projects)
 
 assets/             Aset statis (dipetakan ke URL /assets/...)
 ├── css/base/       Token warna, reset, dan tipografi

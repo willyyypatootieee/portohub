@@ -60,7 +60,8 @@ portohub/
 │   │       ├── auth.php              Status login tingkat halaman
 │   │       └── format.php            Format angka tampilan
 │   ├── middleware/
-│   │   └── AuthMiddleware.php        Pintu tunggal validasi login creator
+│   │   ├── AuthMiddleware.php        Pintu tunggal validasi login creator
+│   │   └── SuperadminMiddleware.php  Penjaga halaman monitoring superadmin
 │   ├── repositories/                 Semua query database
 │   │   ├── PortfolioRepository.php   Karya landing page
 │   │   └── StudioRepository.php      Semua data creator studio
@@ -78,7 +79,7 @@ portohub/
 │   │   ├── auth/                     Tampilan login dan register
 │   │   └── sections/                 Bagian-bagian landing page
 │   ├── creator/                      Tampilan creator studio
-│   └── superadmin/                   Tampilan monitoring superadmin
+│   └── superadmin/                   Tampilan monitoring superadmin (layout, overview, users, projects)
 ├── assets/
 │   ├── css/
 │   │   ├── app.css                   Lapisan bersama: base + components + layout
@@ -110,7 +111,9 @@ portohub/
   `studio.css`, logika lewat `StudioController` + `StudioRepository`.
 - **Auth:** alur di `AuthController` + `AuthenticationService`, tampilan di
   `views/public/auth/`.
-- **Superadmin:** tampilan di `views/superadmin/`.
+- **Superadmin:** tampilan di `views/superadmin/`, penjaga akses di
+  `SuperadminMiddleware`. Dashboard, daftar pengguna, dan moderasi konten
+  semuanya berada di bawah `/login/superadmin/`.
 
 Semua kelas backend berada di `app/` dan dimuat sekali lewat `app/bootstrap.php`,
 jadi setiap halaman cukup `require` bootstrap satu kali. Karena backend ada di
@@ -349,6 +352,12 @@ Melalui dashboard, admin dapat:
 - Register: `/login/register/`
 - Creator studio: `/studio/` (requires a creator account)
 - Superadmin monitoring: `/login/superadmin/` (separate monitoring screen without the creator sidebar)
+- Superadmin user directory: `/login/superadmin/users.php`
+- Superadmin content moderation: `/login/superadmin/projects.php`
+
+The superadmin area is guarded by `SuperadminMiddleware` and only renders for a signed-in superadmin. The dashboard summarises platform numbers; the user directory searches accounts and toggles them active or inactive; the content page lists every project and portfolio and hides or restores projects from public view. Hiding a project only removes it from public pages — the creator still sees it in the studio, where a badge marks it as hidden.
+
+Account status is stored in `users.is_active` and project visibility in `studio_projects.is_hidden` (both default to 1 and 0). Deactivated creators cannot sign in and their existing sessions are rejected by `AuthMiddleware` on the next request.
 
 Creator projects, profiles, and uploads are stored in `users`, `studio_projects`, and `media_assets`. All creator-studio tables live in `database/creator-studio.sql`; the application checks at startup that they exist and never creates them by itself.
 

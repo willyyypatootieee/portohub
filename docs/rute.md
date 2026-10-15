@@ -15,7 +15,9 @@ ke berkas route-nya.
 | `/studio/analytics.php` | `public/studio/analytics.php` | Creator | Ringkasan perkembangan portofolio. |
 | `/studio/logout.php` | `public/studio/logout.php` | Creator | Keluar dari session creator. |
 | `/portfolio/?user={username}` | `public/portfolio/index.php` | Publik | Portofolio creator: proyek published beserta galeri gambar, GIF, dan video. |
-| `/login/superadmin/` | `public/login/superadmin/index.php` | Superadmin | Monitoring platform terpisah. |
+| `/login/superadmin/` | `public/login/superadmin/index.php` | Superadmin | Dashboard monitoring platform: ringkasan angka, aktivitas creator terbaru, dan aksi cepat. |
+| `/login/superadmin/users.php` | `public/login/superadmin/users.php` | Superadmin | Daftar dan pencarian pengguna, serta aksi mengaktifkan atau menonaktifkan akun. |
+| `/login/superadmin/projects.php` | `public/login/superadmin/projects.php` | Superadmin | Daftar seluruh proyek dan portofolio, pencarian/filter konten, dan aksi menyembunyikan proyek. |
 
 ## Catatan URL portfolio
 

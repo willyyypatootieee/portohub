@@ -1,88 +1,113 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Superadmin monitoring</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/app.css')) ?>">
-    <link rel="stylesheet" href="<?= escape(appUrl('/assets/css/studio.css')) ?>">
-</head>
-<body class="superadmin-page">
-    <header>
-        <a class="studio-brand" href="<?= escape(appUrl('/')) ?>">▮▮ <?= escape(SITE_NAME) ?></a>
-        <nav>
-            <a href="<?= escape(appUrl('/')) ?>">View discovery</a>
-            <a href="<?= escape(appUrl('/login/superadmin/?logout=1')) ?>">Sign out</a>
-        </nav>
-    </header>
+<?php
+/** Dashboard superadmin: ringkasan angka platform dan aktivitas creator terbaru. */
+$page = 'overview';
+$pageTitle = 'Superadmin overview';
+require __DIR__ . '/layout.php';
+?>
 
-    <main>
-        <p class="eyebrow">Platform monitoring</p>
-        <h1>Superadmin overview</h1>
-        <p class="admin-description">
-            A separate monitoring screen — creator studio navigation is intentionally not included here.
-        </p>
+<p class="eyebrow">Platform monitoring</p>
+<h1>Superadmin overview</h1>
+<p class="admin-description">
+    Monitor creators and moderate published content. This screen is separate from the creator studio.
+</p>
 
-        <section class="metric-grid">
-            <article>
-                <p>Registered creators</p>
-                <strong><?= $counts['creators'] ?></strong>
-            </article>
-            <article>
-                <p>Creator projects</p>
-                <strong><?= $counts['projects'] ?></strong>
-            </article>
-            <article>
-                <p>Published projects</p>
-                <strong><?= $counts['published'] ?></strong>
-            </article>
-            <article>
-                <p>Uploaded assets</p>
-                <strong><?= $counts['assets'] ?></strong>
-            </article>
-        </section>
+<section class="metric-grid">
+    <article>
+        <p>Registered creators</p>
+        <strong><?= (int) $counts['creators'] ?></strong>
+    </article>
+    <article>
+        <p>Total projects</p>
+        <strong><?= (int) $counts['projects'] ?></strong>
+    </article>
+    <article>
+        <p>Published projects</p>
+        <strong><?= (int) $counts['published'] ?></strong>
+    </article>
+    <article>
+        <p>Hidden projects</p>
+        <strong><?= (int) $counts['hidden'] ?></strong>
+    </article>
+    <article>
+        <p>Deactivated accounts</p>
+        <strong><?= (int) $counts['inactive'] ?></strong>
+    </article>
+    <article>
+        <p>Uploaded assets</p>
+        <strong><?= (int) $counts['assets'] ?></strong>
+    </article>
+</section>
 
-        <section class="panel">
-            <div class="panel-title">
-                <div>
-                    <h2>Creator activity</h2>
-                    <p>Recent creator records and project activity.</p>
-                </div>
+<div class="admin-split">
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <h2>Creator activity</h2>
+                <p>Recent creator records and project activity.</p>
             </div>
+            <a href="<?= escape(appUrl('/login/superadmin/users.php')) ?>">Manage users</a>
+        </div>
 
-            <?php if ($activity === []): ?>
-                <div class="empty-state">
-                    <strong>Become The One</strong>
-                    <p>No registered creators yet.</p>
-                </div>
-            <?php else: ?>
-                <div class="project-table-wrap">
-                    <table>
-                        <thead>
+        <?php if ($activity === []): ?>
+            <div class="empty-state">
+                <strong>Become The One</strong>
+                <p>No registered creators yet.</p>
+            </div>
+        <?php else: ?>
+            <div class="project-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Creator</th>
+                            <th>Projects</th>
+                            <th>Status</th>
+                            <th>Last activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($activity as $creator): ?>
                             <tr>
-                                <th>Creator</th>
-                                <th>Email</th>
-                                <th>Projects</th>
-                                <th>Last activity</th>
+                                <td>
+                                    <strong><?= escape($creator['display_name']) ?></strong>
+                                    <small>@<?= escape($creator['username']) ?></small>
+                                </td>
+                                <td><?= (int) $creator['project_count'] ?></td>
+                                <td>
+                                    <?php if ((int) $creator['is_active'] === 1): ?>
+                                        <span class="status published">Active</span>
+                                    <?php else: ?>
+                                        <span class="status archived">Inactive</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= escape($creator['last_activity'] ?? 'No projects yet') ?></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($activity as $creator): ?>
-                                <tr>
-                                    <td><strong><?= escape($creator['display_name']) ?></strong></td>
-                                    <td><?= escape($creator['email']) ?></td>
-                                    <td><?= (int) $creator['project_count'] ?></td>
-                                    <td><?= escape($creator['last_activity'] ?? 'No projects yet') ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
-        </section>
-    </main>
-</body>
-</html>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </section>
+
+    <aside class="panel admin-quick">
+        <div class="panel-title">
+            <div>
+                <h2>Quick actions</h2>
+                <p>Jump straight to moderation tasks.</p>
+            </div>
+        </div>
+        <a class="admin-quick-link" href="<?= escape(appUrl('/login/superadmin/users.php')) ?>">
+            <strong>User directory</strong>
+            <span>Search accounts and enable or disable access.</span>
+        </a>
+        <a class="admin-quick-link" href="<?= escape(appUrl('/login/superadmin/projects.php')) ?>">
+            <strong>Content moderation</strong>
+            <span>Review every project and hide what breaks the rules.</span>
+        </a>
+        <a class="admin-quick-link" href="<?= escape(appUrl('/login/superadmin/projects.php?visibility=hidden')) ?>">
+            <strong>Hidden projects</strong>
+            <span>See everything currently removed from public view.</span>
+        </a>
+    </aside>
+</div>
+
+<?php require __DIR__ . '/layout-end.php'; ?>
