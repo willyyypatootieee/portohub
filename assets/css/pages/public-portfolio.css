@@ -253,6 +253,53 @@
     border: 1px solid var(--line);
 }
 
+/* Teknologi yang digunakan pada tiap karya. */
+.public-tech-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 11px 14px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.public-tech-chips li {
+    padding: 3px 8px;
+    color: var(--purple);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    background: #f0efff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+
+/* Tautan demo dan repository milik proyek. */
+.public-project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 14px 0;
+}
+
+.public-project-links a {
+    padding: 4px 10px;
+    color: var(--ink);
+    font-size: 9px;
+    font-weight: 700;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 var(--line);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.public-project-links a:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--line);
+}
+
 @media (max-width: 900px) {
     .public-work-grid {
         grid-template-columns: repeat(2, 1fr);

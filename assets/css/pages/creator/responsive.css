@@ -112,4 +112,8 @@
     .upload-form .button {
         grid-column: auto;
     }
+
+    .cover-editor {
+        grid-template-columns: 1fr;
+    }
 }

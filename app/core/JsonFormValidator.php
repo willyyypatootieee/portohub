@@ -61,6 +61,12 @@ final class JsonFormValidator
                 $errors[$field] = 'Enter a valid email address.';
             }
             if (
+                ($rules['type'] ?? 'string') === 'url'
+                && (!is_string($stringValue) || filter_var($stringValue, FILTER_VALIDATE_URL) === false)
+            ) {
+                $errors[$field] = (string) ($rules['message'] ?? 'Enter a valid URL, including http:// or https://.');
+            }
+            if (
                 isset($rules['minLength'])
                 && (!is_string($stringValue) || mb_strlen($stringValue) < (int) $rules['minLength'])
             ) {

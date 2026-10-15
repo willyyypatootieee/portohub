@@ -207,10 +207,55 @@ final class StudioRepository
             $sql .= ' AND (p.title LIKE :search OR p.category LIKE :search OR p.description LIKE :search)';
             $params['search'] = '%' . $search . '%';
         }
-        $sql .= ' ORDER BY p.updated_at DESC, p.id DESC';
+        $sql .= ' ORDER BY p.sort_order ASC, p.updated_at DESC, p.id DESC';
         $statement = $this->database->prepare($sql);
         $statement->execute($params);
         return $statement->fetchAll();
+    }
+
+    /**
+     * Memindahkan satu proyek naik atau turun satu posisi.
+     *
+     * Urutan ditulis ulang menjadi 1..n supaya posisi tetap konsisten walau
+     * sebelumnya ada proyek yang masih memakai nilai default 0.
+     */
+    public function reorderProject(int $userId, int $projectId, string $direction): bool
+    {
+        if (!in_array($direction, ['up', 'down'], true)) {
+            return false;
+        }
+
+        $statement = $this->database->prepare(
+            'SELECT id FROM studio_projects WHERE user_id = :user_id ORDER BY sort_order ASC, updated_at DESC, id DESC'
+        );
+        $statement->execute(['user_id' => $userId]);
+        $ids = array_map('intval', array_column($statement->fetchAll(), 'id'));
+
+        $index = array_search($projectId, $ids, true);
+        if ($index === false) {
+            return false;
+        }
+
+        $target = $direction === 'up' ? $index - 1 : $index + 1;
+        if ($target < 0 || $target >= count($ids)) {
+            return false;
+        }
+
+        [$ids[$index], $ids[$target]] = [$ids[$target], $ids[$index]];
+
+        $update = $this->database->prepare(
+            'UPDATE studio_projects SET sort_order = :sort_order WHERE id = :id AND user_id = :user_id'
+        );
+
+        foreach ($ids as $position => $id) {
+            $update->execute([
+                'sort_order' => $position + 1,
+                'id' => $id,
+                'user_id' => $userId,
+            ]);
+        }
+
+        return true;
     }
 
     /** @return array<string, mixed>|null */
@@ -222,18 +267,33 @@ final class StudioRepository
         return $project === false ? null : $project;
     }
 
-    /** @param array<string, string|int> $project */
+    /** @param array<string, string|int|null> $project */
     public function saveProject(int $userId, array $project, ?int $projectId = null): int
     {
         if ($projectId !== null) {
             $project['id'] = $projectId;
             $project['user_id'] = $userId;
-            $statement = $this->database->prepare('UPDATE studio_projects SET title = :title, category = :category, description = :description, status = :status, featured = :featured WHERE id = :id AND user_id = :user_id');
+            $statement = $this->database->prepare(
+                'UPDATE studio_projects
+                 SET title = :title,
+                     category = :category,
+                     description = :description,
+                     technologies = :technologies,
+                     demo_url = :demo_url,
+                     repo_url = :repo_url,
+                     status = :status,
+                     featured = :featured
+                 WHERE id = :id AND user_id = :user_id'
+            );
             $statement->execute($project);
             return $projectId;
         }
+
         $project['user_id'] = $userId;
-        $statement = $this->database->prepare('INSERT INTO studio_projects (user_id, title, category, description, status, featured) VALUES (:user_id, :title, :category, :description, :status, :featured)');
+        $statement = $this->database->prepare(
+            'INSERT INTO studio_projects (user_id, title, category, description, technologies, demo_url, repo_url, status, featured)
+             VALUES (:user_id, :title, :category, :description, :technologies, :demo_url, :repo_url, :status, :featured)'
+        );
         $statement->execute($project);
         return (int) $this->database->lastInsertId();
     }
@@ -301,13 +361,13 @@ final class StudioRepository
     public function getShowcaseProjects(int $limit = 18): array
     {
         $statement = $this->database->prepare(
-            "SELECT p.id, p.title, p.category, p.description, p.updated_at,
+            "SELECT p.id, p.title, p.category, p.description, p.technologies, p.demo_url, p.repo_url, p.updated_at,
                     u.display_name, u.username, u.headline,
                     (SELECT COUNT(*) FROM media_assets m WHERE m.project_id = p.id) AS media_count
              FROM studio_projects p
              INNER JOIN users u ON u.id = p.user_id
              WHERE p.status = 'published' AND p.is_hidden = 0
-             ORDER BY p.featured DESC, p.updated_at DESC, p.id DESC
+             ORDER BY p.featured DESC, p.sort_order ASC, p.updated_at DESC, p.id DESC
              LIMIT :limit"
         );
         $statement->bindValue('limit', $limit, PDO::PARAM_INT);
@@ -333,9 +393,27 @@ final class StudioRepository
         return array_column($statement->fetchAll(), 'category');
     }
 
-    /** @return array{stored_name: string, mime_type: string}|null */
+    /**
+     * Gambar sampul proyek.
+     *
+     * Sampul yang diunggah khusus lewat form proyek (kolom cover_filename)
+     * selalu diprioritaskan. Bila belum ada, gambar pertama pada media proyek
+     * dipakai sebagai sampul cadangan.
+     *
+     * @return array{stored_name: string, mime_type: string}|null
+     */
     public function findProjectCover(int $projectId): ?array
     {
+        $statement = $this->database->prepare(
+            'SELECT cover_filename FROM studio_projects WHERE id = :project_id LIMIT 1'
+        );
+        $statement->execute(['project_id' => $projectId]);
+        $coverFilename = $statement->fetchColumn();
+
+        if (is_string($coverFilename) && $coverFilename !== '') {
+            return ['stored_name' => $coverFilename, 'mime_type' => 'image/*'];
+        }
+
         $statement = $this->database->prepare(
             "SELECT stored_name, mime_type
              FROM media_assets
@@ -346,6 +424,35 @@ final class StudioRepository
         $statement->execute(['project_id' => $projectId]);
         $cover = $statement->fetch();
         return $cover === false ? null : $cover;
+    }
+
+    /**
+     * Menyimpan atau menghapus gambar sampul khusus proyek.
+     *
+     * @return string|null nama berkas sampul sebelumnya agar pemanggil bisa
+     *                     menghapus berkas lamanya dari disk
+     */
+    public function updateProjectCover(int $userId, int $projectId, ?string $storedName): ?string
+    {
+        $find = $this->database->prepare(
+            'SELECT cover_filename FROM studio_projects WHERE id = :id AND user_id = :user_id'
+        );
+        $find->execute(['id' => $projectId, 'user_id' => $userId]);
+        $previous = $find->fetchColumn();
+
+        if ($previous === false) {
+            return null;
+        }
+
+        $update = $this->database->prepare(
+            'UPDATE studio_projects SET cover_filename = :cover_filename WHERE id = :id AND user_id = :user_id'
+        );
+        $update->bindValue('cover_filename', $storedName, $storedName === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $update->bindValue('id', $projectId, PDO::PARAM_INT);
+        $update->bindValue('user_id', $userId, PDO::PARAM_INT);
+        $update->execute();
+
+        return is_string($previous) && $previous !== '' ? $previous : null;
     }
 
     /** @return array<string, mixed>|null */

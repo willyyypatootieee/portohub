@@ -28,14 +28,19 @@ CREATE TABLE IF NOT EXISTS studio_projects (
     title VARCHAR(150) NOT NULL,
     category VARCHAR(80) NOT NULL,
     description TEXT NOT NULL,
+    technologies VARCHAR(255) NOT NULL DEFAULT '',
+    demo_url VARCHAR(255) NULL,
+    repo_url VARCHAR(255) NULL,
     status ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft',
     featured TINYINT(1) NOT NULL DEFAULT 0,
     is_hidden TINYINT(1) NOT NULL DEFAULT 0,
+    sort_order INT NOT NULL DEFAULT 0,
     cover_filename VARCHAR(255) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_studio_projects_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_studio_projects_owner (user_id, status, updated_at)
+    INDEX idx_studio_projects_owner (user_id, status, updated_at),
+    INDEX idx_studio_projects_order (user_id, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS media_assets (

@@ -59,7 +59,7 @@
                 <article
                     class="work-card"
                     data-category="<?= escape($project['category']) ?>"
-                    data-search="<?= escape(strtolower($project['title'] . ' ' . $project['display_name'] . ' ' . $project['category'])) ?>"
+                    data-search="<?= escape(strtolower($project['title'] . ' ' . $project['display_name'] . ' ' . $project['category'] . ' ' . (string) ($project['technologies'] ?? ''))) ?>"
                 >
                     <div class="work-image">
                         <?php if ($coverUrl !== null): ?>
@@ -87,6 +87,21 @@
                             <?= (int) $project['media_count'] ?> file<?= (int) $project['media_count'] === 1 ? '' : 's' ?>
                         </p>
                     </div>
+
+                    <?php
+                    $cardTechnologies = array_values(array_filter(array_map(
+                        static fn (string $item): string => trim($item),
+                        explode(',', (string) ($project['technologies'] ?? ''))
+                    ), static fn (string $item): bool => $item !== ''));
+                    ?>
+
+                    <?php if ($cardTechnologies !== []): ?>
+                        <ul class="work-tech" aria-label="Teknologi yang digunakan">
+                            <?php foreach (array_slice($cardTechnologies, 0, 4) as $technology): ?>
+                                <li><?= escape($technology) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
                 </article>
             <?php endforeach; ?>
         </div>

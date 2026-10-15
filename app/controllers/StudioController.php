@@ -185,16 +185,96 @@ final class StudioController
         return $errors;
     }
 
-    /** @return array{title: string, category: string, description: string, status: string, featured: int} */
+    /** @return array<string, string|int|null> */
     private function projectFromRequest(): array
     {
+        $demoUrl = trim((string) ($_POST['demo_url'] ?? ''));
+        $repoUrl = trim((string) ($_POST['repo_url'] ?? ''));
+
         return [
             'title' => trim((string) ($_POST['title'] ?? '')),
             'category' => trim((string) ($_POST['category'] ?? '')),
             'description' => trim((string) ($_POST['description'] ?? '')),
+            'technologies' => $this->normalizeTechnologies((string) ($_POST['technologies'] ?? '')),
+            'demo_url' => $demoUrl === '' ? null : $demoUrl,
+            'repo_url' => $repoUrl === '' ? null : $repoUrl,
             'status' => (string) ($_POST['status'] ?? 'draft'),
             'featured' => isset($_POST['featured']) ? 1 : 0,
         ];
+    }
+
+    /**
+     * Merapikan daftar teknologi dari input teks bebas yang dipisah koma.
+     * Contoh: "php, MySQL,  figma" menjadi "php, MySQL, figma".
+     */
+    private function normalizeTechnologies(string $raw): string
+    {
+        $items = [];
+        foreach (explode(',', $raw) as $item) {
+            $item = trim($item);
+            if ($item !== '' && !in_array($item, $items, true) && count($items) < 12) {
+                $items[] = $item;
+            }
+        }
+
+        return implode(', ', $items);
+    }
+
+    /** Memindahkan proyek naik atau turun satu posisi pada daftar creator. */
+    public function reorderProject(int $userId): void
+    {
+        $projectId = (int) ($_POST['id'] ?? 0);
+        $direction = (string) ($_POST['direction'] ?? '');
+
+        if ($this->repository->reorderProject($userId, $projectId, $direction)) {
+            setFlash('success', 'Urutan proyek diperbarui.');
+        }
+
+        redirect(appUrl('/studio/projects.php'));
+    }
+
+    /**
+     * Unggah atau ganti gambar sampul khusus untuk sebuah proyek.
+     * Mengembalikan pesan error; null berarti berhasil (dan sudah redirect).
+     */
+    public function uploadProjectCover(int $userId): ?string
+    {
+        $projectId = (int) ($_POST['project_id'] ?? 0);
+        $project = $projectId > 0 ? $this->repository->findProject($userId, $projectId) : null;
+
+        if ($project === null) {
+            return 'Pilih proyek milik Anda sendiri sebelum mengunggah gambar sampul.';
+        }
+
+        $uploader = new MediaUploadService(projectCoverUploadConfig());
+
+        try {
+            $uploaded = $uploader->store($_FILES['cover_file'] ?? null);
+        } catch (RuntimeException $exception) {
+            return $exception->getMessage();
+        }
+
+        $previous = $this->repository->updateProjectCover($userId, $projectId, $uploaded['stored_name']);
+
+        if ($previous !== null) {
+            $uploader->remove($previous);
+        }
+
+        setFlash('success', 'Gambar sampul berhasil disimpan.');
+        redirect(appUrl('/studio/projects.php?edit=' . $projectId . '#project-cover'));
+    }
+
+    public function removeProjectCover(int $userId): void
+    {
+        $projectId = (int) ($_POST['project_id'] ?? 0);
+        $previous = $this->repository->updateProjectCover($userId, $projectId, null);
+
+        if ($previous !== null) {
+            (new MediaUploadService(projectCoverUploadConfig()))->remove($previous);
+        }
+
+        setFlash('success', 'Gambar sampul dihapus.');
+        redirect(appUrl('/studio/projects.php?edit=' . $projectId . '#project-cover'));
     }
 
     /**

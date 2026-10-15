@@ -76,6 +76,11 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                         static fn (array $item): bool => (string) ($item['stored_name'] ?? '') !== $coverStored
                     ));
                     $projectLink = appUrl('/project/' . (int) $project['id']);
+
+                    $technologies = array_values(array_filter(array_map(
+                        static fn (string $item): string => trim($item),
+                        explode(',', (string) ($project['technologies'] ?? ''))
+                    ), static fn (string $item): bool => $item !== ''));
                     ?>
                     <article class="public-work-card">
                         <a class="public-thumb" href="<?= escape($projectLink) ?>">
@@ -92,6 +97,25 @@ $memberSinceYear = $memberSince !== '' ? date('Y', strtotime($memberSince)) : SI
                             <h3><a href="<?= escape($projectLink) ?>"><?= escape($project['title']) ?></a></h3>
                             <span class="public-work-description"><?= nl2br(escape($project['description'])) ?></span>
                         </div>
+
+                        <?php if ($technologies !== []): ?>
+                            <ul class="public-tech-chips" aria-label="Teknologi yang digunakan">
+                                <?php foreach ($technologies as $technology): ?>
+                                    <li><?= escape($technology) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <?php if (!empty($project['demo_url']) || !empty($project['repo_url'])): ?>
+                            <div class="public-project-links">
+                                <?php if (!empty($project['demo_url'])): ?>
+                                    <a href="<?= escape((string) $project['demo_url']) ?>" target="_blank" rel="noopener">Live demo</a>
+                                <?php endif; ?>
+                                <?php if (!empty($project['repo_url'])): ?>
+                                    <a href="<?= escape((string) $project['repo_url']) ?>" target="_blank" rel="noopener">Repository</a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
 
                         <?php if ($gallery !== []): ?>
                             <div class="public-media">
