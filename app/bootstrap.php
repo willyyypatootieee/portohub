@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Core\Connection;
 use App\Middleware\AuthMiddleware;
+use App\Middleware\SuperadminMiddleware;
 use App\Repositories\PortfolioRepository;
 use App\Repositories\StudioRepository;
 
@@ -50,6 +51,7 @@ require_once __DIR__ . '/services/MediaUploadService.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/StudioController.php';
 require_once __DIR__ . '/middleware/AuthMiddleware.php';
+require_once __DIR__ . '/middleware/SuperadminMiddleware.php';
 
 loadEnvironmentFile(dirname(__DIR__) . '/.env');
 
@@ -80,3 +82,5 @@ if (!$studioRepository->hasRequiredSchema()) {
 /* 5. Middleware ------------------------------------------------------------ */
 
 $authMiddleware = new AuthMiddleware($studioRepository);
+
+$superadminMiddleware = new SuperadminMiddleware();

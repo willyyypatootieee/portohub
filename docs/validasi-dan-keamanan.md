@@ -77,6 +77,25 @@ Kredensialnya masih memakai konfigurasi environment `ADMIN_USERNAME` dan
 `ADMIN_PASSWORD`. Untuk production, gunakan secret environment yang kuat dan
 pertimbangkan menambah hash password serta rate limiting.
 
+Selain form masuk, setiap halaman superadmin dijaga oleh
+`SuperadminMiddleware` (`app/middleware/SuperadminMiddleware.php`) lewat
+`requireSuperadmin()`, yang mengarahkan kembali ke form masuk bila session
+superadmin belum ada. Aksi mengaktifkan/menonaktifkan akun dan
+menyembunyikan/menampilkan proyek dikirim lewat form POST dan dilindungi CSRF
+token. Akun superadmin berasal dari konfigurasi dan tidak ada di tabel `users`,
+jadi tidak mungkin menonaktifkan dirinya sendiri.
+
+## Akun nonaktif dan proyek tersembunyi
+
+Dua kolom penanda menjadi dasar moderasi platform:
+
+- `users.is_active` — akun bernilai `0` tidak bisa masuk. Pesan login
+  membedakan akun nonaktif dari kredensial salah, dan `AuthMiddleware` menolak
+  session lama akun yang baru saja dinonaktifkan.
+- `studio_projects.is_hidden` — proyek bernilai `1` tidak tampil di landing
+  page, halaman portofolio publik, maupun daftar kategori. Creator tetap
+  melihat proyeknya di studio lengkap dengan lencana "Hidden by admin".
+
 ## Session cookie dan CSRF
 
 Halaman creator memakai **session cookie**. Cookie dikonfigurasi dengan
@@ -90,6 +109,8 @@ Proteksi terpusat ada di `app/middleware/AuthMiddleware.php` lewat
 
 1. ada id user yang sah di session;
 2. akun tersebut masih ada di database (sesi dihapus bila user sudah dihapus);
+3. akun tersebut masih aktif (`is_active = 1`); session dibersihkan bila akun
+   dinonaktifkan pengelola platform.
 
 Bila gagal, session login dibersihkan, pesan flash ditampilkan, dan pengunjung
 diarahkan ke halaman masuk.

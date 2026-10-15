@@ -22,7 +22,27 @@ final class AuthenticationService
             return null;
         }
 
+        // Akun yang dinonaktifkan pengelola platform tidak boleh masuk.
+        if ((int) ($user['is_active'] ?? 1) === 0) {
+            return null;
+        }
+
         return $user;
+    }
+
+    /**
+     * Kredensial benar tetapi akun dinonaktifkan pengelola platform.
+     * Dipakai controller untuk menampilkan pesan yang tepat.
+     */
+    public function isDeactivatedAccount(string $email, string $password): bool
+    {
+        $user = $this->repository->findUserByEmail($email);
+
+        if ($user === null || !password_verify($password, (string) $user['password_hash'])) {
+            return false;
+        }
+
+        return (int) ($user['is_active'] ?? 1) === 0;
     }
 
     public function signIn(int $userId): void
